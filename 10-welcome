@@ -3,3 +3,4 @@
 echo
 echo "SYSTEM DISK USAGE"
 export TERM=xterm; inxi -D
+echo
