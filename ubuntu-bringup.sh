@@ -19,16 +19,13 @@ curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash - &&\
 sudo apt-get install -y nodejs
 curl -sL https://dl.yarnpkg.com/debian/pubkey.gpg | gpg --dearmor | sudo tee /usr/share/keyrings/yarnkey.gpg >/dev/null
 echo "deb [signed-by=/usr/share/keyrings/yarnkey.gpg] https://dl.yarnpkg.com/debian stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
-sudo apt-get update && sudo apt-get install yarn
+sudo apt-get update && sudo apt-get install yarn -y
 
 # openwrt dependencies
-sudo apt install -y build-essential clang flex bison g++ gawk git rsync unzip file wget gettext
-sudo apt install -y gcc-multilib g++-multilib libncurses-dev libssl-dev python3-distutils zlib1g-dev
+sudo apt install -y build-essential clang flex bison g++ gawk git rsync unzip file wget gettext gcc-multilib g++-multilib libncurses-dev libssl-dev python3-distutils zlib1g-dev
 
 # satcom dependencies
-sudo apt install -y npm minicom python2
-sudo apt install -y libncurses5 libncurses5-dev libncurses6 libncurses-dev ncurses-base zlib1g-dev zlib1g 
-sudo apt install -y libelf-dev
+sudo apt install -y npm minicom python2 libncurses5 libncurses5-dev libncurses6 libncurses-dev ncurses-base zlib1g-dev zlib1g libelf-dev
 
 # my tools
 sudo apt install -y ranger python3 python3-pip python3-venv screen curl
@@ -57,50 +54,47 @@ rm /tmp/htop.deb
 # rust
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 
-# zsh
-sudo apt install -y zsh
-sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
-chsh -s $(which zsh)
+# # zsh
+# sudo apt install -y zsh
+# sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+# chsh -s $(which zsh)
 
 # OPTIONAL: install starship prompt, and set it up with my config (you can change this lol)
 curl -fsSL https://starship.rs/install.sh | sh -s -- -y
 mkdir /home/cole/.config -p
 curl -fsSL https://raw.githubusercontent.com/colefuerth/dot-files/master/starship.toml -o /home/cole/.config/starship.toml
 
-# aliases, as a list
-aliases=(
-    "alias py=/usr/bin/python3"
-    "alias pip='/usr/bin/python3 -m pip'"
-    "alias pip3='/usr/bin/python3 -m pip'"
-    "alias ll='ls -al'"
-    "alias 7z='/usr/local/bin/7zz'"
-    "PATH=$PATH:/home/cole/.local/bin"
-)
+# # .zshrc
+# echo 'ZSH="/home/cole/.oh-my-zsh"
+
+# #Theme
+# ZSH_THEME=""
+
+# #Plugins
+# plugins=(git zsh-autosuggestions)
+# source $ZSH/oh-my-zsh.sh
+
+# #Star Ship
+# eval "$(starship init zsh)"
+# ' > /home/cole/.zshrc
+# echo "PATH=$PATH:/home/cole/.local/bin" >> /home/cole/.zshrc
+# git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
+
+# # aliases, as a list
+# "alias py='/usr/bin/python3'" >> /home/cole/.zshrc
+# "alias pip='/usr/bin/python3 -m pip'" >> /home/cole/.zshrc
+# "alias pip3='/usr/bin/python3 -m pip'" >> /home/cole/.zshrc
+# "alias ll='ls -al'" >> /home/cole/.zshrc
+# "alias 7z='/usr/local/bin/7zz'" >> /home/cole/.zshrc
 
 # .bashrc
+echo "alias py='/usr/bin/python3'" >> /home/cole/.bashrc
+echo "alias pip='/usr/bin/python3 -m pip'" >> /home/cole/.bashrc
+echo "alias pip3='/usr/bin/python3 -m pip'" >> /home/cole/.bashrc
+echo "alias ll='ls -al'" >> /home/cole/.bashrc
+echo "alias 7z='/usr/local/bin/7zz'" >> /home/cole/.bashrc
 echo "eval \"\$(starship init bash)\"" >> /home/cole/.bashrc
-for i in "${aliases[@]}"; do
-    echo $i >> /home/cole/.bashrc
-done
-
-# .zshrc
-git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
-echo 'ZSH="/home/harshith/.oh-my-zsh"
-
-#Theme
-ZSH_THEME=""
-
-#Plugins
-plugins=(git zsh-autosuggestions)
-source $ZSH/oh-my-zsh.sh
-
-#Star Ship
-eval "$(starship init zsh)"
-' > /home/cole/.zshrc
-for i in "${aliases[@]}"; do
-    echo $i >> /home/cole/.zshrc
-done
-
+echo "PATH=\$PATH:/home/cole/.local/bin" >> /home/cole/.bashrc
 
 # setup verbose boot
 # sudo apt install -y kernelstub
@@ -124,24 +118,14 @@ sudo sysctl -p
 sudo usermod -a -G dialout cole
 
 # qemu dependencies
-sudo apt install -y pkg-config autoconf automake libpng-dev libjpeg-dev libmodplug-dev libode-dev
-sudo apt install -y git libglib2.0-dev libfdt-dev libpixman-1-dev zlib1g-dev ninja-build
-sudo apt install -y git-email
-sudo apt install -y libaio-dev libbluetooth-dev libcapstone-dev libbrlapi-dev libbz2-dev
-sudo apt install -y libcap-ng-dev libcurl4-gnutls-dev libgtk-3-dev
-sudo apt install -y libibverbs-dev libjpeg8-dev libncurses5-dev libnuma-dev
-sudo apt install -y librbd-dev librdmacm-dev
-sudo apt install -y libsasl2-dev libsdl2-dev libseccomp-dev libsnappy-dev libssh-dev
-sudo apt install -y libvde-dev libvdeplug-dev libvte-2.91-dev libxen-dev liblzo2-dev
-sudo apt install -y valgrind xfslibs-dev
-sudo apt install -y libnfs-dev libiscsi-dev
+sudo apt install -y pkg-config autoconf automake libpng-dev libjpeg-dev libmodplug-dev libode-dev git libglib2.0-dev libfdt-dev libpixman-1-dev zlib1g-dev ninja-build git-email libaio-dev libbluetooth-dev libcapstone-dev libbrlapi-dev libbz2-dev libcap-ng-dev libcurl4-gnutls-dev libgtk-3-dev libibverbs-dev libjpeg8-dev libncurses5-dev libnuma-dev librbd-dev librdmacm-dev libsasl2-dev libsdl2-dev libseccomp-dev libsnappy-dev libssh-dev libvde-dev libvdeplug-dev libvte-2.91-dev libxen-dev liblzo2-dev valgrind xfslibs-dev libnfs-dev libiscsi-dev
 
 # at the end we should run an update and autoremove in case anything was missed
 sudo apt update
 sudo apt autoremove -y
 
 # need to ssh-keygen a new keypair for bitbucket
-ssh-keygen -t rsa -b 4096 -C "cole-sd-vm"
+ssh-keygen -t rsa -b 4096 -C "cole-sd-vm" -f ~/.ssh/id_rsa
 eval "$(ssh-agent -s)"
 ssh-add ~/.ssh/id_rsa
 echo "copy this into github ------------"
