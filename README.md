@@ -1,5 +1,7 @@
 # My Dot-Files
 
+as a side note, for some of this, it may be better to just `curl` the script to a local file and copy paste sections at a time, as some of the menus require user input and may not be fully tested. I more or less just did a bunch of stuff manually and then threw it in a script after the fact.
+
 ## Installation
 
 ```bash
@@ -7,7 +9,8 @@ sudo apt update && sudo apt install -y curl
 curl -fsSL https://raw.githubusercontent.com/colefuerth/dot-files/master/ubuntu-bringup.sh | bash
 ```
 
-**note: if you aren't *me* then do this instead:**
+**note: if you aren't *me* then do this instead:**\
+(there are flags at the start of the script that turn features on and off)
 
 ```bash
 sudo apt update && sudo apt install -y curl
