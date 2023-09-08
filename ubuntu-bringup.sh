@@ -1,5 +1,7 @@
 # POP!_OS 22.04 LTS BRINGUP
 
+set -x
+
 # update packages
 sudo apt update
 sudo add-apt-repository universe -y

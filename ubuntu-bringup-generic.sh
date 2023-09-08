@@ -1,5 +1,7 @@
 # POP!_OS 22.04 LTS BRINGUP
 
+set -x
+
 # SETTINGS
 INSTALL_STARSHIP=true       # install starship prompt
 INSTALL_ZSH=false           # install zsh & set as default shell
