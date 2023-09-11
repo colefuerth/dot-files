@@ -4,7 +4,7 @@ set -x
 
 # SETTINGS
 INSTALL_STARSHIP=true       # install starship prompt
-INSTALL_ZSH=false           # install zsh & set as default shell
+INSTALL_ZSH=true           # install zsh & set as default shell
 INSTALL_QEMU=true           # install qemu dependencies for building SD's qemu
 INSTALL_NPM=true
 INSTALL_SD=true
@@ -132,8 +132,17 @@ fi
 
 if $SETUP_GIT; then
     # git config
-    git config --global user.email "cfuerth@satcomdirect.com"
-    git config --global user.name "$USER Fuerth"
+    # get the user's name and email from cli
+    EMAIL=""
+    while [ -z "$EMAIL" ]; do
+        read -p "Enter your email for git: " EMAIL
+    done
+    NAME=""
+    while [ -z "$NAME" ]; do
+        read -p "Enter your name for git: " NAME
+    done
+    git config --global user.email "$EMAIL"
+    git config --global user.name "$NAME"
     git config --global core.editor "nano"
     sudo bash -c "echo 'fs.inotify.max_user_watches=524288' >> /etc/sysctl.conf"
     sudo sysctl -p
@@ -142,8 +151,13 @@ fi
 # need to add user to dialout group for serial access
 sudo usermod -a -G dialout $USER
 
+if $SETUP_QEMU; then
+    # qemu runtime for general emulation
+    sudo apt install -y qemu-system-arm qemu-efi-aarch64 qemu-utils
+fi
+
 if $SETUP_QEMU && $INSTALL_SD; then
-    # qemu dependencies
+    # qemu dependencies for compiling our fork of qemu
     sudo apt install -y pkg-config autoconf automake libpng-dev libjpeg-dev libmodplug-dev libode-dev git libglib2.0-dev libfdt-dev libpixman-1-dev zlib1g-dev ninja-build git-email libaio-dev libbluetooth-dev libcapstone-dev libbrlapi-dev libbz2-dev libcap-ng-dev libcurl4-gnutls-dev libgtk-3-dev libibverbs-dev libjpeg8-dev libncurses5-dev libnuma-dev librbd-dev librdmacm-dev libsasl2-dev libsdl2-dev libseccomp-dev libsnappy-dev libssh-dev libvde-dev libvdeplug-dev libvte-2.91-dev libxen-dev liblzo2-dev valgrind xfslibs-dev libnfs-dev libiscsi-dev
 fi
 
@@ -160,7 +174,6 @@ if $SETUP_GIT; then
     more ~/.ssh/id_rsa.pub
     echo "----------------------------------------------------------- **"
 fi
-
 
 echo
 echo "** you should generate a keypair on your host and copy the public key into `~/.ssh/authorized_keys` on the vm **"
