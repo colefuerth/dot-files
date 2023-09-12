@@ -11,6 +11,7 @@ INSTALL_SD=true
 INSTALL_TOOLS=true          # a set of tools that I like to use (ranger, ncdu, htop, 7z, etc)
 SETUP_GIT=true              # performs most of the git setup for you
 SETUP_WELCOME_MSG=true      # sets up a welcome message for the terminal
+SETUP_BASH=true             # sets up bashrcm with my aliases etc
 
 # update packages
 sudo apt update
@@ -77,6 +78,16 @@ if $INSTALL_STARSHIP; then
     curl -fsSL https://raw.githubusercontent.com/colefuerth/dot-files/master/starship.toml -o /home/$USER/.config/starship.toml
 fi
 
+# define a function for aliases to be added to .bashrc or .zshrc
+function add_aliases() {
+    echo "alias py='/usr/bin/python3'" >> /home/$USER/$1
+    echo "alias pip='/usr/bin/python3 -m pip'" >> /home/$USER/$1
+    echo "alias pip3='/usr/bin/python3 -m pip'" >> /home/$USER/$1
+    echo "alias ll='ls -al'" >> /home/$USER/$1
+    echo "alias 7z='/usr/local/bin/7zz'" >> /home/$USER/$1
+    echo "PATH=\$PATH:/home/$USER/.local/bin" >> /home/$USER/$1
+}
+
 if $INSTALL_ZSH; then
     # zsh
     sudo apt install -y zsh
@@ -85,6 +96,7 @@ if $INSTALL_ZSH; then
 
 
     # .zshrc
+    touch /home/$USER/.zshrc
     echo 'ZSH="/home/$USER/.oh-my-zsh"
 
     # Theme
@@ -96,26 +108,18 @@ if $INSTALL_ZSH; then
 
     # Star Ship
     eval "$(starship init zsh)"
-    ' > /home/$USER/.zshrc
-    echo "PATH=$PATH:/home/$USER/.local/bin" >> /home/$USER/.zshrc
+    ' >> /home/$USER/.zshrc
     git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
 
     # aliases, as a list
-    "alias py='/usr/bin/python3'" >> /home/$USER/.zshrc
-    "alias pip='/usr/bin/python3 -m pip'" >> /home/$USER/.zshrc
-    "alias pip3='/usr/bin/python3 -m pip'" >> /home/$USER/.zshrc
-    "alias ll='ls -al'" >> /home/$USER/.zshrc
-    "alias 7z='/usr/local/bin/7zz'" >> /home/$USER/.zshrc
+    add_aliases ".zshrc"
 fi
 
 # .bashrc
-echo "alias py='/usr/bin/python3'" >> /home/$USER/.bashrc
-echo "alias pip='/usr/bin/python3 -m pip'" >> /home/$USER/.bashrc
-echo "alias pip3='/usr/bin/python3 -m pip'" >> /home/$USER/.bashrc
-echo "alias ll='ls -al'" >> /home/$USER/.bashrc
-echo "alias 7z='/usr/local/bin/7zz'" >> /home/$USER/.bashrc
-echo "eval \"\$(starship init bash)\"" >> /home/$USER/.bashrc
-echo "PATH=\$PATH:/home/$USER/.local/bin" >> /home/$USER/.bashrc
+if $SETUP_BASH; then
+    echo "eval \"\$(starship init bash)\"" >> /home/$USER/.bashrc
+    add_aliases ".bashrc"
+fi
 
 # setup verbose boot
 # sudo apt install -y kernelstub
