@@ -86,6 +86,7 @@ function add_aliases() {
     echo "alias ll='ls -al'" >> /home/$USER/$1
     echo "alias 7z='/usr/local/bin/7zz'" >> /home/$USER/$1
     echo "PATH=\$PATH:/home/$USER/.local/bin" >> /home/$USER/$1
+    echo "PATH=\$PATH:/home/$USER/.cargo/bin" >> /home/$USER/$1
 }
 
 if $INSTALL_ZSH; then
