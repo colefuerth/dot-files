@@ -83,7 +83,7 @@ function add_aliases() {
     echo "alias py='/usr/bin/python3'" >> /home/$USER/$1
     echo "alias pip='/usr/bin/python3 -m pip'" >> /home/$USER/$1
     echo "alias pip3='/usr/bin/python3 -m pip'" >> /home/$USER/$1
-    echo "alias ll='ls -al'" >> /home/$USER/$1
+    echo "alias ll='ls -alh'" >> /home/$USER/$1
     echo "alias 7z='/usr/local/bin/7zz'" >> /home/$USER/$1
     echo "PATH=\$PATH:/home/$USER/.local/bin" >> /home/$USER/$1
     echo "PATH=\$PATH:/home/$USER/.cargo/bin" >> /home/$USER/$1
