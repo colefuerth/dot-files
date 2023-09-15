@@ -27,6 +27,7 @@ format = "[$duration]($style) "
 style = "yellow"
 
 [status]
+style = "red"
 symbol = "↵ "
 disabled = false
 
