@@ -6,6 +6,7 @@ $git_branch\
 $git_state\
 $git_status\
 $cmd_duration\
+$status\
 $line_break\
 $conda\
 $character"""
@@ -25,10 +26,13 @@ style = "bright-black"
 format = "[$duration]($style) "
 style = "yellow"
 
+[status]
+symbol = "↵ "
+disabled = false
+
 [character]
 success_symbol = "[>](bold purple)"
 error_symbol = "[>](bold red)"
-vicmd_symbol = "[<](bold green)"
 
 [git_commit]
 tag_symbol = " tag "
