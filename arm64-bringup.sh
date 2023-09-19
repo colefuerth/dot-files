@@ -6,14 +6,12 @@ set -x
 INSTALL_STARSHIP=true       # install starship prompt
 INSTALL_ZSH=true           # install zsh & set as default shell
 INSTALL_QEMU=true           # install qemu dependencies for building SD's qemu
-INSTALL_NPM=true
+INSTALL_NPM=false
 INSTALL_SD=true
 INSTALL_TOOLS=true          # a set of tools that I like to use (ranger, ncdu, htop, 7z, etc)
 SETUP_GIT=true              # performs most of the git setup for you
 SETUP_WELCOME_MSG=true      # sets up a welcome message for the terminal
 SETUP_BASH=true             # sets up bashrcm with my aliases etc
-INSTALL_CCACHE=true         # sets up CCACHE
-CCACHE_ALIASES=true         # masquerade ccache as g++ and gcc, so it is on for *everything*
 
 # update packages
 sudo apt update
@@ -51,7 +49,7 @@ if $INSTALL_TOOLS; then
     /usr/bin/python3 -m pip install --user virtualenv numpy pandas matplotlib jupyterlab
 
     # ncdu static binary 2.3
-    curl -fsSL https://dev.yorhel.nl/download/ncdu-2.3-linux-x86_64.tar.gz -o /tmp/ncdu.tar.gz
+    curl -fsSL https://dev.yorhel.nl/download/ncdu-2.3-linux-aarch64.tar.gz -o /tmp/ncdu.tar.gz
     tar -xvf /tmp/ncdu.tar.gz -C /tmp
     sudo mv /tmp/ncdu /usr/bin/ncdu
     sudo chmod +x /usr/bin/ncdu
@@ -73,17 +71,6 @@ if $INSTALL_TOOLS; then
     curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 fi
 
-if $INSTALL_CCACHE; then
-    curl -fsSL https://github.com/ccache/ccache/releases/download/v4.8.3/ccache-4.8.3-linux-x86_64.tar.xz
-    tar -xvf /tmp/ccache-4.8.3-linux-x86_64.tar.xz -C /tmp
-    sudo cp /tmp/ccache-4.8.3-linux-x86_64/ccache /usr/local/bin/ccache
-    rm -rf /tmp/ccache-4.8.3-linux-x86_64 /tmp/ccache-4.8.3-linux-x86_64.tar.xz
-    if $CCACHE_ALIASES; then
-        sudo ln -s ccache /usr/local/bin/gcc
-        sudo ln -s ccache /usr/local/bin/g++
-    fi
-fi
-
 if $INSTALL_STARSHIP; then
     # OPTIONAL: install starship prompt, and set it up with my config (you can change this lol)
     curl -fsSL https://starship.rs/install.sh | sh -s -- -y
@@ -96,16 +83,10 @@ function add_aliases() {
     echo "alias py='/usr/bin/python3'" >> /home/$USER/$1
     echo "alias pip='/usr/bin/python3 -m pip'" >> /home/$USER/$1
     echo "alias pip3='/usr/bin/python3 -m pip'" >> /home/$USER/$1
-    echo "alias ll='ls -alh'" >> /home/$USER/$1
+    echo "alias ll='ls -al'" >> /home/$USER/$1
+    echo "alias 7z='/usr/local/bin/7zz'" >> /home/$USER/$1
     echo "PATH=\$PATH:/home/$USER/.local/bin" >> /home/$USER/$1
-    if $INSTALL_TOOLS; then
-        echo "alias 7z='/usr/local/bin/7zz'" >> /home/$USER/$1
-        echo "PATH=\$PATH:/home/$USER/.cargo/bin" >> /home/$USER/$1
-    fi
-    if $INSTALL_CCACHE; then
-        echo "export CCACHE_DIR=/home/$USER/.ccache" >> /home/$USER/$1
-        echo "export CCACHE_TEMPDIR=/home/$USER/.ccache" >> /home/$USER/$1
-    fi
+    echo "PATH=\$PATH:/home/$USER/.cargo/bin" >> /home/$USER/$1
 }
 
 if $INSTALL_ZSH; then
