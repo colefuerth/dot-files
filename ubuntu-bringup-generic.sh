@@ -79,8 +79,9 @@ if $INSTALL_CCACHE; then
     sudo cp /tmp/ccache-4.8.3-linux-x86_64/ccache /usr/local/bin/ccache
     rm -rf /tmp/ccache-4.8.3-linux-x86_64 /tmp/ccache-4.8.3-linux-x86_64.tar.xz
     if $CCACHE_ALIASES; then
-        sudo ln -s ccache /usr/local/bin/gcc
-        sudo ln -s ccache /usr/local/bin/g++
+        sudo rm /usr/local/bin/gcc /usr/local/bin/g++
+        sudo ln -s /usr/local/bin/ccache /usr/local/bin/gcc
+        sudo ln -s /usr/local/bin/ccache /usr/local/bin/g++
     fi
 fi
 
