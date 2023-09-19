@@ -74,8 +74,8 @@ if $INSTALL_TOOLS; then
 fi
 
 if $INSTALL_CCACHE; then
-    curl -fsSL https://github.com/ccache/ccache/releases/download/v4.8.3/ccache-4.8.3-linux-x86_64.tar.xz
-    tar -xvf /tmp/ccache-4.8.3-linux-x86_64.tar.xz -C /tmp
+    curl -fsSL https://github.com/ccache/ccache/releases/download/v4.8.3/ccache-4.8.3-linux-x86_64.tar.xz -o /tmp/ccache.tar.xz
+    tar -xvf /tmp/ccache.tar.xz -C /tmp
     sudo cp /tmp/ccache-4.8.3-linux-x86_64/ccache /usr/local/bin/ccache
     rm -rf /tmp/ccache-4.8.3-linux-x86_64 /tmp/ccache-4.8.3-linux-x86_64.tar.xz
     if $CCACHE_ALIASES; then
