@@ -79,7 +79,7 @@ if $INSTALL_CCACHE; then
     sudo cp /tmp/ccache-4.8.3-linux-x86_64/ccache /usr/local/bin/ccache
     rm -rf /tmp/ccache-4.8.3-linux-x86_64 /tmp/ccache-4.8.3-linux-x86_64.tar.xz
     if $CCACHE_ALIASES; then
-        sudo rm /usr/local/bin/gcc /usr/local/bin/g++
+        sudo rm -f /usr/local/bin/gcc /usr/local/bin/g++
         sudo ln -s /usr/local/bin/ccache /usr/local/bin/gcc
         sudo ln -s /usr/local/bin/ccache /usr/local/bin/g++
     fi
@@ -106,6 +106,12 @@ function add_aliases() {
     if $INSTALL_CCACHE; then
         echo "export CCACHE_DIR=/home/$USER/.ccache" >> /home/$USER/$1
         echo "export CCACHE_TEMPDIR=/home/$USER/.ccache" >> /home/$USER/$1
+    fi
+    if $INSTALL_SD; then
+        echo "alias sdgu='./sda/scripts/git-feeds-check.sh update'" >> /home/$USER/$1
+        echo "alias sdgp='./sda/scripts/git-feeds-check.sh pull'" >> /home/$USER/$1
+        echo "alias sdcp='./sda/scripts/compile-package.sh'" >> /home/$USER/$1
+        echo "alias sdfc='./sda/scripts/full-clean.sh'" >> /home/$USER/$1
     fi
 }
 
