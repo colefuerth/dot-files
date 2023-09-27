@@ -48,7 +48,8 @@ if $INSTALL_TOOLS; then
     # my tools
     sudo apt install -y ranger python3 python3-pip python3-venv screen curl
     /usr/bin/python3 -m pip install --user --upgrade pip
-    /usr/bin/python3 -m pip install --user virtualenv numpy pandas matplotlib jupyterlab
+    /usr/bin/python3 -m pip install --user virtualenv
+    # /usr/bin/python3 -m pip install --user numpy pandas matplotlib jupyterlab
 
     # ncdu static binary 2.3
     curl -fsSL https://dev.yorhel.nl/download/ncdu-2.3-linux-x86_64.tar.gz -o /tmp/ncdu.tar.gz
@@ -110,8 +111,11 @@ function add_aliases() {
     if $INSTALL_SD; then
         echo "alias sdgu='./sda/scripts/git-feeds-check.sh update'" >> /home/$USER/$1
         echo "alias sdgp='./sda/scripts/git-feeds-check.sh pull'" >> /home/$USER/$1
-        echo "alias sdcp='./sda/scripts/compile-package.sh'" >> /home/$USER/$1
+        echo "alias sdcp='./sda/scripts/compile_package.sh'" >> /home/$USER/$1
         echo "alias sdfc='./sda/scripts/full-clean.sh'" >> /home/$USER/$1
+        echo "alias sdba='./sda/scripts/build_all.sh'" >> /home/$USER/$1
+        echo "alias sdmm='make menuconfig'" >> /home/$USER/$1
+        echo "alias sdmk='make -j$(nproc)'" >> /home/$USER/$1
     fi
 }
 
