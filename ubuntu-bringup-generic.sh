@@ -79,11 +79,11 @@ if $INSTALL_CCACHE; then
     tar -xvf /tmp/ccache.tar.xz -C /tmp
     sudo cp /tmp/ccache-4.8.3-linux-x86_64/ccache /usr/local/bin/ccache
     rm -rf /tmp/ccache-4.8.3-linux-x86_64 /tmp/ccache-4.8.3-linux-x86_64.tar.xz
-    if $CCACHE_ALIASES; then
-        sudo rm -f /usr/local/bin/gcc /usr/local/bin/g++
-        sudo ln -s /usr/local/bin/ccache /usr/local/bin/gcc
-        sudo ln -s /usr/local/bin/ccache /usr/local/bin/g++
-    fi
+    # if $CCACHE_ALIASES; then
+    #     # sudo rm -f /usr/local/bin/gcc /usr/local/bin/g++
+    #     # sudo ln -s /usr/local/bin/ccache /usr/local/bin/gcc
+    #     # sudo ln -s /usr/local/bin/ccache /usr/local/bin/g++
+    # fi
 fi
 
 if $INSTALL_STARSHIP; then
@@ -116,6 +116,10 @@ function add_aliases() {
         echo "alias sdba='./sda/scripts/build_all.sh'" >> /home/$USER/$1
         echo "alias sdmm='make menuconfig'" >> /home/$USER/$1
         echo "alias sdmk='make -j$(nproc)'" >> /home/$USER/$1
+        if $CCACHE_ALIASES; then
+            echo "alias gcc='ccache gcc'" >> /home/$USER/$1
+            echo "alias g++='ccache g++'" >> /home/$USER/$1
+        fi
     fi
 }
 
