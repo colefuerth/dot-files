@@ -42,6 +42,7 @@ if $INSTALL_SD; then
     sudo apt install -y build-essential clang flex bison g++ gawk git rsync unzip file wget gettext gcc-multilib g++-multilib libncurses-dev libssl-dev python3-distutils zlib1g-dev
     # satcom dependencies
     sudo apt install -y npm minicom python2 libncurses5 libncurses5-dev libncurses6 libncurses-dev ncurses-base zlib1g-dev zlib1g libelf-dev
+    sudo ln /usr/bin/python2 /usr/bin/python
 fi
 
 if $INSTALL_TOOLS; then
@@ -116,6 +117,12 @@ function add_aliases() {
         echo "alias sdba='./sda/scripts/build_all.sh'" >> /home/$USER/$1
         echo "alias sdmm='make menuconfig'" >> /home/$USER/$1
         echo "alias sdmk='make -j$(nproc)'" >> /home/$USER/$1
+        echo "alias sdssh='ssh-keygen -f \"/home/cole/.ssh/known_hosts\" -R "192.168.78.1"'" >> /home/$USER/$1
+        echo "alias tsr='ts -r "[%H:%M:%S]"'" >> /home/$USER/$1
+        echo "alias sdcc=\"sed -i 's/# CONFIG_CCACHE is not set/CONFIG_CCACHE=y/' .config && sed -i 's/CONFIG_CCACHE_DIR=\\\"\\\"/CONFIG_CCACHE_DIR=\\\"\\/home\/cole\/.ccache\\\"/g' .config\"" >> /home/$USER/$1
+        echo "alias sdr='cp sda/config/config.sdr .config'" >> /home/$USER/$1
+        echo "alias sdr2='cp sda/config/config.sdr2 .config'" >> /home/$USER/$1
+        echo "alias sdr261='cp sda/config/config.sdr2-6.1 .config'" >> /home/$USER/$1
         if $CCACHE_ALIASES; then
             echo "alias gcc='ccache gcc'" >> /home/$USER/$1
             echo "alias g++='ccache g++'" >> /home/$USER/$1
