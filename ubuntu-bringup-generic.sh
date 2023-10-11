@@ -28,6 +28,33 @@ sudo systemctl enable ssh
 mkdir -p /home/$USER/.ssh
 touch /home/$USER/.ssh/authorized_keys
 
+if $INSTALL_ZSH; then
+    # zsh
+    sudo apt install -y zsh
+    sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+    chsh -s $(which zsh)
+
+
+    # .zshrc
+    touch /home/$USER/.zshrc
+    echo 'ZSH="/home/$USER/.oh-my-zsh"
+
+    # Theme
+    ZSH_THEME=""
+
+    # Plugins
+    plugins=(git zsh-autosuggestions)
+    source $ZSH/oh-my-zsh.sh
+
+    # Star Ship
+    eval "$(starship init zsh)"
+    ' >> /home/$USER/.zshrc
+    git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
+
+    # aliases, as a list
+    add_aliases ".zshrc"
+fi
+
 # need node.js 18, npm 9, and yarn (bc why not) (since this is a dependency for some stuff later it needs to install first)
 if $INSTALL_NPM; then
     curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash - &&\
@@ -73,6 +100,11 @@ if $INSTALL_TOOLS; then
 
     # rust
     curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+
+    # mcfly
+    sudo curl -LSfs https://raw.githubusercontent.com/cantino/mcfly/master/ci/install.sh | sh -s -- --git cantino/mcfly
+    echo 'eval "$(mcfly init zsh)"' >> /home/$USER/.zshrc
+    echo 'eval "$(mcfly init bash)"' >> /home/$USER/.bashrc
 fi
 
 if $INSTALL_CCACHE; then
@@ -129,33 +161,6 @@ function add_aliases() {
         fi
     fi
 }
-
-if $INSTALL_ZSH; then
-    # zsh
-    sudo apt install -y zsh
-    sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
-    chsh -s $(which zsh)
-
-
-    # .zshrc
-    touch /home/$USER/.zshrc
-    echo 'ZSH="/home/$USER/.oh-my-zsh"
-
-    # Theme
-    ZSH_THEME=""
-
-    # Plugins
-    plugins=(git zsh-autosuggestions)
-    source $ZSH/oh-my-zsh.sh
-
-    # Star Ship
-    eval "$(starship init zsh)"
-    ' >> /home/$USER/.zshrc
-    git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
-
-    # aliases, as a list
-    add_aliases ".zshrc"
-fi
 
 # .bashrc
 if $SETUP_BASH; then
