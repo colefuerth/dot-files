@@ -11,6 +11,8 @@ $line_break\
 $conda\
 $character"""
 
+command_timeout = 1000  # 1 second
+
 [hostname]
 ssh_symbol = ""
 

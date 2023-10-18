@@ -3,17 +3,19 @@
 set -x
 
 # SETTINGS
+SETUP_SSH=true
+SETUP_DIALOUT=true
 INSTALL_STARSHIP=true       # install starship prompt
 INSTALL_ZSH=true           # install zsh & set as default shell
 INSTALL_QEMU=true           # install qemu dependencies for building SD's qemu
-INSTALL_NPM=true
+INSTALL_NPM=false
 INSTALL_SD=true
 INSTALL_TOOLS=true          # a set of tools that I like to use (ranger, ncdu, htop, 7z, etc)
 SETUP_GIT=true              # performs most of the git setup for you
 SETUP_WELCOME_MSG=true      # sets up a welcome message for the terminal
 SETUP_BASH=true             # sets up bashrcm with my aliases etc
 INSTALL_CCACHE=true         # sets up CCACHE
-CCACHE_ALIASES=true         # masquerade ccache as g++ and gcc, so it is on for *everything*
+CCACHE_ALIASES=false         # masquerade ccache as g++ and gcc, so it is on for *everything*
 
 # update packages
 sudo apt update
@@ -22,36 +24,83 @@ sudo apt update
 sudo apt upgrade -y
 
 # get ssh set up first
-sudo apt install -y openssh-server
-sudo ufw allow ssh
-sudo systemctl enable ssh
-mkdir -p /home/$USER/.ssh
-touch /home/$USER/.ssh/authorized_keys
+if $SETUP_SSH; then
+    sudo apt install -y openssh-server
+    sudo ufw allow ssh
+    sudo systemctl enable ssh
+    mkdir -p /home/$USER/.ssh
+    touch /home/$USER/.ssh/authorized_keys
+    cp config /home/$USER/.ssh/config
+fi
+
+# define a function for aliases to be added to .bashrc or .zshrc
+function add_aliases() {
+    echo >> /home/$USER/$1
+    echo "# My Aliases"  >> /home/$USER/$1
+    echo "alias py='/usr/bin/python3'" >> /home/$USER/$1
+    echo "alias pip='/usr/bin/python3 -m pip'" >> /home/$USER/$1
+    echo "alias pip3='/usr/bin/python3 -m pip'" >> /home/$USER/$1
+    echo "alias ll='ls -alh'" >> /home/$USER/$1
+    echo "PATH=\$PATH:/home/$USER/.local/bin" >> /home/$USER/$1
+    if $INSTALL_TOOLS; then
+        echo "alias 7z='/usr/local/bin/7zz'" >> /home/$USER/$1
+        if [ "$1" = ".zshrc" ]; then
+            echo 'eval "$(mcfly init zsh)"' >> /home/$USER/$1
+        else
+            echo 'eval "$(mcfly init bash)"' >> /home/$USER/$1
+        fi
+        # echo "PATH=\$PATH:/home/$USER/.cargo/bin" >> /home/$USER/$1
+    fi
+    if $INSTALL_STARSHIP; then
+        if [ "$1" = ".zshrc" ]; then
+            echo 'eval "$(starship init zsh)"' >> /home/$USER/$1
+        else
+            echo 'eval "$(starship init bash)"' >> /home/$USER/$1
+        fi
+    fi
+    if $INSTALL_CCACHE; then
+        echo >> /home/$USER/$1
+        echo "export CCACHE_DIR=/home/$USER/.ccache" >> /home/$USER/$1
+        echo "export CCACHE_TEMPDIR=/home/$USER/.ccache" >> /home/$USER/$1
+    fi
+    if $INSTALL_SD; then
+        echo >> /home/$USER/$1
+        echo "# Satcom Aliases" >> /home/$USER/$1
+        echo "alias sdgu='./sda/scripts/git-feeds-check.sh update'" >> /home/$USER/$1
+        echo "alias sdgp='./sda/scripts/git-feeds-check.sh pull'" >> /home/$USER/$1
+        echo "alias sdcp='./sda/scripts/compile_package.sh'" >> /home/$USER/$1
+        echo "alias sdfc='./sda/scripts/full-clean.sh'" >> /home/$USER/$1
+        echo "alias sdba='./sda/scripts/build_all.sh'" >> /home/$USER/$1
+        echo "alias sdmm='make menuconfig'" >> /home/$USER/$1
+        echo "alias sdmk='make -j$(nproc)'" >> /home/$USER/$1
+        echo "alias sdssh='ssh-keygen -f \"/home/cole/.ssh/known_hosts\" -R "192.168.78.1"'" >> /home/$USER/$1
+        echo "alias tsr='ts -r "[%H:%M:%S]"'" >> /home/$USER/$1
+        echo "alias sdcc=\"sed -i 's/# CONFIG_CCACHE is not set/CONFIG_CCACHE=y/' .config && sed -i 's/CONFIG_CCACHE_DIR=\\\"\\\"/CONFIG_CCACHE_DIR=\\\"\\/home\/cole\/.ccache\\\"/g' .config\"" >> /home/$USER/$1
+        echo "alias sdr='cp sda/config/config.sdr .config'" >> /home/$USER/$1
+        echo "alias sdr2='cp sda/config/config.sdr2 .config'" >> /home/$USER/$1
+        echo "alias ten64='cp sda/config/testboxes/config.sdr2emu .config'" >> /home/$USER/$1
+        if $CCACHE_ALIASES; then
+            echo "alias gcc='ccache gcc'" >> /home/$USER/$1
+            echo "alias g++='ccache g++'" >> /home/$USER/$1
+        fi
+    fi
+}
 
 if $INSTALL_ZSH; then
     # zsh
     sudo apt install -y zsh
+
+    # oh my zsh
     sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
     chsh -s $(which zsh)
 
+    # .zshrc setup
+    cp .zshrc /home/$USER/.zshrc
+    git clone https://github.com/zsh-users/zsh-autosuggestions \
+        ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
 
-    # .zshrc
-    touch /home/$USER/.zshrc
-    echo 'ZSH="/home/$USER/.oh-my-zsh"
-
-    # Theme
-    ZSH_THEME=""
-
-    # Plugins
-    plugins=(git zsh-autosuggestions)
-    source $ZSH/oh-my-zsh.sh
-
-    # Star Ship
-    eval "$(starship init zsh)"
-    ' >> /home/$USER/.zshrc
-    git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
-
-    # aliases, as a list
+    # aliases and evals, as a list
+    # (generated at runtime since this varies depending on flags)
     add_aliases ".zshrc"
 fi
 
@@ -59,30 +108,34 @@ fi
 if $INSTALL_NPM; then
     curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash - &&\
     sudo apt-get install -y nodejs
-    curl -sL https://dl.yarnpkg.com/debian/pubkey.gpg | gpg --dearmor | sudo tee /usr/share/keyrings/yarnkey.gpg >/dev/null
-    echo "deb [signed-by=/usr/share/keyrings/yarnkey.gpg] https://dl.yarnpkg.com/debian stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
+    curl -sL https://dl.yarnpkg.com/debian/pubkey.gpg | gpg --dearmor | \
+         sudo tee /usr/share/keyrings/yarnkey.gpg >/dev/null
+    echo "deb [signed-by=/usr/share/keyrings/yarnkey.gpg] https://dl.yarnpkg.com/debian stable main" | \
+         sudo tee /etc/apt/sources.list.d/yarn.list
     sudo apt-get update && sudo apt-get install yarn -y
 fi
 
 if $INSTALL_SD; then
     # openwrt dependencies
-    sudo apt install -y build-essential clang flex bison g++ gawk git rsync unzip file wget gettext gcc-multilib g++-multilib libncurses-dev libssl-dev python3-distutils zlib1g-dev
+    sudo apt install -y build-essential clang flex bison g++ gawk git rsync unzip file wget gettext gcc-multilib \
+            g++-multilib libncurses-dev libssl-dev python3-distutils zlib1g-dev
     # satcom dependencies
-    sudo apt install -y npm minicom python2 libncurses5 libncurses5-dev libncurses6 libncurses-dev ncurses-base zlib1g-dev zlib1g libelf-dev
+    sudo apt install -y npm minicom python2 libncurses5 libncurses5-dev libncurses6 libncurses-dev ncurses-base \
+            zlib1g-dev zlib1g libelf-dev
     sudo ln /usr/bin/python2 /usr/bin/python
 fi
 
 if $INSTALL_TOOLS; then
     # my tools
-    sudo apt install -y ranger python3 python3-pip python3-venv screen curl
+    sudo apt install -y ranger python3 python2 python3-pip python3-venv screen curl
     /usr/bin/python3 -m pip install --user --upgrade pip
     /usr/bin/python3 -m pip install --user virtualenv
-    # /usr/bin/python3 -m pip install --user numpy pandas matplotlib jupyterlab
+    /usr/bin/python3 -m pip install --user numpy pandas matplotlib jupyterlab
 
     # ncdu static binary 2.3
     curl -fsSL https://dev.yorhel.nl/download/ncdu-2.3-linux-x86_64.tar.gz -o /tmp/ncdu.tar.gz
     tar -xvf /tmp/ncdu.tar.gz -C /tmp
-    sudo mv /tmp/ncdu /usr/bin/ncdu
+    sudo cp /tmp/ncdu /usr/bin/ncdu
     sudo chmod +x /usr/bin/ncdu
     rm /tmp/ncdu.tar.gz
 
@@ -90,7 +143,8 @@ if $INSTALL_TOOLS; then
     curl -fsSL https://7-zip.org/a/7z2301-linux-x64.tar.xz -o /tmp/7z.tar.xz
     mkdir /tmp/7z
     tar -xvf /tmp/7z.tar.xz -C /tmp/7z
-    sudo mv /tmp/7z/7zz /usr/local/bin/7zz
+    sudo cp /tmp/7z/7zz /usr/local/bin/7zz
+    sudo ln -s /usr/local/bin/7zz /usr/local/bin/7z
     rm -rf /tmp/7z
 
     # htop static binary 3.2.2
@@ -103,12 +157,11 @@ if $INSTALL_TOOLS; then
 
     # mcfly
     sudo curl -LSfs https://raw.githubusercontent.com/cantino/mcfly/master/ci/install.sh | sh -s -- --git cantino/mcfly
-    echo 'eval "$(mcfly init zsh)"' >> /home/$USER/.zshrc
-    echo 'eval "$(mcfly init bash)"' >> /home/$USER/.bashrc
 fi
 
 if $INSTALL_CCACHE; then
-    curl -fsSL https://github.com/ccache/ccache/releases/download/v4.8.3/ccache-4.8.3-linux-x86_64.tar.xz -o /tmp/ccache.tar.xz
+    curl -fsSL https://github.com/ccache/ccache/releases/download/v4.8.3/ccache-4.8.3-linux-x86_64.tar.xz \
+         -o /tmp/ccache.tar.xz
     tar -xvf /tmp/ccache.tar.xz -C /tmp
     sudo cp /tmp/ccache-4.8.3-linux-x86_64/ccache /usr/local/bin/ccache
     rm -rf /tmp/ccache-4.8.3-linux-x86_64 /tmp/ccache-4.8.3-linux-x86_64.tar.xz
@@ -123,44 +176,9 @@ if $INSTALL_STARSHIP; then
     # OPTIONAL: install starship prompt, and set it up with my config (you can change this lol)
     curl -fsSL https://starship.rs/install.sh | sh -s -- -y
     mkdir /home/$USER/.config -p
-    curl -fsSL https://raw.githubusercontent.com/colefuerth/dot-files/master/starship.toml -o /home/$USER/.config/starship.toml
+    curl -fsSL https://raw.githubusercontent.com/colefuerth/dot-files/master/starship.toml \
+         -o /home/$USER/.config/starship.toml
 fi
-
-# define a function for aliases to be added to .bashrc or .zshrc
-function add_aliases() {
-    echo "alias py='/usr/bin/python3'" >> /home/$USER/$1
-    echo "alias pip='/usr/bin/python3 -m pip'" >> /home/$USER/$1
-    echo "alias pip3='/usr/bin/python3 -m pip'" >> /home/$USER/$1
-    echo "alias ll='ls -alh'" >> /home/$USER/$1
-    echo "PATH=\$PATH:/home/$USER/.local/bin" >> /home/$USER/$1
-    if $INSTALL_TOOLS; then
-        echo "alias 7z='/usr/local/bin/7zz'" >> /home/$USER/$1
-        echo "PATH=\$PATH:/home/$USER/.cargo/bin" >> /home/$USER/$1
-    fi
-    if $INSTALL_CCACHE; then
-        echo "export CCACHE_DIR=/home/$USER/.ccache" >> /home/$USER/$1
-        echo "export CCACHE_TEMPDIR=/home/$USER/.ccache" >> /home/$USER/$1
-    fi
-    if $INSTALL_SD; then
-        echo "alias sdgu='./sda/scripts/git-feeds-check.sh update'" >> /home/$USER/$1
-        echo "alias sdgp='./sda/scripts/git-feeds-check.sh pull'" >> /home/$USER/$1
-        echo "alias sdcp='./sda/scripts/compile_package.sh'" >> /home/$USER/$1
-        echo "alias sdfc='./sda/scripts/full-clean.sh'" >> /home/$USER/$1
-        echo "alias sdba='./sda/scripts/build_all.sh'" >> /home/$USER/$1
-        echo "alias sdmm='make menuconfig'" >> /home/$USER/$1
-        echo "alias sdmk='make -j$(nproc)'" >> /home/$USER/$1
-        echo "alias sdssh='ssh-keygen -f \"/home/cole/.ssh/known_hosts\" -R "192.168.78.1"'" >> /home/$USER/$1
-        echo "alias tsr='ts -r "[%H:%M:%S]"'" >> /home/$USER/$1
-        echo "alias sdcc=\"sed -i 's/# CONFIG_CCACHE is not set/CONFIG_CCACHE=y/' .config && sed -i 's/CONFIG_CCACHE_DIR=\\\"\\\"/CONFIG_CCACHE_DIR=\\\"\\/home\/cole\/.ccache\\\"/g' .config\"" >> /home/$USER/$1
-        echo "alias sdr='cp sda/config/config.sdr .config'" >> /home/$USER/$1
-        echo "alias sdr2='cp sda/config/config.sdr2 .config'" >> /home/$USER/$1
-        echo "alias sdr261='cp sda/config/config.sdr2-6.1 .config'" >> /home/$USER/$1
-        if $CCACHE_ALIASES; then
-            echo "alias gcc='ccache gcc'" >> /home/$USER/$1
-            echo "alias g++='ccache g++'" >> /home/$USER/$1
-        fi
-    fi
-}
 
 # .bashrc
 if $SETUP_BASH; then
@@ -177,7 +195,8 @@ if $SETUP_WELCOME_MSG; then
     # welcome messages
     sudo apt install -y inxi neofetch
     sudo chmod -x /etc/update-motd.d/*
-    sudo curl -fsSL https://raw.githubusercontent.com/colefuerth/dot-files/master/10-welcome -o /etc/update-motd.d/01-welcome
+    sudo curl -fsSL https://raw.githubusercontent.com/colefuerth/dot-files/master/10-welcome \
+              -o /etc/update-motd.d/01-welcome
     sudo chmod +x /etc/update-motd.d/01-welcome
 fi
 
@@ -195,12 +214,15 @@ if $SETUP_GIT; then
     git config --global user.email "$EMAIL"
     git config --global user.name "$NAME"
     git config --global core.editor "nano"
+    git config --global pull.rebase true
     sudo bash -c "echo 'fs.inotify.max_user_watches=524288' >> /etc/sysctl.conf"
     sudo sysctl -p
 fi
 
 # need to add user to dialout group for serial access
-sudo usermod -a -G dialout $USER
+if $SETUP_DIALOUT; then
+    sudo usermod -a -G dialout $USER
+fi
 
 if $SETUP_QEMU; then
     # qemu runtime for general emulation
@@ -209,12 +231,16 @@ fi
 
 if $SETUP_QEMU && $INSTALL_SD; then
     # qemu dependencies for compiling our fork of qemu
-    sudo apt install -y pkg-config autoconf automake libpng-dev libjpeg-dev libmodplug-dev libode-dev git libglib2.0-dev libfdt-dev libpixman-1-dev zlib1g-dev ninja-build git-email libaio-dev libbluetooth-dev libcapstone-dev libbrlapi-dev libbz2-dev libcap-ng-dev libcurl4-gnutls-dev libgtk-3-dev libibverbs-dev libjpeg8-dev libncurses5-dev libnuma-dev librbd-dev librdmacm-dev libsasl2-dev libsdl2-dev libseccomp-dev libsnappy-dev libssh-dev libvde-dev libvdeplug-dev libvte-2.91-dev libxen-dev liblzo2-dev valgrind xfslibs-dev libnfs-dev libiscsi-dev
+    sudo apt install -y pkg-config autoconf automake libpng-dev libjpeg-dev libmodplug-dev \
+    libode-dev git libglib2.0-dev libfdt-dev libpixman-1-dev zlib1g-dev ninja-build git-email \
+    libaio-dev libbluetooth-dev libcapstone-dev libbrlapi-dev libbz2-dev libcap-ng-dev libcurl4-gnutls-dev \
+    libgtk-3-dev libibverbs-dev libjpeg8-dev libncurses5-dev libnuma-dev librbd-dev librdmacm-dev libsasl2-dev \
+    libsdl2-dev libseccomp-dev libsnappy-dev libssh-dev libvde-dev libvdeplug-dev libvte-2.91-dev libxen-dev \
+    liblzo2-dev valgrind xfslibs-dev libnfs-dev libiscsi-dev
 fi
 
 # at the end we should run an update and autoremove in case anything was missed
-sudo apt update
-sudo apt autoremove -y
+sudo apt update && sudo apt autoremove -y
 
 # need to ssh-keygen a new keypair for bitbucket
 if $SETUP_GIT; then

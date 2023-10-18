@@ -1,0 +1,7 @@
+Host t64r
+  User root
+  HostName 192.168.10.1
+
+Host t64
+  User root
+  HostName 192.168.78.1
