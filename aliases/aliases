@@ -1,0 +1,7 @@
+PATH=$PATH:/home/$USER/.local/bin
+
+# My Aliases
+alias py='/usr/bin/python3'
+alias pip='/usr/bin/python3 -m pip'
+alias pip3='/usr/bin/python3 -m pip'
+alias ll='ls -alh'

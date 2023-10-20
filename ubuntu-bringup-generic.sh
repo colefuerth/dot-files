@@ -7,9 +7,7 @@ SETUP_SSH=true
 SETUP_DIALOUT=true
 INSTALL_STARSHIP=true       # install starship prompt
 INSTALL_ZSH=true           # install zsh & set as default shell
-INSTALL_QEMU=true           # install qemu dependencies for building SD's qemu
 INSTALL_NPM=false
-INSTALL_SD=true
 INSTALL_TOOLS=true          # a set of tools that I like to use (ranger, ncdu, htop, 7z, etc)
 SETUP_GIT=true              # performs most of the git setup for you
 SETUP_WELCOME_MSG=true      # sets up a welcome message for the terminal
@@ -18,6 +16,7 @@ INSTALL_CCACHE=true         # sets up CCACHE
 CCACHE_ALIASES=false         # masquerade ccache as g++ and gcc, so it is on for *everything*
 
 BASE=$(pwd)
+MKDIR="mkdir -p"
 
 # update packages
 sudo apt update
@@ -30,66 +29,23 @@ if $SETUP_SSH; then
     sudo apt install -y openssh-server
     sudo ufw allow ssh
     sudo systemctl enable ssh
-    mkdir -p /home/$USER/.ssh
-    touch /home/$USER/.ssh/authorized_keys
-    cp config /home/$USER/.ssh/config
+    $MKDIR $HOME/.ssh
+    touch $HOME/.ssh/authorized_keys
+    cp config $HOME/.ssh/config
 fi
 
 # define a function for aliases to be added to .bashrc or .zshrc
 function add_aliases() {
-    echo >> /home/$USER/$1
-    echo "PATH=\$PATH:/home/$USER/.local/bin" >> /home/$USER/$1
-    echo >> /home/$USER/$1
-    echo "# My Aliases"  >> /home/$USER/$1
-    echo "alias py='/usr/bin/python3'" >> /home/$USER/$1
-    echo "alias pip='/usr/bin/python3 -m pip'" >> /home/$USER/$1
-    echo "alias pip3='/usr/bin/python3 -m pip'" >> /home/$USER/$1
-    echo "alias ll='ls -alh'" >> /home/$USER/$1
-    if $CCACHE_ALIASES; then
-        echo "alias gcc='ccache gcc'" >> /home/$USER/$1
-        echo "alias g++='ccache g++'" >> /home/$USER/$1
-    fi
-    if $INSTALL_TOOLS; then
-        echo "alias cp='/usr/local/bin/advcp -g'" >> /home/$USER/$1
-        echo "alias mv='/usr/local/bin/advmv -g'" >> /home/$USER/$1
-    fi
-    if $INSTALL_SD; then
-        echo >> /home/$USER/$1
-        echo "# Satcom Aliases" >> /home/$USER/$1
-        echo "alias sdgu='./sda/scripts/git-feeds-check.sh update'" >> /home/$USER/$1
-        echo "alias sdgp='./sda/scripts/git-feeds-check.sh pull'" >> /home/$USER/$1
-        echo "alias sdcp='./sda/scripts/compile_package.sh'" >> /home/$USER/$1
-        echo "alias sdfc='./sda/scripts/full-clean.sh'" >> /home/$USER/$1
-        echo "alias sdba='./sda/scripts/build_all.sh'" >> /home/$USER/$1
-        echo "alias sdmm='make menuconfig'" >> /home/$USER/$1
-        echo "alias sdmk='make -j$(nproc)'" >> /home/$USER/$1
-        echo "alias sdssh='ssh-keygen -f \"/home/cole/.ssh/known_hosts\" -R "192.168.78.1"'" >> /home/$USER/$1
-        echo "alias tsr='ts -r "[%H:%M:%S]"'" >> /home/$USER/$1
-        echo "alias sdcc=\"sed -i 's/# CONFIG_CCACHE is not set/CONFIG_CCACHE=y/' .config && sed -i 's/CONFIG_CCACHE_DIR=\\\"\\\"/CONFIG_CCACHE_DIR=\\\"\\/home\/cole\/.ccache\\\"/g' .config\"" >> /home/$USER/$1
-        echo "alias sdr='cp sda/config/config.sdr .config'" >> /home/$USER/$1
-        echo "alias sdr2='cp sda/config/config.sdr2 .config'" >> /home/$USER/$1
-        echo "alias ten64='cp sda/config/testboxes/config.sdr2emu .config'" >> /home/$USER/$1
-    fi
-    if $INSTALL_TOOLS; then
-        echo "alias 7z='/usr/local/bin/7zz'" >> /home/$USER/$1
-        if [ "$1" = ".zshrc" ]; then
-            echo 'eval "$(mcfly init zsh)"' >> /home/$USER/$1
-        else
-            echo 'eval "$(mcfly init bash)"' >> /home/$USER/$1
-        fi
-    fi
-    if $INSTALL_STARSHIP; then
-        if [ "$1" = ".zshrc" ]; then
-            echo 'eval "$(starship init zsh)"' >> /home/$USER/$1
-        else
-            echo 'eval "$(starship init bash)"' >> /home/$USER/$1
-        fi
-    fi
-    if $INSTALL_CCACHE; then
-        echo >> /home/$USER/$1
-        echo "export CCACHE_DIR=/home/$USER/.ccache" >> /home/$USER/$1
-        echo "export CCACHE_TEMPDIR=/home/$USER/.ccache" >> /home/$USER/$1
-    fi
+    $MKDIR "$1"_aliases
+    ALIASES="$HOME"/"$1"_aliases
+
+    # generic aliases on every system
+    ln -s aliases/aliases $ALIASES/aliases
+    
+    # flagged aliases
+    $INSTALL_TOOLS && ln -s aliases/tools $ALIASES/tools
+    $CCACHE_ALIASES && ln -s aliases/ccache $ALIASES/ccache
+    $INSTALL_STARSHIP && ln -s aliases/starship $ALIASES/starship
 }
 
 if $INSTALL_ZSH; then
@@ -101,9 +57,13 @@ if $INSTALL_ZSH; then
     chsh -s $(which zsh)
 
     # .zshrc setup
-    cp .zshrc /home/$USER/.zshrc
-    git clone https://github.com/zsh-users/zsh-autosuggestions \
-        ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
+    cp zshrc $HOME/.zshrc
+    if [ ! -e "${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions" ]; then
+        git clone https://github.com/zsh-users/zsh-autosuggestions \
+            ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
+    else
+        cd ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions && git pull
+    fi
 
     # aliases and evals, as a list
     # (generated at runtime since this varies depending on flags)
@@ -119,16 +79,6 @@ if $INSTALL_NPM; then
     echo "deb [signed-by=/usr/share/keyrings/yarnkey.gpg] https://dl.yarnpkg.com/debian stable main" | \
          sudo tee /etc/apt/sources.list.d/yarn.list
     sudo apt-get update && sudo apt-get install yarn -y
-fi
-
-if $INSTALL_SD; then
-    # openwrt dependencies
-    sudo apt install -y build-essential clang flex bison g++ gawk git rsync unzip file wget gettext gcc-multilib \
-            g++-multilib libncurses-dev libssl-dev python3-distutils zlib1g-dev
-    # satcom dependencies
-    sudo apt install -y npm minicom python2 libncurses5 libncurses5-dev libncurses6 libncurses-dev ncurses-base \
-            zlib1g-dev zlib1g libelf-dev
-    sudo ln /usr/bin/python2 /usr/bin/python
 fi
 
 if $INSTALL_TOOLS; then
@@ -181,24 +131,19 @@ if $INSTALL_CCACHE; then
     tar -xvf /tmp/ccache.tar.xz -C /tmp
     sudo cp /tmp/ccache-4.8.3-linux-x86_64/ccache /usr/local/bin/ccache
     rm -rf /tmp/ccache-4.8.3-linux-x86_64 /tmp/ccache-4.8.3-linux-x86_64.tar.xz
-    # if $CCACHE_ALIASES; then
-    #     # sudo rm -f /usr/local/bin/gcc /usr/local/bin/g++
-    #     # sudo ln -s /usr/local/bin/ccache /usr/local/bin/gcc
-    #     # sudo ln -s /usr/local/bin/ccache /usr/local/bin/g++
-    # fi
 fi
 
 if $INSTALL_STARSHIP; then
     # OPTIONAL: install starship prompt, and set it up with my config (you can change this lol)
     curl -fsSL https://starship.rs/install.sh | sh -s -- -y
-    mkdir /home/$USER/.config -p
+    mkdir $HOME/.config -p
     curl -fsSL https://raw.githubusercontent.com/colefuerth/dot-files/master/starship.toml \
-         -o /home/$USER/.config/starship.toml
+         -o $HOME/.config/starship.toml
 fi
 
 # .bashrc
 if $SETUP_BASH; then
-    echo "eval \"\$(starship init bash)\"" >> /home/$USER/.bashrc
+    echo "eval \"\$(starship init bash)\"" >> $HOME/.bashrc
     add_aliases ".bashrc"
 fi
 
@@ -230,7 +175,7 @@ if $SETUP_GIT; then
     git config --global user.email "$EMAIL"
     git config --global user.name "$NAME"
     git config --global core.editor "nano"
-    git config --global pull.rebase true
+    git config --global pull.rebase false
     sudo bash -c "echo 'fs.inotify.max_user_watches=524288' >> /etc/sysctl.conf"
     sudo sysctl -p
 fi
@@ -238,21 +183,6 @@ fi
 # need to add user to dialout group for serial access
 if $SETUP_DIALOUT; then
     sudo usermod -a -G dialout $USER
-fi
-
-if $SETUP_QEMU; then
-    # qemu runtime for general emulation
-    sudo apt install -y qemu-system-arm qemu-efi-aarch64 qemu-utils
-fi
-
-if $SETUP_QEMU && $INSTALL_SD; then
-    # qemu dependencies for compiling our fork of qemu
-    sudo apt install -y pkg-config autoconf automake libpng-dev libjpeg-dev libmodplug-dev \
-    libode-dev git libglib2.0-dev libfdt-dev libpixman-1-dev zlib1g-dev ninja-build git-email \
-    libaio-dev libbluetooth-dev libcapstone-dev libbrlapi-dev libbz2-dev libcap-ng-dev libcurl4-gnutls-dev \
-    libgtk-3-dev libibverbs-dev libjpeg8-dev libncurses5-dev libnuma-dev librbd-dev librdmacm-dev libsasl2-dev \
-    libsdl2-dev libseccomp-dev libsnappy-dev libssh-dev libvde-dev libvdeplug-dev libvte-2.91-dev libxen-dev \
-    liblzo2-dev valgrind xfslibs-dev libnfs-dev libiscsi-dev
 fi
 
 # at the end we should run an update and autoremove in case anything was missed

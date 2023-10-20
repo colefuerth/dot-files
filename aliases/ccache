@@ -1,0 +1,4 @@
+export CCACHE_DIR=/home/$USER/.ccache
+export CCACHE_TEMPDIR=/home/$USER/.ccache
+alias gcc='ccache gcc'
+alias g++='ccache g++'
