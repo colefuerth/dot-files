@@ -17,6 +17,8 @@ SETUP_BASH=true             # sets up bashrcm with my aliases etc
 INSTALL_CCACHE=true         # sets up CCACHE
 CCACHE_ALIASES=false         # masquerade ccache as g++ and gcc, so it is on for *everything*
 
+BASE=$(pwd)
+
 # update packages
 sudo apt update
 sudo add-apt-repository universe -y
@@ -36,32 +38,20 @@ fi
 # define a function for aliases to be added to .bashrc or .zshrc
 function add_aliases() {
     echo >> /home/$USER/$1
+    echo "PATH=\$PATH:/home/$USER/.local/bin" >> /home/$USER/$1
+    echo >> /home/$USER/$1
     echo "# My Aliases"  >> /home/$USER/$1
     echo "alias py='/usr/bin/python3'" >> /home/$USER/$1
     echo "alias pip='/usr/bin/python3 -m pip'" >> /home/$USER/$1
     echo "alias pip3='/usr/bin/python3 -m pip'" >> /home/$USER/$1
     echo "alias ll='ls -alh'" >> /home/$USER/$1
-    echo "PATH=\$PATH:/home/$USER/.local/bin" >> /home/$USER/$1
+    if $CCACHE_ALIASES; then
+        echo "alias gcc='ccache gcc'" >> /home/$USER/$1
+        echo "alias g++='ccache g++'" >> /home/$USER/$1
+    fi
     if $INSTALL_TOOLS; then
-        echo "alias 7z='/usr/local/bin/7zz'" >> /home/$USER/$1
-        if [ "$1" = ".zshrc" ]; then
-            echo 'eval "$(mcfly init zsh)"' >> /home/$USER/$1
-        else
-            echo 'eval "$(mcfly init bash)"' >> /home/$USER/$1
-        fi
-        # echo "PATH=\$PATH:/home/$USER/.cargo/bin" >> /home/$USER/$1
-    fi
-    if $INSTALL_STARSHIP; then
-        if [ "$1" = ".zshrc" ]; then
-            echo 'eval "$(starship init zsh)"' >> /home/$USER/$1
-        else
-            echo 'eval "$(starship init bash)"' >> /home/$USER/$1
-        fi
-    fi
-    if $INSTALL_CCACHE; then
-        echo >> /home/$USER/$1
-        echo "export CCACHE_DIR=/home/$USER/.ccache" >> /home/$USER/$1
-        echo "export CCACHE_TEMPDIR=/home/$USER/.ccache" >> /home/$USER/$1
+        echo "alias cp='/usr/local/bin/advcp -g'" >> /home/$USER/$1
+        echo "alias mv='/usr/local/bin/advmv -g'" >> /home/$USER/$1
     fi
     if $INSTALL_SD; then
         echo >> /home/$USER/$1
@@ -79,10 +69,26 @@ function add_aliases() {
         echo "alias sdr='cp sda/config/config.sdr .config'" >> /home/$USER/$1
         echo "alias sdr2='cp sda/config/config.sdr2 .config'" >> /home/$USER/$1
         echo "alias ten64='cp sda/config/testboxes/config.sdr2emu .config'" >> /home/$USER/$1
-        if $CCACHE_ALIASES; then
-            echo "alias gcc='ccache gcc'" >> /home/$USER/$1
-            echo "alias g++='ccache g++'" >> /home/$USER/$1
+    fi
+    if $INSTALL_TOOLS; then
+        echo "alias 7z='/usr/local/bin/7zz'" >> /home/$USER/$1
+        if [ "$1" = ".zshrc" ]; then
+            echo 'eval "$(mcfly init zsh)"' >> /home/$USER/$1
+        else
+            echo 'eval "$(mcfly init bash)"' >> /home/$USER/$1
         fi
+    fi
+    if $INSTALL_STARSHIP; then
+        if [ "$1" = ".zshrc" ]; then
+            echo 'eval "$(starship init zsh)"' >> /home/$USER/$1
+        else
+            echo 'eval "$(starship init bash)"' >> /home/$USER/$1
+        fi
+    fi
+    if $INSTALL_CCACHE; then
+        echo >> /home/$USER/$1
+        echo "export CCACHE_DIR=/home/$USER/.ccache" >> /home/$USER/$1
+        echo "export CCACHE_TEMPDIR=/home/$USER/.ccache" >> /home/$USER/$1
     fi
 }
 
@@ -126,6 +132,7 @@ if $INSTALL_SD; then
 fi
 
 if $INSTALL_TOOLS; then
+    cd /tmp
     # my tools
     sudo apt install -y ranger python3 python2 python3-pip python3-venv screen curl
     /usr/bin/python3 -m pip install --user --upgrade pip
@@ -157,6 +164,15 @@ if $INSTALL_TOOLS; then
 
     # mcfly
     sudo curl -LSfs https://raw.githubusercontent.com/cantino/mcfly/master/ci/install.sh | sh -s -- --git cantino/mcfly
+
+    # advanced copy/move
+    cd /tmp
+    curl https://raw.githubusercontent.com/jarun/advcpmv/master/install.sh --create-dirs -o ./advcpmv/install.sh && (cd advcpmv && sh install.sh)
+    sudo mv ./advcpmv/advcp /usr/local/bin/
+    sudo mv ./advcpmv/advmv /usr/local/bin/
+    rm -rf ./advcpmv
+
+    cd $BASE
 fi
 
 if $INSTALL_CCACHE; then
