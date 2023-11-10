@@ -5,24 +5,19 @@ Host root_vm
 Host vm
   HostName 192.168.17.128
   User cole
-  IdentityFile C:/Users/cfuerth/.ssh/id_rsa
 
 Host vm18
   HostName 192.168.17.130
   User cole
-  IdentityFile C:/Users/cfuerth/.ssh/id_rsa
 
 Host vm20
   HostName 192.168.17.131
   User cole
-  IdentityFile C:/Users/cfuerth/.ssh/id_rsa
   
 Host t64r
   User root
   HostName 192.168.10.1
-  ProxyJump vm
   
 Host owrt
   User root
   HostName 192.168.17.140
-  IdentityFile C:/Users/cfuerth/.ssh/id_rsa
