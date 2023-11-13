@@ -7,13 +7,12 @@ SETUP_SSH=true
 SETUP_DIALOUT=true
 INSTALL_STARSHIP=true       # install starship prompt
 INSTALL_ZSH=true           # install zsh & set as default shell
-INSTALL_NPM=false
 INSTALL_TOOLS=true          # a set of tools that I like to use (ranger, ncdu, htop, 7z, etc)
 SETUP_GIT=true              # performs most of the git setup for you
 SETUP_WELCOME_MSG=true      # sets up a welcome message for the terminal
 SETUP_BASH=true             # sets up bashrcm with my aliases etc
 INSTALL_CCACHE=true         # sets up CCACHE
-CCACHE_ALIASES=false         # masquerade ccache as g++ and gcc, so it is on for *everything*
+CCACHE_ALIASES=true         # set ccache paths
 
 BASE=$(pwd)
 MKDIR="mkdir -p"
@@ -68,17 +67,6 @@ if $INSTALL_ZSH; then
     # aliases and evals, as a list
     # (generated at runtime since this varies depending on flags)
     add_aliases ".zshrc"
-fi
-
-# need node.js 18, npm 9, and yarn (bc why not) (since this is a dependency for some stuff later it needs to install first)
-if $INSTALL_NPM; then
-    curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash - &&\
-    sudo apt-get install -y nodejs
-    curl -sL https://dl.yarnpkg.com/debian/pubkey.gpg | gpg --dearmor | \
-         sudo tee /usr/share/keyrings/yarnkey.gpg >/dev/null
-    echo "deb [signed-by=/usr/share/keyrings/yarnkey.gpg] https://dl.yarnpkg.com/debian stable main" | \
-         sudo tee /etc/apt/sources.list.d/yarn.list
-    sudo apt-get update && sudo apt-get install yarn -y
 fi
 
 if $INSTALL_TOOLS; then
@@ -190,7 +178,7 @@ sudo apt update && sudo apt autoremove -y
 
 # need to ssh-keygen a new keypair for bitbucket
 if $SETUP_GIT; then
-    ssh-keygen -t rsa -b 4096 -C "sd-vm-popos" -f ~/.ssh/id_rsa
+    ssh-keygen -t rsa -b 4096 -f ~/.ssh/id_rsa
     eval "$(ssh-agent -s)"
     ssh-add ~/.ssh/id_rsa
     echo "** copy this into github ----------------------------------"
