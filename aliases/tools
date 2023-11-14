@@ -1,5 +1,5 @@
-alias cp='/usr/local/bin/advcp'
-alias mv='/usr/local/bin/advmv'
+# alias cp='/usr/local/bin/advcp'
+# alias mv='/usr/local/bin/advmv'
 alias acp='/usr/local/bin/advcp -g'
 alias amv='/usr/local/bin/advmv -g'
 alias 7z='/usr/local/bin/7zz'
