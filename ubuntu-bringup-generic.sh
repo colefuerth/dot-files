@@ -5,14 +5,14 @@ set -x
 # SETTINGS
 SETUP_SSH=true
 SETUP_DIALOUT=true
-INSTALL_STARSHIP=true       # install starship prompt
-INSTALL_ZSH=true           # install zsh & set as default shell
-INSTALL_TOOLS=true          # a set of tools that I like to use (ranger, ncdu, htop, 7z, etc)
-SETUP_GIT=true              # performs most of the git setup for you
-SETUP_WELCOME_MSG=true      # sets up a welcome message for the terminal
-SETUP_BASH=true             # sets up bashrcm with my aliases etc
-INSTALL_CCACHE=true         # sets up CCACHE
-CCACHE_ALIASES=true         # set ccache paths
+INSTALL_STARSHIP=true  # install starship prompt
+INSTALL_ZSH=true       # install zsh & set as default shell
+INSTALL_TOOLS=true     # a set of tools that I like to use (ranger, ncdu, htop, 7z, etc)
+SETUP_GIT=true         # performs most of the git setup for you
+SETUP_WELCOME_MSG=true # sets up a welcome message for the terminal
+SETUP_BASH=true        # sets up bashrcm with my aliases etc
+INSTALL_CCACHE=true    # sets up CCACHE
+CCACHE_ALIASES=true    # set ccache paths
 
 BASE=$(pwd)
 MKDIR="mkdir -p"
@@ -40,7 +40,7 @@ function add_aliases() {
 
     # generic aliases on every system
     ln -s aliases/aliases $ALIASES/aliases
-    
+
     # flagged aliases
     $INSTALL_TOOLS && ln -s aliases/tools $ALIASES/tools
     $CCACHE_ALIASES && ln -s aliases/ccache $ALIASES/ccache
@@ -110,12 +110,23 @@ if $INSTALL_TOOLS; then
     sudo mv ./advcpmv/advmv /usr/local/bin/
     rm -rf ./advcpmv
 
-    cd $BASE
+    # clipboard
+    sudo apt install libx11-dev libwayland-dev cmake
+    cd /tmp
+    git clone https://github.com/Slackadays/Clipboard
+    cd Clipboard/build
+    cmake -DCMAKE_BUILD_TYPE=Release ..
+    cmake --build . -j 12
+    sudo cmake --install .
+    cd && rm -rf /tmp/Clipboard
+
 fi
+
+cd $BASE
 
 if $INSTALL_CCACHE; then
     curl -fsSL https://github.com/ccache/ccache/releases/download/v4.8.3/ccache-4.8.3-linux-x86_64.tar.xz \
-         -o /tmp/ccache.tar.xz
+        -o /tmp/ccache.tar.xz
     tar -xvf /tmp/ccache.tar.xz -C /tmp
     sudo cp /tmp/ccache-4.8.3-linux-x86_64/ccache /usr/local/bin/ccache
     rm -rf /tmp/ccache-4.8.3-linux-x86_64 /tmp/ccache-4.8.3-linux-x86_64.tar.xz
@@ -126,12 +137,12 @@ if $INSTALL_STARSHIP; then
     curl -fsSL https://starship.rs/install.sh | sh -s -- -y
     mkdir $HOME/.config -p
     curl -fsSL https://raw.githubusercontent.com/colefuerth/dot-files/master/starship.toml \
-         -o $HOME/.config/starship.toml
+        -o $HOME/.config/starship.toml
 fi
 
 # .bashrc
 if $SETUP_BASH; then
-    echo "eval \"\$(starship init bash)\"" >> $HOME/.bashrc
+    echo "eval \"\$(starship init bash)\"" >>$HOME/.bashrc
     add_aliases ".bashrc"
 fi
 
@@ -145,7 +156,7 @@ if $SETUP_WELCOME_MSG; then
     sudo apt install -y inxi neofetch
     sudo chmod -x /etc/update-motd.d/*
     sudo curl -fsSL https://raw.githubusercontent.com/colefuerth/dot-files/master/10-welcome \
-              -o /etc/update-motd.d/01-welcome
+        -o /etc/update-motd.d/01-welcome
     sudo chmod +x /etc/update-motd.d/01-welcome
 fi
 
@@ -187,4 +198,4 @@ if $SETUP_GIT; then
 fi
 
 echo
-echo "** you should generate a keypair on your host and copy the public key into `~/.ssh/authorized_keys` on the vm **"
+echo "** you should generate a keypair on your host and copy the public key into $(~/.ssh/authorized_keys) on the vm **"
