@@ -1,0 +1,46 @@
+#!/usr/bin/zsh
+
+# load and unload the ramdisk from a flat image
+
+RAMDISK_IMG='/home/cole/ramdisk.tar'
+RAMDISK_MP='/home/cole/ramdisk'
+RAMDISK_SIZE='40G'
+
+# create_rd() {
+#     if [ -e "$RAMDISK_IMG" ]; then
+#         echo "Ramdisk already exists! Please delete before creating."
+#         return 1
+#     fi
+#     echo "Creating ramdisk "$RAMDISK_IMG", 40G"
+#     dd if=/dev/zero of="$RAMDISK_IMG" bs=4M count=10000
+# }
+
+delete_rd() {
+    rm "$RAMDISK_IMG"
+}
+
+mount_rd() {
+    echo "Mounting "$RAMDISK_SIZE" ramdisk at "$RAMDISK_MP"!"
+    sudo mkdir -p "$RAMDISK_MP"
+    sudo mount -o size="$RAMDISK_SIZE" -t tmpfs none "$RAMDISK_MP"
+    sudo chmod 1777 "$RAMDISK_MP"  # Set permissions, including the sticky bit
+    sudo chown "$USER:$USER" "$RAMDISK_MP"  # Set ownership to the current user
+}
+
+unmount_rd() {
+    echo "Unmounting "$RAMDISK_SIZE" ramdisk at "$RAMDISK_MP"!"
+    sudo umount "$RAMDISK_MP"
+    sudo rm -rf "RAMDISK_MP"
+}
+
+restore_rd() {
+    if [[ ! -f "$RAMDISK_IMG"  || ! -d "$RAMDISK_MP" ]]; then
+        echo "Ramdisk img does not exist, or ramdisk is not mounted!"
+        return 1
+    fi
+    tar -xf "$RAMDISK_IMG" -C "$RAMDISK_MP" | pv -s $(du -sb "$RAMDISK_IMG" | awk '{print $1}') > /dev/null
+}
+
+backup_rd() {
+    tar -cf - -C "$RAMDISK_MP" . | pv -s $(du -sb "$RAMDISK_MP" | awk '{print $1}') > "$RAMDISK_IMG"
+}
