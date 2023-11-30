@@ -7,7 +7,7 @@ ZSH_THEME=""
 plugins=(git zsh-autosuggestions)
 source $ZSH/oh-my-zsh.sh
 
-SCRIPTS_DIR=""  # location of scripts and/or dot-files, set this to auto update
+SCRIPTS_DIR="$HOME/dot-files"  # location of scripts and/or dot-files, set this to auto update
 if [ ! -z SCRIPTS_DIR ]; then
     sh -c "cd $SCRIPTS_DIR && bash update.sh"
 fi
