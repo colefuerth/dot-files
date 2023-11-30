@@ -33,20 +33,6 @@ if $SETUP_SSH; then
     cp config $HOME/.ssh/config
 fi
 
-# define a function for aliases to be added to .bashrc or .zshrc
-function add_aliases() {
-    $MKDIR "$1"_aliases
-    ALIASES="$HOME"/"$1"_aliases
-
-    # generic aliases on every system
-    ln -s aliases/aliases $ALIASES/aliases
-
-    # flagged aliases
-    $INSTALL_TOOLS && ln -s aliases/tools $ALIASES/tools
-    $CCACHE_ALIASES && ln -s aliases/ccache $ALIASES/ccache
-    $INSTALL_STARSHIP && ln -s aliases/starship $ALIASES/starship
-}
-
 if $INSTALL_ZSH; then
     # zsh
     sudo apt install -y zsh
@@ -66,7 +52,7 @@ if $INSTALL_ZSH; then
 
     # aliases and evals, as a list
     # (generated at runtime since this varies depending on flags)
-    add_aliases ".zshrc"
+    mkdir -p "$HOME/.zsh_aliases"
 fi
 
 if $INSTALL_TOOLS; then
@@ -101,7 +87,7 @@ if $INSTALL_TOOLS; then
     curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 
     # mcfly
-    sudo curl -LSfs https://raw.githubusercontent.com/cantino/mcfly/master/ci/install.sh | sh -s -- --git cantino/mcfly
+    sudo curl -LSfs https://raw.githubusercontent.com/cantino/mcfly/master/ci/install.sh | sudo sh -s -- --git cantino/mcfly
 
     # advanced copy/move
     cd /tmp
@@ -143,7 +129,7 @@ fi
 # .bashrc
 if $SETUP_BASH; then
     echo "eval \"\$(starship init bash)\"" >>$HOME/.bashrc
-    add_aliases ".bashrc"
+    mkdir -p "$HOME/.bash_aliases"
 fi
 
 # setup verbose boot
