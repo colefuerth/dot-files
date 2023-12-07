@@ -24,7 +24,7 @@ mount_rd() {
 unmount_rd() {
     echo "Unmounting $RD_SIZE ramdisk at $RD_MP!"
     sudo umount "$RD_MP"
-    sudo rm -rf "RD_MP"
+    sudo rm -rf "$RD_MP"
 }
 
 restore_rd() {
