@@ -10,12 +10,10 @@ INSTALL_ZSH=true       # install zsh & set as default shell
 INSTALL_TOOLS=true     # a set of tools that I like to use (ranger, ncdu, htop, 7z, etc)
 SETUP_GIT=true         # performs most of the git setup for you
 SETUP_WELCOME_MSG=true # sets up a welcome message for the terminal
-SETUP_BASH=true        # sets up bashrcm with my aliases etc
+SETUP_BASH=false        # sets up bashrcm with my aliases etc
 INSTALL_CCACHE=true    # sets up CCACHE
-CCACHE_ALIASES=true    # set ccache paths
 
 BASE=$(pwd)
-MKDIR="mkdir -p"
 
 # update packages
 sudo apt update
@@ -28,7 +26,7 @@ if $SETUP_SSH; then
     sudo apt install -y openssh-server
     sudo ufw allow ssh
     sudo systemctl enable ssh
-    $MKDIR $HOME/.ssh
+    mkdir -p $HOME/.ssh
     touch $HOME/.ssh/authorized_keys
     cp config $HOME/.ssh/config
 fi
@@ -38,11 +36,16 @@ if $INSTALL_ZSH; then
     sudo apt install -y zsh
 
     # oh my zsh
+    echo '#'
+    echo '# MAKE SURE TO CTRL+D OR EXIT OUT OF ZSH AFTER THIS STEP'
+    echo '# sleeping 5 seconds...'
+    sleep 5
     sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
-    chsh -s $(which zsh)
+    # chsh -s $(which zsh)
 
     # .zshrc setup
     cp zshrc $HOME/.zshrc
+    sed -i "s|SCRIPTS_DIR=''|SCRIPTS_DIR='$BASE'|g" $HOME/.zshrc
     if [ ! -e "${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions" ]; then
         git clone https://github.com/zsh-users/zsh-autosuggestions \
             ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
@@ -59,6 +62,7 @@ if $INSTALL_TOOLS; then
     cd /tmp
     # my tools
     sudo apt install -y ranger python3 python2 python3-pip python3-venv screen curl
+    sudo apt --fix-broken install -y && sudo apt autoremove -y
     /usr/bin/python3 -m pip install --user --upgrade pip
     /usr/bin/python3 -m pip install --user virtualenv
     /usr/bin/python3 -m pip install --user numpy pandas matplotlib jupyterlab
@@ -97,15 +101,14 @@ if $INSTALL_TOOLS; then
     rm -rf ./advcpmv
 
     # clipboard
-    sudo apt install libx11-dev libwayland-dev cmake
+    sudo apt install -y libx11-dev libwayland-dev cmake
     cd /tmp
     git clone https://github.com/Slackadays/Clipboard
     cd Clipboard/build
     cmake -DCMAKE_BUILD_TYPE=Release ..
     cmake --build . -j 12
     sudo cmake --install .
-    cd && rm -rf /tmp/Clipboard
-
+    rm -rf /tmp/Clipboard
 fi
 
 cd $BASE
