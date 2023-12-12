@@ -61,7 +61,7 @@ fi
 if $INSTALL_TOOLS; then
     cd /tmp
     # my tools
-    sudo apt install -y ranger python3 python2 python3-pip python3-venv screen curl
+    sudo apt install -y ranger python3 python2 python3-pip python3-venv screen curl fdisk sshpass
     sudo apt --fix-broken install -y && sudo apt autoremove -y
     /usr/bin/python3 -m pip install --user --upgrade pip
     /usr/bin/python3 -m pip install --user virtualenv
