@@ -2,16 +2,7 @@
 
 set -x
 
-# SETTINGS
-SETUP_SSH=true
-SETUP_DIALOUT=true
-INSTALL_STARSHIP=true  # install starship prompt
-INSTALL_ZSH=true       # install zsh & set as default shell
-INSTALL_TOOLS=true     # a set of tools that I like to use (ranger, ncdu, htop, 7z, etc)
-SETUP_GIT=true         # performs most of the git setup for you
-SETUP_WELCOME_MSG=true # sets up a welcome message for the terminal
-SETUP_BASH=false        # sets up bashrcm with my aliases etc
-INSTALL_CCACHE=true    # sets up CCACHE
+source ./config.bash
 
 BASE=$(pwd)
 
@@ -28,7 +19,6 @@ if $SETUP_SSH; then
     sudo systemctl enable ssh
     mkdir -p $HOME/.ssh
     touch $HOME/.ssh/authorized_keys
-    cp config $HOME/.ssh/config
 fi
 
 if $INSTALL_ZSH; then
@@ -36,12 +26,8 @@ if $INSTALL_ZSH; then
     sudo apt install -y zsh
 
     # oh my zsh
-    echo '#'
-    echo '# MAKE SURE TO CTRL+D OR EXIT OUT OF ZSH AFTER THIS STEP'
-    echo '# sleeping 5 seconds...'
-    sleep 5
-    sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
-    # chsh -s $(which zsh)
+    sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" --unattended --keep-zshrc
+    chsh -s $(which zsh)
 
     # .zshrc setup
     cp zshrc $HOME/.zshrc
@@ -67,48 +53,62 @@ if $INSTALL_TOOLS; then
     /usr/bin/python3 -m pip install --user virtualenv
     /usr/bin/python3 -m pip install --user numpy pandas matplotlib jupyterlab
 
-    # ncdu static binary 2.3
-    curl -fsSL https://dev.yorhel.nl/download/ncdu-2.3-linux-x86_64.tar.gz -o /tmp/ncdu.tar.gz
-    tar -xvf /tmp/ncdu.tar.gz -C /tmp
-    sudo cp /tmp/ncdu /usr/bin/ncdu
-    sudo chmod +x /usr/bin/ncdu
-    rm /tmp/ncdu.tar.gz
+    if NCDU; then
+        # ncdu static binary 2.3
+        curl -fsSL https://dev.yorhel.nl/download/ncdu-2.3-linux-x86_64.tar.gz -o /tmp/ncdu.tar.gz
+        tar -xvf /tmp/ncdu.tar.gz -C /tmp
+        sudo cp /tmp/ncdu /usr/bin/ncdu
+        sudo chmod +x /usr/bin/ncdu
+        rm /tmp/ncdu.tar.gz
+    fi
 
-    # 7z static binary 23.01
-    curl -fsSL https://7-zip.org/a/7z2301-linux-x64.tar.xz -o /tmp/7z.tar.xz
-    mkdir /tmp/7z
-    tar -xvf /tmp/7z.tar.xz -C /tmp/7z
-    sudo cp /tmp/7z/7zz /usr/local/bin/7zz
-    sudo ln -s /usr/local/bin/7zz /usr/local/bin/7z
-    rm -rf /tmp/7z
+    if 7Z; then
+        # 7z static binary 23.01
+        curl -fsSL https://7-zip.org/a/7z2301-linux-x64.tar.xz -o /tmp/7z.tar.xz
+        mkdir /tmp/7z
+        tar -xvf /tmp/7z.tar.xz -C /tmp/7z
+        sudo cp /tmp/7z/7zz /usr/local/bin/7zz
+        sudo ln -s /usr/local/bin/7zz /usr/local/bin/7z
+        rm -rf /tmp/7z
+    fi
 
-    # htop static binary 3.2.2
-    curl -fsSL http://ftp.us.debian.org/debian/pool/main/h/htop/htop_3.2.2-2_amd64.deb -o /tmp/htop.deb
-    sudo dpkg -i /tmp/htop.deb
-    rm /tmp/htop.deb
+    if HTOP; then
+        # htop static binary 3.2.2
+        curl -fsSL http://ftp.us.debian.org/debian/pool/main/h/htop/htop_3.2.2-2_amd64.deb -o /tmp/htop.deb
+        sudo dpkg -i /tmp/htop.deb
+        rm /tmp/htop.deb
+    fi
 
-    # rust
-    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+    if RUST; then
+        # rust
+        curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+    fi
 
-    # mcfly
-    sudo curl -LSfs https://raw.githubusercontent.com/cantino/mcfly/master/ci/install.sh | sudo sh -s -- --git cantino/mcfly
+    if MCFLY; then
+        # mcfly
+        sudo curl -LSfs https://raw.githubusercontent.com/cantino/mcfly/master/ci/install.sh | sudo sh -s -- --git cantino/mcfly
+    fi
 
-    # advanced copy/move
-    cd /tmp
-    curl https://raw.githubusercontent.com/jarun/advcpmv/master/install.sh --create-dirs -o ./advcpmv/install.sh && (cd advcpmv && sh install.sh)
-    sudo mv ./advcpmv/advcp /usr/local/bin/
-    sudo mv ./advcpmv/advmv /usr/local/bin/
-    rm -rf ./advcpmv
+    if ADVCPMV; then
+        # advanced copy/move
+        cd /tmp
+        curl https://raw.githubusercontent.com/jarun/advcpmv/master/install.sh --create-dirs -o ./advcpmv/install.sh && (cd advcpmv && sh install.sh)
+        sudo mv ./advcpmv/advcp /usr/local/bin/
+        sudo mv ./advcpmv/advmv /usr/local/bin/
+        rm -rf ./advcpmv
+    fi
 
-    # clipboard
-    sudo apt install -y libx11-dev libwayland-dev cmake
-    cd /tmp
-    git clone https://github.com/Slackadays/Clipboard
-    cd Clipboard/build
-    cmake -DCMAKE_BUILD_TYPE=Release ..
-    cmake --build . -j 12
-    sudo cmake --install .
-    rm -rf /tmp/Clipboard
+    if CLIPBOARD; then
+        # clipboard
+        sudo apt install -y libx11-dev libwayland-dev cmake
+        cd /tmp
+        git clone https://github.com/Slackadays/Clipboard
+        cd Clipboard/build
+        cmake -DCMAKE_BUILD_TYPE=Release ..
+        cmake --build . -j 12
+        sudo cmake --install .
+        rm -rf /tmp/Clipboard
+    fi
 fi
 
 cd $BASE
@@ -177,7 +177,7 @@ fi
 sudo apt update && sudo apt autoremove -y
 
 # need to ssh-keygen a new keypair for bitbucket
-if $SETUP_GIT; then
+if $SETUP_GIT && [ ! -f "$HOME/.ssh/id_rsa.pub" ]; then
     ssh-keygen -t rsa -b 4096 -f ~/.ssh/id_rsa
     eval "$(ssh-agent -s)"
     ssh-add ~/.ssh/id_rsa
