@@ -53,7 +53,7 @@ if $INSTALL_TOOLS; then
     /usr/bin/python3 -m pip install --user virtualenv
     /usr/bin/python3 -m pip install --user numpy pandas matplotlib jupyterlab
 
-    if NCDU; then
+    if $NCDU; then
         # ncdu static binary 2.3
         curl -fsSL https://dev.yorhel.nl/download/ncdu-2.3-linux-x86_64.tar.gz -o /tmp/ncdu.tar.gz
         tar -xvf /tmp/ncdu.tar.gz -C /tmp
@@ -62,7 +62,7 @@ if $INSTALL_TOOLS; then
         rm /tmp/ncdu.tar.gz
     fi
 
-    if 7Z; then
+    if $7Z; then
         # 7z static binary 23.01
         curl -fsSL https://7-zip.org/a/7z2301-linux-x64.tar.xz -o /tmp/7z.tar.xz
         mkdir /tmp/7z
@@ -72,24 +72,24 @@ if $INSTALL_TOOLS; then
         rm -rf /tmp/7z
     fi
 
-    if HTOP; then
+    if $HTOP; then
         # htop static binary 3.2.2
         curl -fsSL http://ftp.us.debian.org/debian/pool/main/h/htop/htop_3.2.2-2_amd64.deb -o /tmp/htop.deb
         sudo dpkg -i /tmp/htop.deb
         rm /tmp/htop.deb
     fi
 
-    if RUST; then
+    if $RUST; then
         # rust
         curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
     fi
 
-    if MCFLY; then
+    if $MCFLY; then
         # mcfly
         sudo curl -LSfs https://raw.githubusercontent.com/cantino/mcfly/master/ci/install.sh | sudo sh -s -- --git cantino/mcfly
     fi
 
-    if ADVCPMV; then
+    if $ADVCPMV; then
         # advanced copy/move
         cd /tmp
         curl https://raw.githubusercontent.com/jarun/advcpmv/master/install.sh --create-dirs -o ./advcpmv/install.sh && (cd advcpmv && sh install.sh)
@@ -98,7 +98,7 @@ if $INSTALL_TOOLS; then
         rm -rf ./advcpmv
     fi
 
-    if CLIPBOARD; then
+    if $CLIPBOARD; then
         curl -fsSL https://github.com/Slackadays/Clipboard/releases/download/0.9.0.1/clipboard-linux-amd64.zip -o /tmp/clipboard.zip
         mkdir -p /tmp/clipboard
         unzip -d /tmp/clipboard /tmp/clipboard.zip
