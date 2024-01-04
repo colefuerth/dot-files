@@ -26,7 +26,7 @@ if $INSTALL_ZSH; then
     sudo apt install -y zsh
 
     # oh my zsh
-    sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" --unattended --keep-zshrc
+    sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended --keep-zshrc
     chsh -s $(which zsh)
 
     # .zshrc setup
@@ -99,15 +99,12 @@ if $INSTALL_TOOLS; then
     fi
 
     if CLIPBOARD; then
-        # clipboard
-        sudo apt install -y libx11-dev libwayland-dev cmake
-        cd /tmp
-        git clone https://github.com/Slackadays/Clipboard
-        cd Clipboard/build
-        cmake -DCMAKE_BUILD_TYPE=Release ..
-        cmake --build . -j 12
-        sudo cmake --install .
-        rm -rf /tmp/Clipboard
+        curl -fsSL https://github.com/Slackadays/Clipboard/releases/download/0.9.0.1/clipboard-linux-amd64.zip -o /tmp/clipboard.zip
+        mkdir -p /tmp/clipboard
+        unzip -d /tmp/clipboard /tmp/clipboard.zip
+        sudo chmod +x /tmp/clipboard/bin/cb
+        sudo cp -rv /tmp/clipboard/* /usr
+        rm -rf /tmp/clipboard /tmp/clipboard.zip
     fi
 fi
 
