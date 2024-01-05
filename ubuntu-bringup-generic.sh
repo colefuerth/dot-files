@@ -57,12 +57,12 @@ if $INSTALL_TOOLS; then
         # ncdu static binary 2.3
         curl -fsSL https://dev.yorhel.nl/download/ncdu-2.3-linux-x86_64.tar.gz -o /tmp/ncdu.tar.gz
         tar -xvf /tmp/ncdu.tar.gz -C /tmp
-        sudo cp /tmp/ncdu /usr/bin/ncdu
-        sudo chmod +x /usr/bin/ncdu
+        sudo cp /tmp/ncdu /usr/local/bin/ncdu
+        sudo chmod +x /usr/local/bin/ncdu
         rm /tmp/ncdu.tar.gz
     fi
 
-    if $7Z; then
+    if $INSTALL_7Z; then
         # 7z static binary 23.01
         curl -fsSL https://7-zip.org/a/7z2301-linux-x64.tar.xz -o /tmp/7z.tar.xz
         mkdir /tmp/7z

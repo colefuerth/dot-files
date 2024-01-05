@@ -13,7 +13,7 @@ INSTALL_CCACHE=true    # installs ccache binaries and sets up PATH
 # TOOLS SUBCONFIG (optional extra tools)
 # note: does nothing if INSTALL_TOOLS is set to false
 NCDU=true
-7Z=true
+INSTALL_7Z=true
 HTOP=true
 RUST=false
 MCFLY=true

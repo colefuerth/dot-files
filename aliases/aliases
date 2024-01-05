@@ -2,6 +2,10 @@
 if [ -d "$HOME/.local/bin" ]; then
     PATH="$PATH:$HOME/.local/bin"
 fi
+if [ -d "$HOME/.bin" ]; then
+    PATH="$PATH:$HOME/.bin"
+fi
+PATH="$PATH:/usr/local/bin"
 
 # My Aliases
 alias py='/usr/bin/python3'
