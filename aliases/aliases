@@ -1,11 +1,16 @@
 
-if [ -d "$HOME/.local/bin" ]; then
-    PATH="$PATH:$HOME/.local/bin"
-fi
-if [ -d "$HOME/.bin" ]; then
-    PATH="$PATH:$HOME/.bin"
-fi
-PATH="$PATH:/usr/local/bin"
+# custom paths that should be added to PATH, if they exist
+cpaths=(
+    "$HOME/.local/bin"
+    "$HOME/.bin"
+    "$HOME/.cargo/bin"
+    "/usr/local/bin"
+)
+for p in "${cpaths[@]}"; do
+    if [ -d "$p" ]; then
+        PATH="$PATH:$p"
+    fi
+done
 
 # My Aliases
 alias py='/usr/bin/python3'
