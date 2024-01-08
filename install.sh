@@ -189,5 +189,7 @@ fi
 # set some final settings
 chsh -s $(which $DEFAULT_SHELL)
 
+bash update.sh
+
 echo
 echo "** you should generate a keypair on your host and copy the public key into $(~/.ssh/authorized_keys) on the vm **"
