@@ -31,7 +31,6 @@ if $INSTALL_ZSH; then
 
     # oh my zsh
     sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended --keep-zshrc
-    chsh -s $(which zsh)
 
     # .zshrc setup
     cp zshrc $HOME/.zshrc
@@ -136,7 +135,7 @@ if $SETUP_BASH; then
     mkdir -p "$HOME/.bash_aliases"
 fi
 
-# setup verbose boot
+# setup verbose boot in pop!_os
 # sudo apt install -y kernelstub
 # sudo kernelstub --delete-options "quiet systemd.show_status=false splash"
 # sudo kernelstub --add-options "systemd.show_status=true"
@@ -186,6 +185,9 @@ if $SETUP_GIT && [ ! -f "$HOME/.ssh/id_rsa.pub" ]; then
     more ~/.ssh/id_rsa.pub
     echo "----------------------------------------------------------- **"
 fi
+
+# set some final settings
+chsh -s $(which $DEFAULT_SHELL)
 
 echo
 echo "** you should generate a keypair on your host and copy the public key into $(~/.ssh/authorized_keys) on the vm **"
