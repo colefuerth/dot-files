@@ -29,12 +29,9 @@ if $INSTALL_ZSH; then
     # zsh
     sudo apt install -y zsh
 
-    # oh my zsh
+    # oh my zsh and zsh-autosuggestions
     sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended --keep-zshrc
 
-    # .zshrc setup
-    cp zshrc $HOME/.zshrc
-    sed -i "s|SCRIPTS_DIR=''|SCRIPTS_DIR='$BASE'|g" $HOME/.zshrc
     if [ ! -e "${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions" ]; then
         git clone https://github.com/zsh-users/zsh-autosuggestions \
             ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
@@ -42,9 +39,17 @@ if $INSTALL_ZSH; then
         cd ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions && git pull
     fi
 
-    # aliases and evals, as a list
-    # (generated at runtime since this varies depending on flags)
+    # .zshrc setup
+    cp zshrc $HOME/.zshrc
+    sed -i "s|SCRIPTS_DIR=''|SCRIPTS_DIR='$BASE'|g" $HOME/.zshrc
     mkdir -p "$HOME/.zsh_aliases"
+fi
+
+# .bashrc
+if $SETUP_BASH; then
+    cp zshrc $HOME/.zshrc
+    sed -i "s|SCRIPTS_DIR=\".*\"|SCRIPTS_DIR=\"$BASE\"|g" $HOME/.bashrc
+    mkdir -p "$HOME/.bash_aliases"
 fi
 
 if $INSTALL_TOOLS; then
@@ -127,12 +132,6 @@ if [ $INSTALL_STARSHIP ] &&  && ! command -v starship &> /dev/null; then
     mkdir $HOME/.config -p
     curl -fsSL https://raw.githubusercontent.com/colefuerth/dot-files/master/starship.toml \
         -o $HOME/.config/starship.toml
-fi
-
-# .bashrc
-if $SETUP_BASH; then
-    echo "eval \"\$(starship init bash)\"" >>$HOME/.bashrc
-    mkdir -p "$HOME/.bash_aliases"
 fi
 
 # setup verbose boot in pop!_os
