@@ -18,3 +18,7 @@ fi
 for file in $HOME/.zsh_aliases/*; do
     [ -r "$file" ] && source "$file"
 done
+
+if command -v starship &> /dev/null; then
+    eval "$(starship init zsh)"
+fi
