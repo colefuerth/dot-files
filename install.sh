@@ -10,6 +10,9 @@ source "./config.bash"
 
 BASE=$(pwd)
 
+# add the local bin path to PATH to mute a bunch of pip records
+PATH="$PATH:$HOME/.local/bin"
+
 # update packages
 sudo apt update
 sudo add-apt-repository universe -y
@@ -47,7 +50,7 @@ fi
 
 # .bashrc
 if $SETUP_BASH; then
-    cp zshrc $HOME/.zshrc
+    cp bashrc $HOME/.bashrc
     sed -i "s|SCRIPTS_DIR=\".*\"|SCRIPTS_DIR=\"$BASE\"|g" $HOME/.bashrc
     mkdir -p "$HOME/.bash_aliases"
 fi
@@ -89,7 +92,7 @@ if $INSTALL_TOOLS; then
 
     if [ $RUST ] && ! command -v rustc &> /dev/null; then
         # rust
-        curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+        curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
     fi
 
     if [ $MCFLY ] && ! command -v mcfly &> /dev/null; then
@@ -118,7 +121,7 @@ fi
 
 cd $BASE
 
-if [ $INSTALL_CCACHE ] &&  && ! command -v ccache &> /dev/null; then
+if [ $INSTALL_CCACHE ] && ! command -v ccache &> /dev/null; then
     curl -fsSL https://github.com/ccache/ccache/releases/download/v4.8.3/ccache-4.8.3-linux-x86_64.tar.xz \
         -o /tmp/ccache.tar.xz
     tar -xvf /tmp/ccache.tar.xz -C /tmp
@@ -126,7 +129,7 @@ if [ $INSTALL_CCACHE ] &&  && ! command -v ccache &> /dev/null; then
     rm -rf /tmp/ccache-4.8.3-linux-x86_64 /tmp/ccache-4.8.3-linux-x86_64.tar.xz
 fi
 
-if [ $INSTALL_STARSHIP ] &&  && ! command -v starship &> /dev/null; then
+if [ $INSTALL_STARSHIP ] && ! command -v starship &> /dev/null; then
     # OPTIONAL: install starship prompt, and set it up with my config (you can change this lol)
     curl -fsSL https://starship.rs/install.sh | sh -s -- -y
     mkdir $HOME/.config -p
