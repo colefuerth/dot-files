@@ -1,9 +1,7 @@
 
 if command -v starship &> /dev/null; then
-    if [ $SHRC == "zsh" ] || [ $SHRC == "bash" ]; then
-        eval "$(starship init $SHRC)"
-    else
+    if [ -z "$SHRC" ]; then
         SHRC=$(basename "$SHELL")
-        eval "$(starship init $SHRC)"
     fi
+    eval "$(starship init $SHRC)"
 fi
