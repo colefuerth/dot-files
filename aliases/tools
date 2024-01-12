@@ -5,6 +5,3 @@ alias amv='/usr/local/bin/advmv -g'
 if command -v 7zz &> /dev/null; then
     alias 7z='/usr/local/bin/7zz'
 fi
-if command -v mcfly &> /dev/null; then
-    eval "$(mcfly init zsh)"
-fi
