@@ -28,6 +28,10 @@ if $SETUP_SSH; then
     touch $HOME/.ssh/authorized_keys
 fi
 
+if $IS_VM; then
+    sudo apt install open-vm-tools -y
+fi
+
 if $INSTALL_ZSH; then
     # zsh
     sudo apt install -y zsh

@@ -19,6 +19,7 @@ SETUP_SSH=false          # install openssh-server and generate an rsa ssh key
 SETUP_DIALOUT=true      # add the active user to the DIALOUT group (required to access serial connections)
 SETUP_GIT=true          # performs most of the git setup for you
 INSTALL_CCACHE=false     # installs ccache binaries and sets up PATH
+IS_VM=false             # installs open-vm-tools
 
 # SUBTOOLS CONFIG (optional extra tools)
 # note: does nothing if INSTALL_TOOLS is set to false
