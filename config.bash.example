@@ -6,7 +6,8 @@
 AUTO_UPDATE=false       # RECOMMENDED SETTING: true
 
 # shell config
-INSTALL_ZSH=true        # install zsh & set as default shell
+INSTALL_ZSH=true        # install zsh
+SETUP_ZSH=true          # load this repo into zsh
 SETUP_BASH=false        # sets up bashrc with my aliases etc
 DEFAULT_SHELL="zsh"     # zsh or bash
 INSTALL_STARSHIP=true   # install [starship](https://starship.rs/) prompt
@@ -24,7 +25,10 @@ INSTALL_CCACHE=false     # installs ccache binaries and sets up PATH
 NCDU=true               # NCurses Disk Usage
 INSTALL_7Z=true         # install the latest 7zz binary from github and create the alias 7z
 HTOP=true               # htop - an interactive process viewer
-RUST=true              # install rustup.rs and add the cargo bin folder to path
+RUST=true               # install rustup.rs and add the cargo bin folder to path
 MCFLY=true              # intelligent, context-sensitive shell search history (ctrl-r)
 ADVCPMV=true            # advanced copy/move, use `acp` or `amv` and get a progress bar for your large cp operations
 CLIPBOARD=true          # `cb` clipboard for terminal
+PYTHON=true             # python3 python2 python3-pip
+PYTHON_EXT=true         # python3-venv pip3 virtualenv numpy pandas matplotlib jupyterlab
+MORE_TOOLS="ranger screen curl fdisk sshpass"  # additional apt packages to install

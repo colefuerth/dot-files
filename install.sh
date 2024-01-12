@@ -43,16 +43,39 @@ if $INSTALL_ZSH; then
     fi
 
     # .zshrc setup
+    if [ -e "$HOME/.zshrc" ]; then
+        mv "$HOME/.zshrc" "$HOME/.zshrc.old"
+    fi
     cp zshrc $HOME/.zshrc
     sed -i "s|^SCRIPTS_DIR=\".*\"|SCRIPTS_DIR=\"$BASE\"|" $HOME/.zshrc
-    mkdir -p "$HOME/.zsh_aliases"
+
+    # .zsh_aliases setup
+    if [ -f "$HOME/.zsh_aliases" ]; then
+        mv "$HOME/.zsh_aliases" "$HOME/zsh_aliases"
+        mkdir -p "$HOME/.zsh_aliases"
+        mv "$HOME/zsh_aliases" "$HOME/.zsh_aliases/zsh_aliases"
+    else
+        mkdir -p "$HOME/.zsh_aliases"
+    fi
+
 fi
 
-# .bashrc
 if $SETUP_BASH; then
+    # .bashrc setup
+    if [ -e "$HOME/.bashrc" ]; then
+        mv "$HOME/.bashrc" "$HOME/.bashrc.old"
+    fi
     cp bashrc $HOME/.bashrc
     sed -i "s|^SCRIPTS_DIR=\".*\"|SCRIPTS_DIR=\"$BASE\"|" $HOME/.bashrc
-    mkdir -p "$HOME/.bash_aliases"
+
+    # .bash_aliases setup
+    if [ -f "$HOME/.bash_aliases" ]; then
+        mv "$HOME/.bash_aliases" "$HOME/bash_aliases"
+        mkdir -p "$HOME/.bash_aliases"
+        mv "$HOME/bash_aliases" "$HOME/.bash_aliases/bash_aliases"
+    else
+        mkdir -p "$HOME/.bash_aliases"
+    fi
 fi
 
 if $INSTALL_TOOLS; then
@@ -61,11 +84,11 @@ if $INSTALL_TOOLS; then
 
     if $PYTHON; then
         sudo apt install -y python3 python2 python3-pip
-    /usr/bin/python3 -m pip install --user --upgrade pip
+        /usr/bin/python3 -m pip install --user --upgrade pip
         if $PYTHON_EXT; then
             sudo apt insatll python3-venv
-    /usr/bin/python3 -m pip install --user virtualenv
-    /usr/bin/python3 -m pip install --user numpy pandas matplotlib jupyterlab
+            /usr/bin/python3 -m pip install --user virtualenv
+            /usr/bin/python3 -m pip install --user numpy pandas matplotlib jupyterlab
         fi
     fi
 
