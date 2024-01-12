@@ -57,12 +57,21 @@ fi
 
 if $INSTALL_TOOLS; then
     cd /tmp
-    # my tools
-    sudo apt install -y ranger python3 python2 python3-pip python3-venv screen curl fdisk sshpass
     sudo apt --fix-broken install -y && sudo apt autoremove -y
+
+    if $PYTHON; then
+        sudo apt install -y python3 python2 python3-pip
     /usr/bin/python3 -m pip install --user --upgrade pip
+        if $PYTHON_EXT; then
+            sudo apt insatll python3-venv
     /usr/bin/python3 -m pip install --user virtualenv
     /usr/bin/python3 -m pip install --user numpy pandas matplotlib jupyterlab
+        fi
+    fi
+
+    if [ -n "$MORE_TOOLS" ]; then
+        sudo apt install $MORE_TOOLS
+    fi
 
     if [ $NCDU ] && ! command -v ncdu &> /dev/null; then
         # ncdu static binary 2.3
