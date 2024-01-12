@@ -44,14 +44,14 @@ if $INSTALL_ZSH; then
 
     # .zshrc setup
     cp zshrc $HOME/.zshrc
-    sed -i "s|SCRIPTS_DIR=\"\$HOME/dot-files\"|SCRIPTS_DIR=\"$BASE\"|g" $HOME/.zshrc
+    sed -i "s|^SCRIPTS_DIR=\".*\"|SCRIPTS_DIR=\"$BASE\"|" $HOME/.zshrc
     mkdir -p "$HOME/.zsh_aliases"
 fi
 
 # .bashrc
 if $SETUP_BASH; then
     cp bashrc $HOME/.bashrc
-    sed -i "s|SCRIPTS_DIR=\"\$HOME/dot-files\"|SCRIPTS_DIR=\"$BASE\"|g" $HOME/.bashrc
+    sed -i "s|^SCRIPTS_DIR=\".*\"|SCRIPTS_DIR=\"$BASE\"|" $HOME/.bashrc
     mkdir -p "$HOME/.bash_aliases"
 fi
 
