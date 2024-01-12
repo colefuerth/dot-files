@@ -2,5 +2,6 @@
 # alias mv='/usr/local/bin/advmv'
 alias acp='/usr/local/bin/advcp -g'
 alias amv='/usr/local/bin/advmv -g'
-alias 7z='/usr/local/bin/7zz'
-eval "$(mcfly init zsh)"
+if command -v 7zz &> /dev/null; then
+    alias 7z='/usr/local/bin/7zz'
+fi

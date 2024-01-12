@@ -1,1 +1,6 @@
-eval "$(starship init zsh)"
+if command -v starship &> /dev/null; then
+    if [ -z "$SHRC" ]; then
+        SHRC=$(basename "$SHELL")
+    fi
+    eval "$(starship init $SHRC)"
+fi

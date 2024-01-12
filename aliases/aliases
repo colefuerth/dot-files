@@ -1,4 +1,16 @@
-PATH=$PATH:/home/$USER/.local/bin
+
+# custom paths that should be added to PATH, if they exist
+cpaths=(
+    "$HOME/.local/bin"
+    "$HOME/.bin"
+    "$HOME/.cargo/bin"
+    "/usr/local/bin"
+)
+for p in "${cpaths[@]}"; do
+    if [ -d "$p" ]; then
+        PATH="$PATH:$p"
+    fi
+done
 
 # My Aliases
 alias py='/usr/bin/python3'
@@ -7,9 +19,6 @@ alias pip3='/usr/bin/python3 -m pip'
 alias ll='ls -alh'
 alias tsr='ts -r "[%H:%M:%S]"'
 
-# alias venv='/usr/bin/python3 -m venv'
-# alias powertop='sudo /home/cole/tmp/powertop/src/powertop'
-# alias battery='upower -i `upower -e | grep "BAT"`'
-alias tf='conda activate tf'
+# "quick" aliases
 alias vpnon='sudo systemctl enable wg-quick@wg0.service && sudo systemctl start wg-quick@wg0.service'
 alias vpnoff='sudo systemctl disable wg-quick@wg0.service && sudo systemctl stop wg-quick@wg0.service'

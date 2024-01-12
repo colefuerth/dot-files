@@ -1,0 +1,6 @@
+if command -v mcfly &> /dev/null; then
+    if [ -z "$SHRC" ]; then
+        SHRC=$(basename "$SHELL")
+    fi
+    eval "$(mcfly init $SHRC)"
+fi

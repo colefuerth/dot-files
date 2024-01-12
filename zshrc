@@ -1,3 +1,5 @@
+#!/usr/bin/zsh
+
 ZSH="$HOME/.oh-my-zsh"
 
 # Theme
@@ -7,12 +9,15 @@ ZSH_THEME=""
 plugins=(git zsh-autosuggestions)
 source $ZSH/oh-my-zsh.sh
 
-SCRIPTS_DIR="$HOME/dot-files"  # location of scripts and/or dot-files, set this to auto update
-if [ ! -z SCRIPTS_DIR ]; then
-    sh -c "cd $SCRIPTS_DIR && bash update.sh"
+# auto updating only happens if the scripts_dir exists, the config is set, and auto_update has been set to true
+SCRIPTS_DIR="$HOME/dot-files"
+if [ ! -z SCRIPTS_DIR ] && [ -r "$SCRIPTS_DIR/config.bash" ] && grep -q "AUTO_UPDATE=true" "$SCRIPTS_DIR/config.bash"; then
+    (cd $SCRIPTS_DIR && ./update.sh)
 fi
+
+SHRC="zsh"
 
 # Load Zsh alias files from ~/zsh_aliases/
 for file in $HOME/.zsh_aliases/*; do
-    [ -r "$file" ] && source "$file"
+    source "$file"
 done
