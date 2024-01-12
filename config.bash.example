@@ -1,22 +1,30 @@
 #!/bin/bash
 
-SETUP_SSH=true          # install openssh-server and generate an rsa ssh key
-SETUP_DIALOUT=true      # add the active user to the DIALOUT group (required to access serial connections)
-INSTALL_STARSHIP=true   # install starship prompt
-INSTALL_ZSH=true        # install zsh & set as default shell
-INSTALL_TOOLS=true      # a set of tools that I like to use (more specific configuration below)
-SETUP_GIT=true          # performs most of the git setup for you
-SETUP_WELCOME_MSG=true  # sets up a welcome message for the terminal
-SETUP_BASH=false        # sets up bashrc with my aliases etc
-INSTALL_CCACHE=true     # installs ccache binaries and sets up PATH
-DEFAULT_SHELL="zsh"     # zsh or bash
+# run `./update.sh` every time a new shell session starts
+# this is off by default for privacy and security reasons, turning this on means you get the latest and greatest,
+# but it also means things could break and any code I push to the repo gets run automatically
+AUTO_UPDATE=false       # RECOMMENDED SETTING: true
 
-# TOOLS SUBCONFIG (optional extra tools)
+# shell config
+INSTALL_ZSH=true        # install zsh & set as default shell
+SETUP_BASH=false        # sets up bashrc with my aliases etc
+DEFAULT_SHELL="zsh"     # zsh or bash
+INSTALL_STARSHIP=true   # install [starship](https://starship.rs/) prompt
+SETUP_WELCOME_MSG=true  # sets up a welcome message for the terminal
+
+# tools config
+INSTALL_TOOLS=true      # a set of tools that I like to use (more specific configuration below)
+SETUP_SSH=false          # install openssh-server and generate an rsa ssh key
+SETUP_DIALOUT=true      # add the active user to the DIALOUT group (required to access serial connections)
+SETUP_GIT=true          # performs most of the git setup for you
+INSTALL_CCACHE=false     # installs ccache binaries and sets up PATH
+
+# SUBTOOLS CONFIG (optional extra tools)
 # note: does nothing if INSTALL_TOOLS is set to false
-NCDU=true
-INSTALL_7Z=true
-HTOP=true
-RUST=true
-MCFLY=true
-ADVCPMV=true
-CLIPBOARD=true
+NCDU=true               # NCurses Disk Usage
+INSTALL_7Z=true         # install the latest 7zz binary from github and create the alias 7z
+HTOP=true               # htop - an interactive process viewer
+RUST=true              # install rustup.rs and add the cargo bin folder to path
+MCFLY=true              # intelligent, context-sensitive shell search history (ctrl-r)
+ADVCPMV=true            # advanced copy/move, use `acp` or `amv` and get a progress bar for your large cp operations
+CLIPBOARD=true          # `cb` clipboard for terminal
