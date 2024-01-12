@@ -31,6 +31,9 @@ fi
 if $INSTALL_ZSH; then
     # zsh
     sudo apt install -y zsh
+fi
+
+if $SETUP_ZSH; then
 
     # oh my zsh and zsh-autosuggestions
     sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended --keep-zshrc
