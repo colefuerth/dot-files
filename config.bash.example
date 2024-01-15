@@ -12,7 +12,7 @@ SETUP_BASH=false        # sets up bashrc with my aliases etc
 DEFAULT_SHELL="zsh"     # zsh or bash
 INSTALL_STARSHIP=true   # install [starship](https://starship.rs/) prompt
 SETUP_WELCOME_MSG=true  # sets up a welcome message for the terminal
-DEPLOYMENT_METHOD="softlink"  # "softlink" or "copy"
+DEPLOYMENT_METHOD="copy"  # "softlink" or "copy"
 
 # tools config
 INSTALL_TOOLS=true      # a set of tools that I like to use (more specific configuration below)
