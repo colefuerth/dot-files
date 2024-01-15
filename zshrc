@@ -1,5 +1,7 @@
 #!/usr/bin/zsh
 
+# for those wondering: your old zshrc file is under "~/.zsh_aliases/.zshrc"
+
 ZSH="$HOME/.oh-my-zsh"
 
 # Theme

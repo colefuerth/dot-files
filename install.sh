@@ -49,13 +49,6 @@ if $SETUP_ZSH; then
         cd ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions && git pull
     fi
 
-    # .zshrc setup
-    if [ -e "$HOME/.zshrc" ]; then
-        mv "$HOME/.zshrc" "$HOME/.zshrc.old"
-    fi
-    cp zshrc $HOME/.zshrc
-    sed -i "s|^SCRIPTS_DIR=\".*\"|SCRIPTS_DIR=\"$BASE\"|" $HOME/.zshrc
-
     # .zsh_aliases setup
     if [ -f "$HOME/.zsh_aliases" ]; then
         mv "$HOME/.zsh_aliases" "$HOME/zsh_aliases"
@@ -65,16 +58,16 @@ if $SETUP_ZSH; then
         mkdir -p "$HOME/.zsh_aliases"
     fi
 
+    # .zshrc setup
+    if [ -e "$HOME/.zshrc" ]; then
+        mv "$HOME/.zshrc" "$HOME/.zsh_aliases/.zshrc
+    fi
+    cp zshrc $HOME/.zshrc
+    sed -i "s|^SCRIPTS_DIR=\".*\"|SCRIPTS_DIR=\"$BASE\"|" $HOME/.zshrc
+
 fi
 
 if $SETUP_BASH; then
-    # .bashrc setup
-    if [ -e "$HOME/.bashrc" ]; then
-        mv "$HOME/.bashrc" "$HOME/.bashrc.old"
-    fi
-    cp bashrc $HOME/.bashrc
-    sed -i "s|^SCRIPTS_DIR=\".*\"|SCRIPTS_DIR=\"$BASE\"|" $HOME/.bashrc
-
     # .bash_aliases setup
     if [ -f "$HOME/.bash_aliases" ]; then
         mv "$HOME/.bash_aliases" "$HOME/bash_aliases"
@@ -83,6 +76,13 @@ if $SETUP_BASH; then
     else
         mkdir -p "$HOME/.bash_aliases"
     fi
+
+    # .bashrc setup
+    if [ -e "$HOME/.bashrc" ]; then
+        mv "$HOME/.bashrc" "$HOME/.bash_aliases/.bashrc
+    fi
+    cp bashrc $HOME/.bashrc
+    sed -i "s|^SCRIPTS_DIR=\".*\"|SCRIPTS_DIR=\"$BASE\"|" $HOME/.bashrc
 fi
 
 if $INSTALL_TOOLS; then
