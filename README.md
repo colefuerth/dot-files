@@ -50,7 +50,7 @@ done
 
 | Option | Description |
 | --- | --- |
-| `AUTO_UPDATE` | Whenever a new terminal is opened, run `./update.sh` to pull any changes and include them in the session, so you are always on the latest release |
+| AUTO_UPDATE | Whenever a new terminal is opened, run `./update.sh` to pull any changes and include them in the session, so you are always on the latest release |
 | INSTALL_ZSH | `sudo apt install zsh` |
 | SETUP_ZSH | Install/load this repo to zsh |
 | SETUP_BASH | Install/load this repo to bash |
