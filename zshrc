@@ -17,7 +17,7 @@ if [ ! -z SCRIPTS_DIR ] && [ -r "$SCRIPTS_DIR/config.bash" ] && grep -q "AUTO_UP
     (cd $SCRIPTS_DIR && ./update.sh)
 fi
 
-SHRC="zsh"
+export SHRC="zsh"
 
 # Load Zsh alias files from ~/zsh_aliases/
 for file in $HOME/.zsh_aliases/*; do

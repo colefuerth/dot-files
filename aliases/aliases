@@ -8,7 +8,7 @@ cpaths=(
 )
 for p in "${cpaths[@]}"; do
     if [ -d "$p" ]; then
-        PATH="$PATH:$p"
+        export PATH="$PATH:$p"
     fi
 done
 

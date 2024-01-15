@@ -1,5 +1,8 @@
 #!/bin/bash
 
+[ ! -r "config.bash" ] && cp config.bash.example config.bash
+. config.bash
+
 BIN="$HOME/.local/bin"
 ALIASES_DIRS=(
     "$HOME/.zsh_aliases"

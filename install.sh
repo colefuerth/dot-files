@@ -2,11 +2,8 @@
 
 set -x
 
-if [ ! -f "config.bash" ]; then
-    cp -v config.bash.example config.bash
-fi
-
-source "./config.bash"
+[ ! -f "config.bash" ] && cp -v config.bash.example config.bash
+. config.bash
 
 BASE=$(pwd)
 
