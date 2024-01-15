@@ -18,8 +18,13 @@ for ALIASES in "${ALIASES_DIRS[@]}"; do
     if [ -d $ALIASES ]; then
         for file in aliases/*; do
             destination="$ALIASES/$(basename "$file")"
-            if [ ! -e "$destination" ]; then
-                ln -s "$PWD/$file" "$destination"
+            if [ "$DEPLOYMENT_METHOD" = "softlink" ]; then
+                [ ! -e "$destination" ] && ln -s "$PWD/$file" "$destination"
+            elif [ "$DEPLOYMENT_METHOD" = "copy" ]; then
+                cp --update "$PWD/$file" "$destination"
+            else
+                echo "SD Scripts Error: Invalid DEPLOYMENT_METHOD, not deploying aliases."
+                break
             fi
         done
     fi
