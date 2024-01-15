@@ -3,6 +3,8 @@
 [ ! -r "config.bash" ] && cp config.bash.example config.bash
 . config.bash
 
+[ "config.bash.example" -nt "config.bash" ] && echo "Your config.bash is out of date!! Please update it if there are any missing config options."
+
 BIN="$HOME/.local/bin"
 ALIASES_DIRS=(
     "$HOME/.zsh_aliases"
