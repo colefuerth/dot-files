@@ -1,4 +1,6 @@
-export CCACHE_DIR=/home/$USER/.ccache
-export CCACHE_TEMPDIR=/home/$USER/.ccache
+export USE_CCACHE=1
+export CCACHE_EXEC="/usr/local/bin/ccache"
+export CCACHE_DIR="$HOME/.ccache"
+export CCACHE_TEMPDIR="$HOME/.ccache"
 # alias gcc='ccache gcc'
 # alias g++='ccache g++'
