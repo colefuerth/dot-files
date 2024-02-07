@@ -3,7 +3,7 @@
 # run `./update.sh` every time a new shell session starts
 # this is off by default for privacy and security reasons, turning this on means you get the latest and greatest,
 # but it also means things could break and any code I push to the repo gets run automatically
-AUTO_UPDATE=false       # RECOMMENDED SETTING: true
+AUTO_UPDATE=false       # RECOMMENDED SETTING: true (makes opening sessions slower since it does a git pull)
 
 # shell config
 INSTALL_ZSH=true        # install zsh

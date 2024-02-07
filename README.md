@@ -25,30 +25,9 @@ To install, then run:
 ./install.sh
 ```
 
-### (Optional) Copy Deployment rather than Softlink Deployment
-
-As of the most current revision, everything in `.zsh_aliases` and `.bash_aliases` is softlinked to this repo's files, so you should not delete this repo.\
-If you do want to delete this repo, you should copy all of the aliases manually before deleting, or none of the aliases will load anymore:
-
-*Note:* I am planning to make this a setting in a future release, but for today it must be done manually.
-
-```bash
-ALIASES_DIRS=(
-    "$HOME/.zsh_aliases"
-    "$HOME/.bash_aliases"
-)
-for ALIASES in "${ALIASES_DIRS[@]}"; do
-    if [ -d $ALIASES ]; then
-        for file in aliases/*; do
-            cp "$PWD/$file" "$ALIASES/$(basename "$file")"
-        done
-    fi
-done
-```
-
 ## Configuration
 
-| Option | Description |
+| Shell Config | Description |
 | --- | --- |
 | AUTO_UPDATE | Whenever a new terminal is opened, run `./update.sh` to pull any changes and include them in the session, so you are always on the latest release |
 | INSTALL_ZSH | `sudo apt install zsh` |
@@ -56,6 +35,10 @@ done
 | SETUP_BASH | Install/load this repo to bash |
 | DEFAULT_SHELL | "zsh" or "bash"; runs `chsh` with whatever this is set to |
 | INSTALL_STARSHIP | install [starship](https://starship.rs/) prompt |
+| DEPLOYMENT_METHOD | "copy" just copies all of the files in this repo to the aliases directory, "softlink" creates symbolic links to the files in this repo |
+
+| Tools Config | Description |
+| --- | --- |
 | SETUP_WELCOME_MSG | run `neofetch` on new terminal sessions |
 | INSTALL_TOOLS | If this is false, nothing under the SUBTOOLS_CONFIG is installed. Recommended to leave this as `true` and just config the subtools |
 | SETUP_SSH | Install openssh-server, open the ssh port, generate an rsa key if none are already generated at the default path |
@@ -74,5 +57,9 @@ done
 | ADVCPMV | Advanced copy/move mod for cp and mv; there is an alias in this repo `acp` and `amv` that enable a progress bar for copies and moves |
 | CLIPBOARD | `cb` clipboard for terminal, files, extremely versatile and useful when you need it, has multiple clipboards so you can juggle things easily |
 | PYTHON | install the python binaries from apt |
-| PYTHON_EXT | install some of the more "essential" pip packages like numpy and venv |
+| PYTHON_EXT | "Python_Extended" installs some of the more "essential" pip packages like numpy and venv |
 | MORE_TOOLS | space-separated list of additional apt packages to install |
+
+## Adding Custom Aliases
+
+By default, any shells configured with my tools auto source any files found under the `.zsh_aliases` or `.bash_aliases` directory, so you can just make your own file under that directory and add stuff there.
