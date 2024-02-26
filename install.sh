@@ -168,7 +168,7 @@ fi
 if [ $INSTALL_STARSHIP ] && ! command -v starship &> /dev/null; then
     # OPTIONAL: install starship prompt, and set it up with my config (you can change this lol)
     curl -fsSL https://starship.rs/install.sh | sh -s -- -y
-    mkdir $HOME/.config -p
+    mkdir -p $HOME/.config
     curl -fsSL https://raw.githubusercontent.com/colefuerth/dot-files/master/starship.toml \
         -o $HOME/.config/starship.toml
 fi
