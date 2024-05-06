@@ -19,6 +19,7 @@ alias pip3='/usr/bin/python3 -m pip'
 alias ll='ls -alh'
 alias tsr='ts -r "[%H:%M:%S]"'
 alias l='ls -lh'
+alias pcp='time rsync --progress -ah'
 
 # "quick" aliases
 alias vpnon='sudo systemctl enable wg-quick@wg0.service && sudo systemctl start wg-quick@wg0.service'
