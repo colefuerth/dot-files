@@ -126,6 +126,23 @@ if $INSTALL_TOOLS; then
         rm /tmp/htop.deb
     fi
 
+    if [ $BTOP ] && ! command -v btop &> /dev/null; then
+        # htop static binary 3.2.2
+        cd /tmp
+        sudo apt install -y coreutils sed git build-essential gcc-11 g++-11 lowdown
+        curl -fsSL https://github.com/aristocratos/btop/releases/download/v1.3.2/btop-x86_64-linux-musl.tbz -o /tmp/btop.tbz
+        tar -xjf btop.tbz
+        cd btop
+        # use "make install PREFIX=/target/dir" to set target, default: /usr/local
+        # only use "sudo" when installing to a NON user owned directory
+        sudo make install
+        # run after make install and use same PREFIX if any was used at install
+        # set SU_USER and SU_GROUP to select user and group, default is root:root
+        sudo make setuid
+        rm -rf /tmp/btop /tmp/btop.tbz
+        cd /tmp
+    fi
+
     if [ $RUST ] && ! command -v rustc &> /dev/null; then
         # rust
         curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
@@ -138,7 +155,6 @@ if $INSTALL_TOOLS; then
 
     if [ $ADVCPMV ] && ! command -v advcp &> /dev/null; then
         # advanced copy/move
-        cd /tmp
         curl https://raw.githubusercontent.com/jarun/advcpmv/master/install.sh --create-dirs -o ./advcpmv/install.sh && (cd advcpmv && sh install.sh)
         sudo mv ./advcpmv/advcp /usr/local/bin/
         sudo mv ./advcpmv/advmv /usr/local/bin/
@@ -232,4 +248,4 @@ bash update.sh
 echo
 echo
 echo
-echo "** you should generate a keypair on your host and copy the public key into $(~/.ssh/authorized_keys) on the vm **"
+echo "** you should generate a keypair on your host and copy the public key into ~/.ssh/authorized_keys on the vm **"
