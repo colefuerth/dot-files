@@ -135,19 +135,14 @@ if $INSTALL_TOOLS; then
 
     if [ $BTOP ] && ! command -v btop &> /dev/null; then
         # htop static binary 3.2.2
-        cd /tmp
         sudo apt install -y coreutils sed git build-essential gcc-11 g++-11 lowdown
-        curl -fsSL https://github.com/aristocratos/btop/releases/download/v1.3.2/btop-x86_64-linux-musl.tbz -o /tmp/btop.tbz
-        tar -xjf btop.tbz
-        cd btop
-        # use "make install PREFIX=/target/dir" to set target, default: /usr/local
-        # only use "sudo" when installing to a NON user owned directory
-        sudo make install
-        # run after make install and use same PREFIX if any was used at install
-        # set SU_USER and SU_GROUP to select user and group, default is root:root
-        sudo make setuid
-        rm -rf /tmp/btop /tmp/btop.tbz
-        cd /tmp
+        git clone https://github.com/aristocratos/btop.git /tmp/btop
+        (cd /tmp/btop && make STATIC=true GPU_SUPPORT=true && sudo make install && sudo make setuid)
+        rm -rf /tmp/btop
+
+        # also copy my default config
+        mkdir -p $HOME/.config/btop && \
+        cp $BASE/.config/btop/btop.conf $HOME/.config/btop/btop.conf
     fi
 
     if [ $RUST ] && ! command -v rustc &> /dev/null; then
