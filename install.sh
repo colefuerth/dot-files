@@ -102,13 +102,17 @@ if $INSTALL_TOOLS; then
         sudo apt install $MORE_TOOLS
     fi
 
-    if [ $NCDU ] && ! command -v ncdu &> /dev/null; then
-        # ncdu static binary 2.3
-        curl -fsSL https://dev.yorhel.nl/download/ncdu-2.3-linux-x86_64.tar.gz -o /tmp/ncdu.tar.gz
+    if [ $NCDU ] &> /dev/null; then
+        # ncdu static binary 2.4
+        curl -fsSL https://dev.yorhel.nl/download/ncdu-2.4-linux-x86_64.tar.gz -o /tmp/ncdu.tar.gz
         tar -xvf /tmp/ncdu.tar.gz -C /tmp
-        sudo cp /tmp/ncdu /usr/local/bin/ncdu
-        sudo chmod +x /usr/local/bin/ncdu
+        sudo chmod +x /tmp/ncdu
+        sudo mv /tmp/ncdu /usr/local/bin/ncdu
         rm /tmp/ncdu.tar.gz
+
+        # also copy my default config
+        mkdir -p $HOME/.config/ncdu && \
+        cp $BASE/.config/ncdu/config $HOME/.config/ncdu/config
     fi
 
     if [ $INSTALL_7Z ] && ! command -v 7z &> /dev/null; then

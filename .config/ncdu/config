@@ -1,0 +1,5 @@
+--extended
+--color dark-bg
+--show-mtime
+--fast-ui-updates
+--exclude-kernfs
