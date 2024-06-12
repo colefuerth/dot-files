@@ -1,8 +1,9 @@
-# POP!_OS 22.04 LTS BRINGUP
+#!/bin/bash
 
-set -x
-
-[ ! -f "config.bash" ] && cp -v config.bash.example config.bash
+[ ! -f "config.bash" ] && cp -v config.bash.example config.bash && \
+    echo "*** \"config.bash\" NOT FOUND!! Using the default \"config.bash.example\" instead..." && \
+    echo "PRESS CRTL+C TO STOP INSTALLING IF YOU WANT TO CONFIGURE FIRST" && \
+    echo "Continuing in 10 seconds..." && sleep 10
 . config.bash
 
 BASE=$(pwd)
