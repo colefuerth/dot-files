@@ -117,12 +117,11 @@ if $INSTALL_TOOLS; then
 
     if [ $INSTALL_7Z ] && ! command -v 7z &> /dev/null; then
         # 7z static binary 23.01
-        curl -fsSL https://7-zip.org/a/7z2301-linux-x64.tar.xz -o /tmp/7z.tar.xz
+        curl -fsSL https://7-zip.org/a/7z2406-linux-x64.tar.xz -o /tmp/7z.tar.xz
         mkdir /tmp/7z
-        tar -xvf /tmp/7z.tar.xz -C /tmp/7z
-        sudo cp /tmp/7z/7zz /usr/local/bin/7zz
-        sudo ln -s /usr/local/bin/7zz /usr/local/bin/7z
-        rm -rf /tmp/7z
+        tar -xf /tmp/7z.tar.xz -C /tmp/7z
+        sudo mv /tmp/7z/7zz /usr/local/bin/7zz
+        rm -rf /tmp/7z /tmp/7z.tar.xz
     fi
 
     if [ $HTOP ] && ! command -v htop &> /dev/null; then
