@@ -126,9 +126,11 @@ if $INSTALL_TOOLS; then
 
     if [ $HTOP ] && ! command -v htop &> /dev/null; then
         # htop static binary 3.2.2
-        curl -fsSL http://ftp.us.debian.org/debian/pool/main/h/htop/htop_3.2.2-2_amd64.deb -o /tmp/htop.deb
-        sudo dpkg -i /tmp/htop.deb
-        rm /tmp/htop.deb
+        curl -fsSL https://github.com/htop-dev/htop/releases/download/3.3.0/htop-3.3.0.tar.xz -o /tmp/htop.tar.xz
+        sudo apt install -y libncursesw5-dev autotools-dev autoconf automake build-essential libsensors-dev
+        tar -xf /tmp/htop.tar.xz -C /tmp
+        (cd /tmp/htop-3.3.0 && ./autogen.sh && ./configure --enable-static && sudo make install)
+        rm -rf /tmp/htop-3.3.0 /tmp/htop.tar.xz
     fi
 
     if [ $BTOP ] && ! command -v btop &> /dev/null; then
