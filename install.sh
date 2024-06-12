@@ -186,9 +186,8 @@ fi
 if [ $INSTALL_STARSHIP ] && ! command -v starship &> /dev/null; then
     # OPTIONAL: install starship prompt, and set it up with my config (you can change this lol)
     curl -fsSL https://starship.rs/install.sh | sh -s -- -y
-    mkdir -p $HOME/.config
-    curl -fsSL https://raw.githubusercontent.com/colefuerth/dot-files/master/starship.toml \
-        -o $HOME/.config/starship.toml
+    # also copy my default config
+    mkdir -p $HOME/.config && cp $BASE/.config/starship.toml $HOME/.config/starship.toml
 fi
 
 # setup verbose boot in pop!_os
