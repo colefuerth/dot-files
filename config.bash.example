@@ -6,8 +6,9 @@
 AUTO_UPDATE=false       # RECOMMENDED SETTING: true (makes opening sessions slower since it does a git pull)
 
 # shell config
-INSTALL_ZSH=true        # install zsh
+INSTALL_ZSH=true        # install zsh shell with apt
 SETUP_ZSH=true          # load this repo into zsh
+INSTALL_FISH=false      # install fish shell with apt
 SETUP_BASH=false        # sets up bashrc with my aliases etc
 DEFAULT_SHELL="zsh"     # zsh or bash
 INSTALL_STARSHIP=true   # install [starship](https://starship.rs/) prompt

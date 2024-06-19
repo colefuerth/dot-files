@@ -66,6 +66,33 @@ if $SETUP_ZSH; then
 
 fi
 
+if $INSTALL_FISH; then
+    sudo apt-add-repository -y ppa:fish-shell/release-3
+    sudo apt update
+    sudo apt install -y fish
+fi
+
+# if $SETUP_FISH; then
+
+#     # .fish_aliases setup
+
+#     if [ -f "$HOME/.fish_aliases" ]; then
+#         mv "$HOME/.fish_aliases" "$HOME/fish_aliases"
+#         mkdir -p "$HOME/.fish_aliases"
+#         mv "$HOME/fish_aliases" "$HOME/.fish_aliases/fish_aliases"
+#     else
+#         mkdir -p "$HOME/.fish_aliases"
+#     fi
+
+#     # .fishrc setup
+#     if [ -e "$HOME/.fishrc" ]; then
+#         mv "$HOME/.fishrc" "$HOME/.fish_aliases/.fishrc"
+#     fi
+#     cp dot-rc/fishrc $HOME/.fishrc
+#     sed -i "s|^SCRIPTS_DIR=\".*\"|SCRIPTS_DIR=\"$BASE\"|" $HOME/.fishrc
+
+# fi
+
 if $SETUP_BASH; then
     # .bash_aliases setup
     if [ -f "$HOME/.bash_aliases" ]; then
