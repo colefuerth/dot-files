@@ -61,7 +61,7 @@ if $SETUP_ZSH; then
     if [ -e "$HOME/.zshrc" ]; then
         mv "$HOME/.zshrc" "$HOME/.zsh_aliases/.zshrc"
     fi
-    cp zshrc $HOME/.zshrc
+    cp dot-rc/zshrc $HOME/.zshrc
     sed -i "s|^SCRIPTS_DIR=\".*\"|SCRIPTS_DIR=\"$BASE\"|" $HOME/.zshrc
 
 fi
@@ -80,7 +80,7 @@ if $SETUP_BASH; then
     if [ -e "$HOME/.bashrc" ]; then
         mv "$HOME/.bashrc" "$HOME/.bash_aliases/.bashrc"
     fi
-    cp bashrc $HOME/.bashrc
+    cp dot-rc/bashrc $HOME/.bashrc
     sed -i "s|^SCRIPTS_DIR=\".*\"|SCRIPTS_DIR=\"$BASE\"|" $HOME/.bashrc
 fi
 
