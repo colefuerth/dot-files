@@ -5,8 +5,8 @@ jail() {
             echo "Starting existing jail container..."
             docker start -ai ${container_name}
         else
-            echo "Attaching to running jail container..."
-            docker attach ${container_name}
+            echo "Creating new bash session in running jail container..."
+            docker exec -it ${container_name} /bin/bash -l
         fi
     else
         echo "Creating new jail container..."
