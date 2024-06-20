@@ -1,0 +1,49 @@
+jail() {
+    local container_name="jail"
+    if [ "$(docker ps -aq -f name=^/${container_name}$)" ]; then
+        if [ "$(docker ps -aq -f status=exited -f name=^/${container_name}$)" ]; then
+            echo "Starting existing jail container..."
+            docker start -ai ${container_name}
+        else
+            echo "Attaching to running jail container..."
+            docker attach ${container_name}
+        fi
+    else
+        echo "Creating new jail container..."
+        docker run -it \
+            -v $HOME/.ssh:/home/$(whoami)/.ssh:ro \
+            -v jail_home:/home/$(whoami) \
+            -e USERNAME=$(whoami) \
+            --name ${container_name} \
+            jail
+    fi
+}
+
+unjail() {
+    local container_name="jail"
+    local volume_name="jail_home"
+
+    # Stop the container if it's running
+    if [ "$(docker ps -q -f name=^/${container_name}$)" ]; then
+        echo "Stopping jail container..."
+        docker stop ${container_name}
+    fi
+
+    # Remove the container
+    if [ "$(docker ps -aq -f name=^/${container_name}$)" ]; then
+        echo "Removing jail container..."
+        docker rm ${container_name}
+    else
+        echo "Jail container does not exist."
+    fi
+
+    # Remove the volume
+    if [ "$(docker volume ls -q -f name=^${volume_name}$)" ]; then
+        echo "Removing jail volume..."
+        docker volume rm ${volume_name}
+    else
+        echo "Jail volume does not exist."
+    fi
+
+    echo "Jail container and volume have been removed. The jail image remains intact."
+}
