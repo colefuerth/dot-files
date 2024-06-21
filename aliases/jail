@@ -10,7 +10,7 @@ jail() {
         fi
     else
         echo "Creating new jail container..."
-        docker run -it \
+        docker run -it --privileged \
             -v $HOME/.ssh:/home/$(whoami)/.ssh:ro \
             -v jail_home:/home/$(whoami) \
             -e USERNAME=$(whoami) \
