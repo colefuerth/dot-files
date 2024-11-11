@@ -9,7 +9,12 @@ fi
 
 export SHRC="bash"
 
-# Load Zsh alias files from ~/zsh_aliases/
+# Load bash alias files from ~/bash_aliases/
 for file in $HOME/.bash_aliases/*; do
     source "$file"
 done
+
+# load completion functions for custom scripts, if installed
+if [ -d ~/.bash_completion.d ]; then
+    for f in ~/.bash_completion.d/*; do source $f; done
+fi

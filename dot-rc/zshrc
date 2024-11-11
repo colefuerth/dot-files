@@ -23,3 +23,8 @@ export SHRC="zsh"
 for file in $HOME/.zsh_aliases/*; do
     source "$file"
 done
+
+# load completion functions for custom scripts, if installed
+if [ -d ~/.bash_completion.d ]; then
+    for f in ~/.bash_completion.d/*; do source $f; done
+fi
