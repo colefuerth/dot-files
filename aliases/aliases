@@ -16,9 +16,7 @@ done
 alias py='/usr/bin/python3'
 alias pip='/usr/bin/python3 -m pip'
 alias pip3='/usr/bin/python3 -m pip'
-alias ll='ls -alh'
 alias tsr='ts -r "[%H:%M:%S]"'
-alias l='ls -lh'
 alias pcp='time rsync --progress -ah'
 
 # "quick" aliases

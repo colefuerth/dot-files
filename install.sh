@@ -161,7 +161,7 @@ if $INSTALL_TOOLS; then
     fi
 
     if [ $BTOP ] && ! command -v btop &> /dev/null; then
-        # htop static binary 3.2.2
+        # btop static binary latest (last updated at btop 1.3.2, apt btop is at 1.2.3)
         sudo apt install -y coreutils sed git build-essential gcc-11 g++-11 lowdown
         git clone https://github.com/aristocratos/btop.git /tmp/btop
         (cd /tmp/btop && make STATIC=true GPU_SUPPORT=true && sudo make install && sudo make setuid)
@@ -175,6 +175,14 @@ if $INSTALL_TOOLS; then
     if [ $RUST ] && ! command -v rustc &> /dev/null; then
         # rust
         curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+    fi
+
+    if [ $EXA || $RMZ || $CPZ ]; then
+        CMD=""
+        [ $EXA ] && CMD="$CMD exa"
+        [ $RMZ ] && CMD="$CMD rmz"
+        [ $CPZ ] && CMD="$CMD cpz"
+        cargo install $CMD
     fi
 
     if [ $MCFLY ] && ! command -v mcfly &> /dev/null; then

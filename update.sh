@@ -29,5 +29,9 @@ for ALIASES in "${ALIASES_DIRS[@]}"; do
                 break
             fi
         done
+        [ ! $EXA ] && rm -f $ALIASES/exa
+        [ ! $INSTALL_STARSHIP ] && rm -f $ALIASES/starship
+        [ ! $MCFLY ] && rm -f $ALIASES/mcfly
+        [ ! $INSTALL_CCACHE ] && rm -f $ALIASES/ccache
     fi
 done
