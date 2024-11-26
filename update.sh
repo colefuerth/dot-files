@@ -33,5 +33,6 @@ for ALIASES in "${ALIASES_DIRS[@]}"; do
         [ ! $INSTALL_STARSHIP ] && rm -f $ALIASES/starship
         [ ! $MCFLY ] && rm -f $ALIASES/mcfly
         [ ! $INSTALL_CCACHE ] && rm -f $ALIASES/ccache
+        true  # clear last command output
     fi
 done
