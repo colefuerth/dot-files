@@ -20,5 +20,5 @@ alias tsr='ts -r "[%H:%M:%S]"'
 alias pcp='time rsync --progress -ah'
 
 # "quick" aliases
-alias vpnon='sudo systemctl enable wg-quick@wg0.service && sudo systemctl start wg-quick@wg0.service'
-alias vpnoff='sudo systemctl disable wg-quick@wg0.service && sudo systemctl stop wg-quick@wg0.service'
+alias vpnon='sudo systemctl enable wg-quick@peer2.service && sudo systemctl start wg-quick@peer2.service'
+alias vpnoff='sudo systemctl disable wg-quick@peer2.service && sudo systemctl stop wg-quick@peer2.service'
