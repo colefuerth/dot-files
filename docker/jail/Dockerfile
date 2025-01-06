@@ -14,10 +14,8 @@ ARG UID
 ARG USERNAME
 
 # Create a user with the same UID and username as the host system
-RUN useradd -m -s /bin/bash -u "$UID" "$USERNAME"
-
-# Add the user to sudoers
-RUN echo "$USERNAME ALL=(ALL) NOPASSWD:ALL" > "/etc/sudoers.d/$USERNAME" && \
+RUN useradd -m -s /bin/bash -u "$UID" "$USERNAME" && \
+    echo "$USERNAME ALL=(ALL) NOPASSWD:ALL" > "/etc/sudoers.d/$USERNAME" && \
     chmod 0440 "/etc/sudoers.d/$USERNAME"
 
 # Set the working directory
