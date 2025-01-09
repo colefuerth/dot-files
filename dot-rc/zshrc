@@ -9,6 +9,7 @@ ZSH_THEME=""
 
 # Plugins
 plugins=(git zsh-autosuggestions)
+DISABLE_UPDATE_PROMPT=true
 source $ZSH/oh-my-zsh.sh
 
 # auto updating only happens if the scripts_dir exists, the config is set, and auto_update has been set to true
