@@ -130,8 +130,8 @@ if $INSTALL_TOOLS; then
     fi
 
     if [ $NCDU ] &> /dev/null; then
-        # ncdu static binary 2.4
-        curl -fsSL https://dev.yorhel.nl/download/ncdu-2.4-linux-x86_64.tar.gz -o /tmp/ncdu.tar.gz
+        # ncdu static binary 2.7
+        curl -fsSL https://dev.yorhel.nl/download/ncdu-2.7-linux-x86_64.tar.gz -o /tmp/ncdu.tar.gz
         tar -xvf /tmp/ncdu.tar.gz -C /tmp
         sudo chmod +x /tmp/ncdu
         sudo mv /tmp/ncdu /usr/local/bin/ncdu
