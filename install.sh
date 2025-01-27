@@ -6,6 +6,19 @@
     echo "Continuing in 10 seconds..." && sleep 10
 . config.bash
 
+deploy() {
+    SRC="$1"
+    DEST="$2"
+    if [ "$DEPLOYMENT_METHOD" = "softlink" ]; then
+        ln -s "$SRC" "$DEST"
+    elif [ "$DEPLOYMENT_METHOD" = "copy" ]; then
+        cp --update "$SRC" "$DEST"
+    else
+        echo "SD Scripts Error: Invalid DEPLOYMENT_METHOD \"$DEPLOYMENT_METHOD\""
+        exit 1
+    fi
+}
+
 BASE=$(pwd)
 
 # add the local bin path to PATH to mute a bunch of pip records
@@ -59,7 +72,7 @@ if $SETUP_ZSH; then
 
     # .zshrc setup
     if [ -e "$HOME/.zshrc" ]; then
-        mv "$HOME/.zshrc" "$HOME/.zsh_aliases/.zshrc"
+        mv "$HOME/.zshrc" "$HOME/.zsh_aliases/zshrc"
     fi
     cp dot-rc/zshrc $HOME/.zshrc
     sed -i "s|^SCRIPTS_DIR=\".*\"|SCRIPTS_DIR=\"$BASE\"|" $HOME/.zshrc
@@ -116,17 +129,15 @@ if $INSTALL_TOOLS; then
     sudo apt --fix-broken install -y && sudo apt autoremove -y
 
     if $PYTHON; then
-        sudo apt install -y python3 python2 python3-pip
+        sudo apt install -y python3 python3-pip
         /usr/bin/python3 -m pip install --user --upgrade pip
         if $PYTHON_EXT; then
-            sudo apt insatll python3-venv
-            /usr/bin/python3 -m pip install --user virtualenv
-            /usr/bin/python3 -m pip install --user numpy pandas matplotlib jupyterlab
+            sudo apt install -y python3-venv python3-virtualenv python3-numpy
         fi
     fi
 
     if [ -n "$MORE_TOOLS" ]; then
-        sudo apt install $MORE_TOOLS
+        sudo apt install -y $MORE_TOOLS
     fi
 
     if [ $NCDU ] &> /dev/null; then
@@ -139,12 +150,12 @@ if $INSTALL_TOOLS; then
 
         # also copy my default config
         mkdir -p $HOME/.config/ncdu && \
-        cp $BASE/.config/ncdu/config $HOME/.config/ncdu/config
+        deploy $BASE/.config/ncdu/config $HOME/.config/ncdu/config
     fi
 
     if [ $INSTALL_7Z ] && ! command -v 7z &> /dev/null; then
         # 7z static binary 23.01
-        curl -fsSL https://7-zip.org/a/7z2406-linux-x64.tar.xz -o /tmp/7z.tar.xz
+        curl -fsSL https://7-zip.org/a/7z2409-linux-x64.tar.xz -o /tmp/7z.tar.xz
         mkdir /tmp/7z
         tar -xf /tmp/7z.tar.xz -C /tmp/7z
         sudo mv /tmp/7z/7zz /usr/local/bin/7zz
@@ -164,12 +175,12 @@ if $INSTALL_TOOLS; then
         # btop static binary latest (last updated at btop 1.3.2, apt btop is at 1.2.3)
         sudo apt install -y coreutils sed git build-essential gcc-11 g++-11 lowdown
         git clone https://github.com/aristocratos/btop.git /tmp/btop
-        (cd /tmp/btop && make STATIC=true GPU_SUPPORT=true && sudo make install && sudo make setuid)
+        (cd /tmp/btop && make GPU_SUPPORT=true && sudo make install && sudo make setuid)
         rm -rf /tmp/btop
 
         # also copy my default config
         mkdir -p $HOME/.config/btop && \
-        cp $BASE/.config/btop/btop.conf $HOME/.config/btop/btop.conf
+        deploy $BASE/.config/btop/btop.conf $HOME/.config/btop/btop.conf
     fi
 
     if [ $RUST ] && ! command -v rustc &> /dev/null; then
@@ -199,7 +210,7 @@ if $INSTALL_TOOLS; then
     fi
 
     if [ $CLIPBOARD ] && ! command -v cb &> /dev/null; then
-        curl -fsSL https://github.com/Slackadays/Clipboard/releases/download/0.9.0.1/clipboard-linux-amd64.zip -o /tmp/clipboard.zip
+        curl -fsSL https://github.com/Slackadays/Clipboard/releases/download/0.10.0/clipboard-linux-amd64.zip -o /tmp/clipboard.zip
         mkdir -p /tmp/clipboard
         unzip -d /tmp/clipboard /tmp/clipboard.zip
         sudo chmod +x /tmp/clipboard/bin/cb
@@ -222,7 +233,7 @@ if [ $INSTALL_STARSHIP ] && ! command -v starship &> /dev/null; then
     # OPTIONAL: install starship prompt, and set it up with my config (you can change this lol)
     curl -fsSL https://starship.rs/install.sh | sh -s -- -y
     # also copy my default config
-    mkdir -p $HOME/.config && cp $BASE/.config/starship.toml $HOME/.config/starship.toml
+    mkdir -p $HOME/.config && deploy $BASE/.config/starship.toml $HOME/.config/starship.toml
 fi
 
 # setup verbose boot in pop!_os
@@ -254,6 +265,7 @@ if $SETUP_GIT; then
     git config --global user.name "$NAME"
     git config --global core.editor "nano"
     git config --global pull.rebase false
+    git config --global color.ui true
     sudo bash -c "echo 'fs.inotify.max_user_watches=524288' >> /etc/sysctl.conf"
     sudo sysctl -p
 fi
