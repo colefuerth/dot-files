@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+
+if [ $# -ne 2 ]; then
+    echo "Usage: dd_with_progress [input_file] [output_device]"
+    exit 1
+fi
+
+infile="$1"
+outfile="$2"
+
+# Check if pv is installed
+if ! command -v pv >/dev/null 2>&1; then
+    echo "pv (pipe viewer) is not installed. Install it first:"
+    echo "sudo apt-get install pv  # For Debian/Ubuntu"
+    exit 1
+fi
+
+# Check if input file exists
+if [ ! -f "$infile" ]; then
+    echo "Input file not found: $infile"
+    exit 1
+fi
+
+# Get file size for better progress indication
+size=$(stat -c%s "$infile" 2>/dev/null || stat -f%z "$infile" 2>/dev/null)
+
+if [ -n "$size" ]; then
+    cat "$infile" | pv -s "$size" | dd of="$outfile" conv=fsync && sync
+else
+    cat "$infile" | pv | dd of="$outfile" conv=fsync && sync
+fi
