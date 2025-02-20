@@ -1,0 +1,66 @@
+# Function to start or attach to the ARMv8 Ubuntu container
+pi() {
+    local container_name="pi_container"
+    local volume_name="pi_volume"
+
+    # Check if the container exists
+    if [ "$(docker ps -aq -f name=^/${container_name}$)" ]; then
+        # If the container is stopped, start it
+        if [ "$(docker ps -aq -f status=exited -f name=^/${container_name}$)" ]; then
+            echo "Starting existing ARMv8 Ubuntu container..."
+            docker start -ai ${container_name}
+        else
+            echo "Attaching to running ARMv8 Ubuntu container..."
+            docker exec -it ${container_name} /bin/bash -l
+        fi
+    else
+        echo "Creating and starting a new ARMv8 Ubuntu container..."
+
+        # Ensure QEMU is set up for ARM emulation
+        docker run --rm --privileged multiarch/qemu-user-static --reset -p yes # This step will execute the registering scripts
+
+        # Create the volume if it doesn't exist
+        if [ -z "$(docker volume ls -q -f name=^${volume_name}$)" ]; then
+            docker volume create ${volume_name}
+        fi
+
+        # Run the ARMv8 Ubuntu container with the persistent volume
+        # also provide ssh on 2222 port
+        docker run -it --platform linux/arm64 \
+            --runtime=nvidia \
+            -v ${volume_name}:/home/$(whoami) \
+            --name ${container_name} \
+            -p 2222:22 \
+            arm64/ubuntu /bin/bash -l
+    fi
+}
+
+# Function to remove the ARMv8 Ubuntu container and its volume
+unpi() {
+    local container_name="pi_container"
+    local volume_name="pi_volume"
+
+    # Stop the container if it's running
+    if [ "$(docker ps -q -f name=^/${container_name}$)" ]; then
+        echo "Stopping ARMv8 Ubuntu container..."
+        docker stop ${container_name}
+    fi
+
+    # Remove the container if it exists
+    if [ "$(docker ps -aq -f name=^/${container_name}$)" ]; then
+        echo "Removing ARMv8 Ubuntu container..."
+        docker rm ${container_name}
+    else
+        echo "ARMv8 Ubuntu container does not exist."
+    fi
+
+    # Remove the volume if it exists
+    if [ "$(docker volume ls -q -f name=^${volume_name}$)" ]; then
+        echo "Removing ARMv8 Ubuntu volume..."
+        docker volume rm ${volume_name}
+    else
+        echo "ARMv8 Ubuntu volume does not exist."
+    fi
+
+    echo "ARMv8 Ubuntu container and volume have been removed."
+}
