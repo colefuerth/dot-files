@@ -175,7 +175,7 @@ if $INSTALL_TOOLS; then
         # btop static binary latest (last updated at btop 1.3.2, apt btop is at 1.2.3)
         sudo apt install -y coreutils sed git build-essential gcc-11 g++-11 lowdown
         git clone https://github.com/aristocratos/btop.git /tmp/btop
-        (cd /tmp/btop && make GPU_SUPPORT=true && sudo make install && sudo make setuid)
+        (cd /tmp/btop && make -j$(nproc) && sudo make install && sudo make setuid)
         rm -rf /tmp/btop
 
         # also copy my default config
