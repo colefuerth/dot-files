@@ -11,6 +11,19 @@ ALIASES_DIRS=(
     "$HOME/.bash_aliases"
 )
 
+deploy() {
+    SRC="$1"
+    DEST="$2"
+    if [ "$DEPLOYMENT_METHOD" = "softlink" ]; then
+        ln -s "$SRC" "$DEST"
+    elif [ "$DEPLOYMENT_METHOD" = "copy" ]; then
+        cp --update "$SRC" "$DEST"
+    else
+        echo "SD Scripts Error: Invalid DEPLOYMENT_METHOD \"$DEPLOYMENT_METHOD\""
+        exit 1
+    fi
+}
+
 if git remote update -p > /dev/null && git status -uno | grep -q 'Your branch is behind'; then
     echo "dot-files has an update!"
     git pull
@@ -19,20 +32,18 @@ fi
 for ALIASES in "${ALIASES_DIRS[@]}"; do
     if [ -d $ALIASES ]; then
         for file in aliases/*; do
-            destination="$ALIASES/$(basename "$file")"
-            if [ "$DEPLOYMENT_METHOD" = "softlink" ]; then
-                [ ! -e "$destination" ] && ln -s "$PWD/$file" "$destination"
-            elif [ "$DEPLOYMENT_METHOD" = "copy" ]; then
-                cp --update "$PWD/$file" "$destination"
-            else
-                echo "SD Scripts Error: Invalid DEPLOYMENT_METHOD, not deploying aliases."
-                break
-            fi
+            deploy "$PWD/$file" "$ALIASES/$(basename "$file")"
         done
-        [ ! $EXA ] && rm -f $ALIASES/exa
+        [ ! $EZA ] && rm -f $ALIASES/exa
         [ ! $INSTALL_STARSHIP ] && rm -f $ALIASES/starship
         [ ! $MCFLY ] && rm -f $ALIASES/mcfly
         [ ! $INSTALL_CCACHE ] && rm -f $ALIASES/ccache
         true  # clear last command output
     fi
 done
+
+if [ -d $BIN ]; then
+    for file in scripts/*; do
+        deploy "$PWD/$file" "$BIN/$(basename "$file")"
+    done
+fi

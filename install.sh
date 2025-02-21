@@ -188,9 +188,9 @@ if $INSTALL_TOOLS; then
         curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
     fi
 
-    if [ $EXA || $RMZ || $CPZ ]; then
+    if [ $EZA || $RMZ || $CPZ ]; then
         CMD=""
-        [ $EXA ] && CMD="$CMD exa"
+        [ $EZA ] && CMD="$CMD eza"
         [ $RMZ ] && CMD="$CMD rmz"
         [ $CPZ ] && CMD="$CMD cpz"
         cargo install $CMD

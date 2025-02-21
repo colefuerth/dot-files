@@ -30,7 +30,7 @@ INSTALL_7Z=true         # install the latest 7zz binary from github and create t
 HTOP=false              # htop - an interactive process viewer
 BTOP=true               # bashtop - a better interactive process viewer
 RUST=true               # install rustup.rs and add the cargo bin folder to path
-EXA=true                # Requires RUST=true; better ls; also aliases `ls ll lt l` to use the exa equivalent; has git status support
+EZA=true                # Requires RUST=true; better ls; also aliases `ls ll lt l` to use the eza equivalent; has git status support
 RMZ=true                # Requires RUST=true; multithreaded rm (very fast)
 CPZ=true                # Requires RUST=true; multithreaded cp (very fast)
 MCFLY=true              # intelligent, context-sensitive shell search history (ctrl-r)

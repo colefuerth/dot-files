@@ -1,4 +1,4 @@
-alias ls='exa'
-alias ll='exa -al --git'
-alias l='exa -l --git'
-alias lt='exa --long --tree'
+alias ls='eza'
+alias ll='eza -al --git'
+alias l='eza -l --git'
+alias lt='eza --long --tree'
