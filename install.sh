@@ -180,7 +180,7 @@ if $INSTALL_TOOLS; then
 
         # also copy my default config
         mkdir -p $HOME/.config/btop && \
-        deploy $BASE/.config/btop/btop.conf $HOME/.config/btop/btop.conf
+        cp $BASE/.config/btop/btop.conf $HOME/.config/btop/btop.conf
     fi
 
     if [ $RUST ] && ! command -v rustc &> /dev/null; then
