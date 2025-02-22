@@ -31,7 +31,7 @@ pi() {
             -v ${volume_name}:/home/$(whoami) \
             --name ${container_name} \
             -p 2222:22 \
-            arm64/ubuntu /bin/bash -l
+            arm64v8/ubuntu /bin/bash -l
     fi
 }
 
