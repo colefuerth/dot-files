@@ -15,7 +15,7 @@ deploy() {
     SRC="$1"
     DEST="$2"
     if [ "$DEPLOYMENT_METHOD" = "softlink" ]; then
-        ln -s "$SRC" "$DEST"
+        [ ! -e "$DEST" ] && ln -s "$SRC" "$DEST"
     elif [ "$DEPLOYMENT_METHOD" = "copy" ]; then
         cp --update "$SRC" "$DEST"
     else
