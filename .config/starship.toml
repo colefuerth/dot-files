@@ -7,6 +7,7 @@ $git_state\
 $git_status\
 $cmd_duration\
 $status\
+$python\
 $line_break\
 $conda\
 $character"""
@@ -52,7 +53,7 @@ symbol = "git "
 
 [python]
 symbol = "py "
-# pyenv_version_name = false
+format = '[(\($virtualenv\) )]($style)'
 
 # Display the version of python from inside a local venv.
 #
