@@ -1,0 +1,172 @@
+#!/usr/bin/env bash
+
+_ripunzip_completions() {
+    local cur prev words cword commands options
+    COMPREPLY=()
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    prev="${COMP_WORDS[COMP_CWORD-1]}"
+    
+    # Define commands and common options
+    commands="list-file unzip-file list-uri unzip-uri help"
+    common_options="-v --verbose -q --quiet -h --help -V --version"
+    
+    # Complete command if we're at position 1 or completing help's argument
+    if [[ ${COMP_CWORD} -eq 1 || ${prev} == "help" ]]; then
+        COMPREPLY=( $(compgen -W "${commands}" -- "${cur}") )
+        return 0
+    fi
+    
+    # Find the command in the command line
+    local command=""
+    for ((i=1; i < ${COMP_CWORD}; i++)); do
+        if [[ " ${commands} " =~ " ${COMP_WORDS[i]} " ]]; then
+            command="${COMP_WORDS[i]}"
+            break
+        fi
+    done
+    
+    # Complete based on the command
+    case "${command}" in
+        list-file)
+            case "${prev}" in
+                -v|--verbose|-q|--quiet|-h|--help)
+                    return 0
+                    ;;
+                *)
+                    # Complete with file paths for zip files
+                    if [[ "${cur}" == -* ]]; then
+                        COMPREPLY=( $(compgen -W "-v --verbose -q --quiet -h --help" -- "${cur}") )
+                    else
+                        COMPREPLY=( $(compgen -f -X '!*.zip' -- "${cur}") $(compgen -d -- "${cur}") )
+                    fi
+                    return 0
+                    ;;
+            esac
+            ;;
+        unzip-file)
+            case "${prev}" in
+                -d|--output-directory)
+                    # Complete with directory paths
+                    COMPREPLY=( $(compgen -d -- "${cur}") )
+                    return 0
+                    ;;
+                -P|--password)
+                    # No completions for password
+                    return 0
+                    ;;
+                -v|--verbose|-q|--quiet|-h|--help|--single-threaded)
+                    return 0
+                    ;;
+                *)
+                    # If we've already processed the FILE argument, suggest files within the ZIP
+                    local zip_file=""
+                    local found_file=0
+                    for ((i=2; i < ${COMP_CWORD}; i++)); do
+                        if [[ ! "${COMP_WORDS[i]}" == -* && ${found_file} -eq 0 ]]; then
+                            zip_file="${COMP_WORDS[i]}"
+                            found_file=1
+                            break
+                        fi
+                    done
+                    
+                    if [[ "${cur}" == -* ]]; then
+                        COMPREPLY=( $(compgen -W "-d --output-directory -P --password --single-threaded -v --verbose -q --quiet -h --help" -- "${cur}") )
+                    elif [[ ${found_file} -eq 0 ]]; then
+                        # Complete with zip files for the first non-option argument
+                        COMPREPLY=( $(compgen -f -X '!*.zip' -- "${cur}") $(compgen -d -- "${cur}") )
+                    elif [[ -f "${zip_file}" && "${zip_file}" == *.zip ]]; then
+                        # Try to complete with files within the ZIP if possible
+                        # This would require actually listing the ZIP contents, which is complex
+                        # For now, just allow any input
+                        return 0
+                    else
+                        # Complete with all files as fallback
+                        COMPREPLY=( $(compgen -f -- "${cur}") $(compgen -d -- "${cur}") )
+                    fi
+                    return 0
+                    ;;
+            esac
+            ;;
+        list-uri)
+            case "${prev}" in
+                --readahead-limit)
+                    # No specific completions for byte values
+                    return 0
+                    ;;
+                -v|--verbose|-q|--quiet|-h|--help)
+                    return 0
+                    ;;
+                *)
+                    if [[ "${cur}" == -* ]]; then
+                        COMPREPLY=( $(compgen -W "--readahead-limit -v --verbose -q --quiet -h --help" -- "${cur}") )
+                    elif [[ "${cur}" == http* ]]; then
+                        # Handle HTTP URLs
+                        return 0
+                    elif [[ "${cur}" == ftp* ]]; then
+                        # Handle FTP URLs
+                        return 0
+                    elif [[ "${cur}" == file* ]]; then
+                        # Handle file URLs
+                        return 0
+                    else
+                        # Suggest URI prefixes
+                        COMPREPLY=( $(compgen -W "http:// https:// ftp:// file://" -- "${cur}") )
+                    fi
+                    return 0
+                    ;;
+            esac
+            ;;
+        unzip-uri)
+            # Since unzip-uri options aren't shown in the help text, 
+            # we'll assume they're similar to unzip-file plus list-uri
+            case "${prev}" in
+                -d|--output-directory)
+                    # Complete with directory paths
+                    COMPREPLY=( $(compgen -d -- "${cur}") )
+                    return 0
+                    ;;
+                -P|--password|--readahead-limit)
+                    # No completions for password or byte values
+                    return 0
+                    ;;
+                -v|--verbose|-q|--quiet|-h|--help|--single-threaded)
+                    return 0
+                    ;;
+                *)
+                    if [[ "${cur}" == -* ]]; then
+                        COMPREPLY=( $(compgen -W "-d --output-directory -P --password --single-threaded --readahead-limit -v --verbose -q --quiet -h --help" -- "${cur}") )
+                    elif [[ "${cur}" == http* || "${cur}" == ftp* || "${cur}" == file* ]]; then
+                        # Handle URLs
+                        return 0
+                    else
+                        # First argument should be a URI
+                        local uri_found=0
+                        for ((i=2; i < ${COMP_CWORD}; i++)); do
+                            if [[ "${COMP_WORDS[i]}" == http* || "${COMP_WORDS[i]}" == ftp* || "${COMP_WORDS[i]}" == file* ]]; then
+                                uri_found=1
+                                break
+                            fi
+                        done
+                        
+                        if [[ ${uri_found} -eq 0 ]]; then
+                            # Suggest URI prefixes
+                            COMPREPLY=( $(compgen -W "http:// https:// ftp:// file://" -- "${cur}") )
+                        fi
+                    fi
+                    return 0
+                    ;;
+            esac
+            ;;
+        *)
+            # No command found yet, complete with common options
+            if [[ "${cur}" == -* ]]; then
+                COMPREPLY=( $(compgen -W "${common_options}" -- "${cur}") )
+            else
+                COMPREPLY=( $(compgen -W "${commands}" -- "${cur}") )
+            fi
+            return 0
+            ;;
+    esac
+}
+
+complete -F _ripunzip_completions ripunzip

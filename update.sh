@@ -10,6 +10,7 @@ ALIASES_DIRS=(
     "$HOME/.zsh_aliases"
     "$HOME/.bash_aliases"
 )
+COMPLETION_DIR="$HOME/.bash_completion.d"
 
 deploy() {
     SRC="$1"
@@ -45,5 +46,13 @@ done
 if [ -d $BIN ]; then
     for file in scripts/*; do
         deploy "$PWD/$file" "$BIN/$(basename "$file")"
+    done
+fi
+
+
+# bash completions should be linked to /usr/share/bash-completion/completions
+if [ -d "$COMPLETION_DIR" ]; then
+    for file in completions/*; do
+        deploy "$PWD/$file" "$COMPLETION_DIR/$(basename "$file")"
     done
 fi
