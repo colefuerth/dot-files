@@ -4,6 +4,7 @@ cpaths=(
     "$HOME/.local/bin"
     "$HOME/.bin"
     "$HOME/.cargo/bin"
+    "$HOME/.platformio/penv/bin"
     "/usr/local/bin"
 )
 for p in "${cpaths[@]}"; do
@@ -23,5 +24,4 @@ alias pcp='time rsync --progress -ah'
 alias vpnon='sudo systemctl enable wg-quick@peer2.service && sudo systemctl start wg-quick@peer2.service'
 alias vpnoff='sudo systemctl disable wg-quick@peer2.service && sudo systemctl stop wg-quick@peer2.service'
 
-
-alias sudo='sudo env PATH=$PATH FPATH=$FPATH '
+alias please='sudo env PATH=$PATH FPATH=$FPATH '
