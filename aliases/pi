@@ -27,11 +27,11 @@ pi() {
         # Run the ARMv8 Ubuntu container with the persistent volume
         # also provide ssh on 2222 port
         docker run -it --platform linux/arm64 \
-            --runtime=nvidia \
             -v ${volume_name}:/home/$(whoami) \
             --name ${container_name} \
             -p 2222:22 \
-            arm64v8/ubuntu /bin/bash -l
+            --entrypoint /bin/bash \
+            arm64v8/ubuntu
     fi
 }
 
