@@ -25,7 +25,7 @@ fi
 size=$(stat -c%s "$infile" 2>/dev/null || stat -f%z "$infile" 2>/dev/null)
 
 if [ -n "$size" ]; then
-    cat "$infile" | pv -s "$size" | dd of="$outfile" conv=fsync && sync
+    dd if="$infile" bs=4M | pv -s "$size" | dd of="$outfile" conv=fsync oflag=direct iflag=fullblock bs=4M && sync
 else
-    cat "$infile" | pv | dd of="$outfile" conv=fsync && sync
+    dd if="$infile" bs=4M | pv | dd of="$outfile" conv=fsync oflag=direct iflag=fullblock bs=4M && sync
 fi
