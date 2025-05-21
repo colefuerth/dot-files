@@ -59,6 +59,12 @@ if $SETUP_ZSH; then
     else
         cd ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions && git pull
     fi
+    if [ ! -e "${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/nix-zsh-completions" ]; then
+        git clone https://github.com/nix-community/nix-zsh-completions.git \
+            ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/nix-zsh-completions
+    else
+        cd ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/nix-zsh-completions && git pull
+    fi
 
     # .zsh_aliases setup
 

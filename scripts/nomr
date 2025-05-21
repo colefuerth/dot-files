@@ -15,7 +15,11 @@ RESULT_PATH=$(
         --eval-store auto \
         --store ssh-ng://$REMOTE \
         --log-format internal-json -v \
-        $* \
+        $*
 )
-nix copy --from ssh://$REMOTE --print-build-logs $RESULT_PATH
+# if `nix-store --verify-path $RESULT_PATH` fails, then we need to copy the result to the local store, make sure to mute stderr
+if ! $NIX store --verify-path $RESULT_PATH 2>/dev/null; then
+    nix copy --from "ssh-ng://$REMOTE" $RESULT_PATH
+    # nix-copy-closure --from "ssh://$REMOTE" --include-outputs --gzip --use-substitutes $RESULT_PATH
+fi
 echo $RESULT_PATH
