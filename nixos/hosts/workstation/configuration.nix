@@ -270,11 +270,14 @@ in
   # List services that you want to enable:
 
   # Enable the OpenSSH daemon.
-  services.openssh.enable = true;
+  services.openssh = {
+    enable = true;
+    passwordAuthentication = true;
+  }
 
   # Open ports in the firewall.
   networking.firewall.enable = true;
-  # networking.firewall.allowedTCPPorts = [ ];
+  networking.firewall.allowedTCPPorts = [ 22 ];
   # networking.firewall.allowedUDPPorts = [ 8554 ];
   # Or disable the firewall altogether.
   # networking.firewall.enable = false;
