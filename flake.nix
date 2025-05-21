@@ -55,9 +55,9 @@
       overlays.default = import ./overlays;
 
       nixosConfigurations = rec {
-        workstation =
+        cole-nixos =
           let
-            host = "workstation";
+            host = "cole-nixos";
             username = "cole";
             system = "x86_64-linux";
             repoRoot = builtins.toString ./.;
