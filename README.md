@@ -2,7 +2,16 @@
 
 This project is for quick bringup and easy synchronization of shell environments between my machines, and has been modified to also support configuration and mods.
 
-## Installation
+## Installation on NixOS
+
+```bash
+git clone git@github.com:colefuerth/dot-files.git
+cd dot-files
+
+
+```
+
+## Installation on Ubuntu/Pop
 
 First, we must clone the repo:
 

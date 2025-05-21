@@ -1,0 +1,22 @@
+#!/bin/env bash
+
+# if nom not found, kill the script
+if ! command -v nom &> /dev/null
+then
+    echo "nom could not be found"
+    exit
+fi
+# if nixos-rebuild not found, kill the script
+if ! command -v nixos-rebuild &> /dev/null
+then
+    echo "nixos-rebuild could not be found"
+    exit
+fi
+
+# check that arg 1 is a valid hostname
+if [ -z "$1" ]; then
+    echo "Usage: $0 <hostname>"
+    exit 1
+fi
+
+nixos-rebuild switch --impure --log-format internal-json -v --flake .#$1  |& nom --json
