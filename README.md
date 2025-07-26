@@ -7,13 +7,13 @@ This project is for quick bringup and easy synchronization of shell environments
 ```bash
 git clone git@github.com:colefuerth/dot-files.git
 cd dot-files
-sudo nixos-rebuild --flake . --log-format internal-json -v switch |& nom --json
+sudo nixos-rebuild --flake .#cole-laptop --log-format internal-json -v switch |& nom --json
 ```
 
 ### build without deploying
 
 ```bash
-nixos-rebuild --flake . --log-format internal-json -v build |& nom --json
+nixos-rebuild --flake .#cole-laptop --log-format internal-json -v build |& nom --json
 ```
 
 ## Installation on Ubuntu/Pop

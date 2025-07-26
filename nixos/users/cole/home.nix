@@ -14,7 +14,7 @@
       # Set the base home-manager options
       inherit username;
       homeDirectory = "/home/${username}";
-      stateVersion = "25.05";
+      stateVersion = "24.11";
       language.base = "en_US.UTF-8";
       packages = with pkgs; [
         claude-code

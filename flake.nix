@@ -55,7 +55,7 @@
       overlays.default = import ./overlays;
 
       nixosConfigurations = rec {
-        nixos =
+        cole-laptop =
           let
             host = "cole-laptop";
             username = "cole";
