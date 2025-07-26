@@ -14,7 +14,7 @@ in
       enable = lib.mkOption {
         default = true;
         description = ''
-          Enable a bunch of my common NixOS things.
+          Anything that goes on every system.
         '';
         type = lib.types.bool;
       };
@@ -22,7 +22,7 @@ in
       applyOverlay = lib.mkOption {
         default = true;
         description = ''
-          Apply my common NixOS overlay.
+          Any overlays that goes on every system.
         '';
         type = lib.types.bool;
       };
@@ -35,7 +35,7 @@ in
       gc = {
         automatic = true;
         randomizedDelaySec = "45min";
-        options = "--delete-older-than 30d";
+        options = "--delete-older-than 7d";
       };
       settings = {
         auto-optimise-store = true;
@@ -46,12 +46,12 @@ in
         substituters = [
           "https://nix-community.cachix.org"
           "https://cuda-maintainers.cachix.org"
-          "https://heaviside-industries.cachix.org"
+          # "https://heaviside-industries.cachix.org"
         ];
         trusted-public-keys = [
           "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
           "cuda-maintainers.cachix.org-1:0dq3bujKpuEPMCX6U4WylrUDZ9JyUG0VpVZa7CNfq5E="
-          "heaviside-industries.cachix.org-1:DXGy3eI6sMfLS7/kC6naM3zqg5A7tcBUKKAaXveQh1M="
+          # "heaviside-industries.cachix.org-1:DXGy3eI6sMfLS7/kC6naM3zqg5A7tcBUKKAaXveQh1M="
         ];
       };
       registry.nixpkgs = {

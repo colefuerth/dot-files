@@ -17,10 +17,7 @@
       stateVersion = "25.05";
       language.base = "en_US.UTF-8";
       packages = with pkgs; [
-        # github-desktop
-        signal-desktop
-        slack
-        zoom-us
+        claude-code
       ];
     };
 

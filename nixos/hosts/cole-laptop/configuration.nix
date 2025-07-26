@@ -138,20 +138,21 @@ in
       enable = true;
       decompressFonts = true;
     };
-    # fontconfig = {
-    #   enable = true;
-    #   antialias = true;
-    #   cache32Bit = true;
-    #   useEmbeddedBitmaps = true;
-    #   defaultFonts = {
-    #     monospace = [ "FiraCode" ];
-    #   };
-    # };
-    # packages = with pkgs; [
-    #   fira-code
-    #   fira-code-symbols
-    #   nerdfonts
-    # ];
+    fontconfig = {
+      enable = true;
+      antialias = true;
+      cache32Bit = true;
+      useEmbeddedBitmaps = true;
+      defaultFonts = {
+        monospace = [ "Consolas" ];
+      };
+    };
+    packages = with pkgs; [ # todo: add
+      # fira-code
+      # fira-code-symbols
+      vista-fonts
+      # nerdfonts.consolas
+    ]; # todo: add
   };
 
   # Enable the X11 windowing system.
@@ -171,10 +172,13 @@ in
       evince # document viewer
       geary # email reader
       # gedit # text editor
+      gnome-apps
+      gnome-calendar # calendar application
       gnome-characters
       gnome-music
       gnome-photos
       # gnome-terminal
+      gnome-weather
       gnome-tour
       hitori # sudoku game
       iagno # go game
@@ -214,7 +218,7 @@ in
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.${username} = {
     isNormalUser = true;
-    description = "Aaditya Watwe";
+    description = "Cole Fuerth";
     extraGroups = [
       # TODO: dialout and docker may be security risks
       "dialout"
@@ -224,7 +228,7 @@ in
       "wheel"
     ];
     packages = with pkgs; [
-      #  thunderbird
+      # packages I want to install for all users
     ];
   };
 
@@ -247,7 +251,9 @@ in
       nvitop
       libsForQt5.okular
       picocom
+      slack
       wireshark
+      zoom-us
     ])
     ++ hardwareDrivers
     ++ [ nvidia-pkgs ]

@@ -55,9 +55,9 @@
       overlays.default = import ./overlays;
 
       nixosConfigurations = rec {
-        cole-nixos =
+        nixos =
           let
-            host = "cole-nixos";
+            host = "cole-laptop";
             username = "cole";
             system = "x86_64-linux";
             repoRoot = builtins.toString ./.;
@@ -89,7 +89,7 @@
                 home-manager.backupFileExtension = "bak.home-manager-${
                   self.shortRev or self.dirtyShortRev or self.lastModified or "unknown"
                 }";
-                home-manager.users.${username} = import ./nixos/hosts/${host}/${username}/home.nix;
+                home-manager.users.${username} = import ./nixos/users/${username}/home.nix;
               }
               sops-nix.nixosModules.sops
             ];
