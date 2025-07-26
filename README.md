@@ -13,7 +13,7 @@ sudo nixos-rebuild --flake . --log-format internal-json -v switch |& nom --json
 ### build without deploying
 
 ```bash
-nom build .#nixosConfigurations.nixos.config.system.build.toplevel --log-format internal-json -v |& nom --json
+nixos-rebuild --flake . --log-format internal-json -v build |& nom --json
 ```
 
 ## Installation on Ubuntu/Pop
