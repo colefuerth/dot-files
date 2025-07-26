@@ -18,6 +18,7 @@
       language.base = "en_US.UTF-8";
       packages = with pkgs; [
         claude-code
+        ncdu
       ];
     };
 
@@ -50,7 +51,7 @@
       };
       home-manager.enable = true;
       mcfly.enable = true;
-      nix-index.enable = true;
+      # nix-index.enable = true;  # Disabled temporarily - run `nix-index` manually when needed
       spotify-player.enable = true;
       ssh = {
         enable = true;
@@ -80,65 +81,6 @@
       };
       starship = {
         enable = true;
-        settings = {
-          add_newline = true;
-          command_timeout = 1000;
-          scan_timeout = 50;
-          format = ''
-            $username\
-            $hostname\
-            $directory\
-            $git_branch\
-            $git_state\
-            $git_status\
-            $cmd_duration\
-            $status\
-            $nix_shell\
-            $python\
-            $line_break\
-            $conda\
-            $character
-          '';
-          cmd_duration = {
-            format = "[$duration]($style) ";
-            style = "yellow";
-          };
-          character = {
-            success_symbol = "[>](bold purple)";
-            error_symbol = "[>](bold red)";
-          };
-          directory = {
-            read_only = " ro";
-            style = "blue";
-          };
-          git_branch = {
-            symbol = "git ";
-          };
-          git_state = {
-            format = "\([$state( $progress_current/$progress_total)]($style)\) ";
-            style = "bright-black";
-          };
-          git_status = {
-            ahead = ">";
-            behind = "<";
-            diverged = "d";
-            renamed = "r";
-            deleted = "x";
-          };
-          hostname = {
-            ssh_symbol = "";
-          };
-          python = {
-            symbol = "py ";
-            format = "[(\($virtualenv\) )]($style)";
-          };
-          python_binary = [
-            "./venv/bin/python"
-            "python"
-            "python3"
-            "python2"
-          ];
-        };
       };
       vscode = {
         enable = true;
@@ -148,28 +90,70 @@
         enableCompletion = true;
         autosuggestion.enable = true;
         syntaxHighlighting.enable = true;
+        
+        # Enable oh-my-zsh for better compatibility with your original setup
+        oh-my-zsh = {
+          enable = true;
+          plugins = [ "git" ];
+          theme = ""; # Empty theme since we use starship
+        };
         history.append = true;
         history.expireDuplicatesFirst = true;
         history.extended = true;
         history.ignoreDups = true;
+        
+        # Fix Ctrl+Left/Right key bindings for word movement
+        initExtra = ''
+          # Key bindings for word movement
+          bindkey "^[[1;5C" forward-word    # Ctrl+Right
+          bindkey "^[[1;5D" backward-word   # Ctrl+Left
+          bindkey "^[[3~" delete-char       # Delete key
+          bindkey "^[[H" beginning-of-line  # Home key
+          bindkey "^[[F" end-of-line        # End key
+          
+          # Set SHRC variable for compatibility with your scripts
+          export SHRC="zsh"
+        '';
         initContent =
           let
-            # autocompletion
+            # autocompletion - skip bash-only completion files
             zshConfigEarlyInit = lib.mkOrder 500 ''
-              for f in ${repoRoot}/completions/*; do
-                source $f
-              done
+              if [[ -d "${repoRoot}/completions" ]] && [[ -n "$(ls -A ${repoRoot}/completions 2>/dev/null)" ]]; then
+                for f in ${repoRoot}/completions/*; do
+                  # Skip bash completion files that use 'complete' command
+                  if [[ -f "$f" ]] && ! grep -q "^complete " "$f" 2>/dev/null; then
+                    source "$f"
+                  fi
+                done
+              fi
             '';
             # general / path
             zshConfig = lib.mkOrder 1000 ''
+              # Load all aliases (skip mcfly and starship since handled by home-manager)
               for f in ${repoRoot}/aliases/*; do
-                source $f
+                if [[ -f "$f" ]]; then
+                  fname="$(basename "$f")"
+                  case "$fname" in
+                    "mcfly"|"starship")
+                      # Skip - handled by home-manager
+                      ;;
+                    *)
+                      # Check if file contains bash-only commands
+                      if ! grep -q "shopt\|complete " "$f" 2>/dev/null; then
+                        echo "Loading alias file: $fname"
+                        source "$f"
+                      else
+                        echo "Skipping bash-only alias file: $fname"
+                      fi
+                      ;;
+                  esac
+                fi
               done
               export PATH=$PATH:${repoRoot}/scripts
             '';
             # dev shell setup
             zshConfigLateInit = lib.mkOrder 1500 ''
-              eval "$(starship init zsh)"
+              # starship is handled by home-manager programs.starship
             '';
           in
           lib.mkMerge [
@@ -183,6 +167,8 @@
     home.file.".ssh/allowed_signers".text = ''
       * ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIIw7/9vkQKS0ultxI6Pbb7wqDlkE120uUw/Hr2UVvcG
     '';
+    home.file.".config/ncdu/config".source = "${repoRoot}/.config/ncdu/config";
+    home.file.".config/starship.toml".source = "${repoRoot}/.config/starship.toml";
     home.file.".ssh/config" = {
       target = ".ssh/config_source";
       force = true;
