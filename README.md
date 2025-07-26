@@ -5,9 +5,7 @@ This project is for quick bringup and easy synchronization of shell environments
 ## Installation on NixOS
 
 ```bash
-git clone git@github.com:colefuerth/dot-files.git
-cd dot-files
-sudo nixos-rebuild --flake .#cole-laptop --log-format internal-json -v switch |& nom --json
+sudo nixos-rebuild --flake github:colefuerth/dot-files#cole-laptop --log-format internal-json -v switch |& nom --json
 ```
 
 ### build without deploying
@@ -15,6 +13,11 @@ sudo nixos-rebuild --flake .#cole-laptop --log-format internal-json -v switch |&
 ```bash
 nixos-rebuild --flake .#cole-laptop --log-format internal-json -v build |& nom --json
 ```
+
+### test locally
+
+```bash
+sudo nixos-rebuild --flake .#cole-laptop test
 
 ## Installation on Ubuntu/Pop
 
