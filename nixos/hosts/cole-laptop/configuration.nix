@@ -147,7 +147,8 @@ in
         monospace = [ "Consolas" ];
       };
     };
-    packages = with pkgs; [ # todo: add
+    packages = with pkgs; [
+      # todo: add
       # fira-code
       # fira-code-symbols
       vista-fonts
@@ -172,14 +173,13 @@ in
       evince # document viewer
       geary # email reader
       # gedit # text editor
-      gnome-apps
-      gnome-calendar # calendar application
-      gnome-characters
-      gnome-music
-      gnome-photos
+      # gnome-calendar # calendar application
+      # gnome-characters
+      # gnome-music
+      # gnome-photos
       # gnome-terminal
-      gnome-weather
-      gnome-tour
+      # gnome-weather
+      # gnome-tour
       hitori # sudoku game
       iagno # go game
       tali # poker game

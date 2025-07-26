@@ -22,7 +22,7 @@
     };
 
     # Allow certail unfree packages
-    nixpkgs.config.allowUnfreePredicate = (p: builtins.elem (lib.getName p) [ ]);
+    nixpkgs.config.allowUnfreePredicate = (p: builtins.elem (lib.getName p) [ "claude-code" ]);
 
     programs = {
       awscli.enable = true;
