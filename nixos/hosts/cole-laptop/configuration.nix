@@ -188,6 +188,7 @@ in
     # bmap-tools
     cachix
     chromium
+    discord
     # dfu-util
     e2fsprogs
     firefoxpwa
@@ -197,6 +198,7 @@ in
     libsForQt5.okular
     # picocom
     # slack
+    steam
     # wireshark
     # zoom-us
   ];
@@ -269,6 +271,11 @@ in
     # };
     java.enable = true;
     nix-ld.enable = true;
+    steam = {
+      enable = true;
+      remotePlay.openFirewall = true; # Open ports in the firewall for Steam Remote Play
+      dedicatedServer.openFirewall = true; # Open ports in the firewall for Source Dedicated Server
+    };
     # qgroundcontrol = {
     #   enable = true;
     #   blacklistModemManagerFromTTYUSB = true;
