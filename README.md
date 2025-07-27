@@ -4,8 +4,18 @@ This project is for quick bringup and easy synchronization of shell environments
 
 ## Installation on NixOS
 
+### switch without cloning
+
 ```bash
 sudo nixos-rebuild --flake github:colefuerth/dot-files#cole-laptop --log-format internal-json -v switch |& nom --json
+```
+
+### cloning and switching locally
+
+```bash
+nix run --extra-experimental-features nix-command --extra-experimental-features flakes nixpkgs#git -- clone https://github.com/colefuerth/dot-files.git
+cd dot-files
+sudo nixos-rebuild --flake .#cole-laptop --log-format internal-json -v switch |& nom --json
 ```
 
 ### build without deploying
