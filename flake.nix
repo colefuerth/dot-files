@@ -16,8 +16,10 @@
     hyprland-plugins = {
       url = "github:hyprwm/hyprland-plugins";
       inputs.hyprland.follows = "hyprland";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
     nix-vscode-extensions.url = "github:nix-community/nix-vscode-extensions";
+    nix-vscode-extensions.inputs.nixpkgs.follows = "nixpkgs";
   };
 
   outputs =
@@ -38,6 +40,45 @@
             value = f name;
           }) systems
         );
+      
+      mkNixosConfiguration = {
+        host,
+        username,
+        system,
+        repoRoot,
+      }:
+        nixpkgs.lib.nixosSystem {
+          inherit system;
+          specialArgs = {
+            inherit
+              inputs
+              host
+              username
+              repoRoot
+              ;
+          };
+          modules = [
+            ./nixos/hosts/${host}/configuration.nix
+            home-manager.nixosModules.home-manager
+            {
+              home-manager.extraSpecialArgs = {
+                inherit
+                  inputs
+                  host
+                  username
+                  repoRoot
+                  ;
+              };
+              home-manager.useGlobalPkgs = true;
+              home-manager.useUserPackages = true;
+              home-manager.backupFileExtension = "bak.home-manager-${
+                self.shortRev or self.dirtyShortRev or self.lastModified or "unknown"
+              }";
+              home-manager.users.${username} = import ./nixos/users/${username}/home.nix;
+            }
+            sops-nix.nixosModules.sops
+          ];
+        };
     in
     {
       formatter = forAllSystems (system: nixpkgs.legacyPackages.${system}.nixfmt-rfc-style);
@@ -55,45 +96,12 @@
       overlays.default = import ./overlays;
 
       nixosConfigurations = rec {
-        cole-laptop =
-          let
-            host = "cole-laptop";
-            username = "cole";
-            system = "x86_64-linux";
-            repoRoot = builtins.toString ./.;
-          in
-          nixpkgs.lib.nixosSystem {
-            inherit system;
-            specialArgs = {
-              inherit
-                inputs
-                host
-                username
-                repoRoot
-                ;
-            };
-            modules = [
-              ./nixos/hosts/${host}/configuration.nix
-              home-manager.nixosModules.home-manager
-              {
-                home-manager.extraSpecialArgs = {
-                  inherit
-                    inputs
-                    host
-                    username
-                    repoRoot
-                    ;
-                };
-                home-manager.useGlobalPkgs = true;
-                home-manager.useUserPackages = true;
-                home-manager.backupFileExtension = "bak.home-manager-${
-                  self.shortRev or self.dirtyShortRev or self.lastModified or "unknown"
-                }";
-                home-manager.users.${username} = import ./nixos/users/${username}/home.nix;
-              }
-              sops-nix.nixosModules.sops
-            ];
-          };
+        cole-laptop = mkNixosConfiguration {
+          host = "cole-laptop";
+          username = "cole";
+          system = "x86_64-linux";
+          repoRoot = builtins.toString ./.;
+        };
       };
     };
 }
