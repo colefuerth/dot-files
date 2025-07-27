@@ -270,16 +270,22 @@ in
     #   polkitPolicyOwners = [ "${username}" ];
     # };
     java.enable = true;
-    nix-ld.enable = true;
+    nix-ld = {
+      enable = true;
+      libraries = with pkgs; [
+        stdenv.cc.cc.lib
+        openssl
+        curl
+        git
+        nodejs_20
+        python3
+      ];
+    };
     steam = {
       enable = true;
       remotePlay.openFirewall = true; # Open ports in the firewall for Steam Remote Play
       dedicatedServer.openFirewall = true; # Open ports in the firewall for Source Dedicated Server
     };
-    # qgroundcontrol = {
-    #   enable = true;
-    #   blacklistModemManagerFromTTYUSB = true;
-    # };
     # tmux.enable = true;
     vim = {
       enable = true;
