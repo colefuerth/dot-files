@@ -102,6 +102,12 @@
           system = "x86_64-linux";
           repoRoot = builtins.toString ./.;
         };
+        cole-vm = mkNixosConfiguration {
+          host = "cole-vm";
+          username = "cole";
+          system = "x86_64-linux";
+          repoRoot = builtins.toString ./.;
+        };
       };
     };
 }
