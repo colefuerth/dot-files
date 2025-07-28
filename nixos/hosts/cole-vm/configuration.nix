@@ -16,8 +16,7 @@ in
   imports = [
     ../../common
     ../../common/cachix.nix
-    # ../../common/nixbuild.nix
-    # Include the results of the hardware scan.
+    ../../common/nixbuild.nix
     ./hardware-configuration.nix
     (fetchTarball {
       url = "https://github.com/nix-community/nixos-vscode-server/tarball/master";
@@ -31,10 +30,10 @@ in
     enable = true;
     users = [ username ];
   };
-  # nixcfg.nixbuild = {
-  #   enable = false;
-  #   disableThisSystem = false;
-  # };
+  nixcfg.nixbuild = {
+    enable = true;
+    disableThisSystem = false;
+  };
 
   # Select the kernel version
   boot.kernelPackages = pkgs.linuxPackages;
@@ -47,15 +46,7 @@ in
   boot.loader.grub.device = "/dev/vda";
   boot.loader.grub.useOSProber = true;
 
-  # boot.initrd.luks.devices."luks-468fc01f-17de-4294-9822-0f4f5d8f8d2f".device =
-  #   "/dev/disk/by-uuid/468fc01f-17de-4294-9822-0f4f5d8f8d2f";
-
   networking.hostName = host; # Define your hostname.
-  # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
-
-  # Configure network proxy if necessary
-  # networking.proxy.default = "http://user:password@proxy:port/";
-  # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
 
   # Enable networking
   networking.networkmanager.enable = true;
@@ -78,78 +69,61 @@ in
     LC_TIME = "en_US.UTF-8";
   };
 
-  fonts = {
-    enableDefaultPackages = true;
-    enableGhostscriptFonts = true;
-    fontDir = {
-      enable = true;
-      decompressFonts = true;
-    };
-    fontconfig = {
-      enable = true;
-      antialias = true;
-      cache32Bit = true;
-      useEmbeddedBitmaps = true;
-      defaultFonts = {
-        monospace = [ "Consolas" ];
-      };
-    };
-    packages = with pkgs; [
-      # todo: add
-      # fira-code
-      # fira-code-symbols
-      vista-fonts
-      # nerdfonts.consolas
-    ]; # todo: add
-  };
-
   # Enable the X11 windowing system.
-  services.xserver.enable = true;
+  services.xserver.enable = false;
+
+  # fonts = {
+  #   enableDefaultPackages = true;
+  #   enableGhostscriptFonts = true;
+  #   fontDir = {
+  #     enable = true;
+  #     decompressFonts = true;
+  #   };
+  #   fontconfig = {
+  #     enable = true;
+  #     antialias = true;
+  #     cache32Bit = true;
+  #     useEmbeddedBitmaps = true;
+  #     defaultFonts = {
+  #       monospace = [ "Consolas" ];
+  #     };
+  #   };
+  #   packages = with pkgs; [
+  #     vista-fonts
+  #   ];
+  # };
 
   # Enable the GNOME Desktop Environment.
-  services.xserver.displayManager.gdm.enable = true;
-  services.xserver.desktopManager.gnome.enable = true;
+  # services.xserver.displayManager.gdm.enable = true;
+  # services.xserver.desktopManager.gnome.enable = true;
 
   # Enable automatic login for the user.
-  services.displayManager.autoLogin.enable = true;
-  services.displayManager.autoLogin.user = "cole";
+  # services.displayManager.autoLogin.enable = true;
+  # services.displayManager.autoLogin.user = "cole";
 
-  # Workaround for GNOME autologin: https://github.com/NixOS/nixpkgs/issues/103746#issuecomment-945091229
-  systemd.services."getty@tty1".enable = false;
-  systemd.services."autovt@tty1".enable = false;
-
-  # Exclude default GNOME apps
-  environment.gnome.excludePackages = (
-    with pkgs;
-    [
-      atomix # puzzle game
-      cheese # webcam tool
-      epiphany # web browser
-      evince # document viewer
-      geary # email reader
-      # gedit # text editor
-      # gnome-calendar # calendar application
-      # gnome-characters
-      # gnome-music
-      # gnome-photos
-      # gnome-terminal
-      # gnome-weather
-      # gnome-tour
-      hitori # sudoku game
-      iagno # go game
-      tali # poker game
-      totem # video player
-    ]
-  );
+  # # Workaround for GNOME autologin: https://github.com/NixOS/nixpkgs/issues/103746#issuecomment-945091229
+  # systemd.services."getty@tty1".enable = false;
+  # systemd.services."autovt@tty1".enable = false;
 
   # Configure keymap in X11
-  services.xserver.xkb = {
-    layout = "us";
-    variant = "";
-  };
+  # services.xserver.xkb = {
+  #   layout = "us";
+  #   variant = "";
+  # };
+
+  # backend for gnome, required for printing and links etc
+  # xdg.portal = {
+  #   enable = true;
+  #   wlr.enable = true;
+  #   extraPortals = with pkgs; [
+  #     # xdg-desktop-portal-wlr
+  #     # xdg-desktop-portal-gtk
+  #     xdg-desktop-portal-gnome
+  #   ];
+  # };
 
   # Enable CUPS to print documents.
-  services.printing.enable = true;
+  # services.printing.enable = true;
 
   # Enable sound with pipewire.
   services.pulseaudio.enable = false;
@@ -185,8 +159,9 @@ in
       "wheel"
     ];
     packages = with pkgs; [
-      # packages I want to install for all users
+      # userspace packages I want to install for all users
     ];
+    shell = pkgs.zsh;
   };
 
   # Allow unfree packages
@@ -195,35 +170,10 @@ in
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
-    # bmap-tools
     cachix
-    chromium
-    discord
-    # dfu-util
-    e2fsprogs
-    firefoxpwa
-    gparted
-    jq
     neofetch
-    nix-output-monitor
-    libsForQt5.okular
-    # picocom
-    # slack
-    steam
     vscode-with-extensions
-    # wireshark
-    # zoom-us
   ];
-
-  # Removed CUDA/NVIDIA session variables
-
-  # Some programs need SUID wrappers, can be configured further or are
-  # started in user sessions.
-  # programs.mtr.enable = true;
-  programs.gnupg.agent = {
-    enable = true;
-    enableSSHSupport = true;
-  };
 
   # List services that you want to enable:
 
@@ -240,32 +190,17 @@ in
   # Or disable the firewall altogether.
   # networking.firewall.enable = false;
 
-  system.stateVersion = "24.11";
-
-  services.logind = {
-    extraConfig = "HandlePowerKey=suspend";
-    lidSwitch = "suspend";
-  };
+  system.stateVersion = "25.11";
 
   # Use simple graphics configuration like working /etc config
-  hardware.graphics.enable = true;
-  services.xserver.videoDrivers = [ "modesetting" ];
+  # hardware.graphics.enable = true;
+  # services.xserver.videoDrivers = [ "modesetting" ];
   # Removed nouveau blacklisting - not needed without NVIDIA config
   # Removed nvidia module packages
   # hardware.nvidia.forceFullCompositionPipeline = true;
 
   virtualisation.docker.enable = true;
   virtualisation.docker.daemon.settings.features.cdi = true;
-
-  xdg.portal = {
-    enable = true;
-    wlr.enable = true;
-    extraPortals = with pkgs; [
-      # xdg-desktop-portal-wlr
-      # xdg-desktop-portal-gtk
-      xdg-desktop-portal-gnome
-    ];
-  };
 
   services.fwupd.enable = true;
 
@@ -274,15 +209,13 @@ in
   services.envfs.enable = true;
 
   programs = {
-    # _1password.enable = true;
-    # _1password-gui = {
-    #   enable = true;
-    #   # Certain features, including CLI integration and system authentication support,
-    #   # require enabling PolKit integration on some desktop environments (e.g. Plasma).
-    #   polkitPolicyOwners = [ "${username}" ];
-    # };
+    gnupg.agent = {
+      enable = true;
+      enableSSHSupport = true;
+    };
     java.enable = true;
     nix-ld = {
+      # required for vscode-server to run as a service
       enable = true;
       libraries = with pkgs; [
         stdenv.cc.cc.lib
@@ -293,17 +226,12 @@ in
         python3
       ];
     };
-    steam = {
-      enable = true;
-      remotePlay.openFirewall = true; # Open ports in the firewall for Steam Remote Play
-      dedicatedServer.openFirewall = true; # Open ports in the firewall for Source Dedicated Server
-    };
-    # tmux.enable = true;
     vim = {
       enable = true;
       defaultEditor = false;
     };
-    # wireshark.enable = true;
+    zsh = {
+      enable = true;
+    };
   };
-
 }

@@ -40,13 +40,14 @@
             value = f name;
           }) systems
         );
-      
-      mkNixosConfiguration = {
-        host,
-        username,
-        system,
-        repoRoot,
-      }:
+
+      mkNixosConfiguration =
+        {
+          host,
+          username,
+          system,
+          repoRoot,
+        }:
         nixpkgs.lib.nixosSystem {
           inherit system;
           specialArgs = {

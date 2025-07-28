@@ -69,6 +69,10 @@ in
           hostNames = [ "eu.nixbuild.net" ];
           publicKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPIQCZc54poJ8vqawd8TraNryQeJnvH1eLpIDgbiqymM";
         };
+        s = {
+          hostNames = [ "s" ];
+          publicKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPIQCZc54poJ8vqawd8TraNryQeJnvH1eLpIDgbiqymM"; # TODO: fix this
+        };
       };
     };
     nix = {
@@ -76,7 +80,7 @@ in
       buildMachines =
         lib.optionals (pkgs.system != "x86_64-linux" || !cfg.disableThisSystem) [
           {
-            hostName = "eu.nixbuild.net";
+            hostName = "l";
             system = "x86_64-linux";
             maxJobs = 100;
             supportedFeatures = [
@@ -87,7 +91,7 @@ in
         ]
         ++ lib.optionals (pkgs.system != "aarch64-linux" || !cfg.disableThisSystem) [
           {
-            hostName = "eu.nixbuild.net";
+            hostName = "s";
             system = "aarch64-linux";
             maxJobs = 100;
             supportedFeatures = [
@@ -117,7 +121,7 @@ in
           }
         ];
       settings = {
-        substituters = [ "ssh://eu.nixbuild.net?priority=50" ];
+        # substituters = [ "ssh://eu.nixbuild.net?priority=50" ];
         trusted-public-keys = [ "nixbuild.net/PM4CHU-1:RpxgxQ+tNPjQ+GAyUDJcESVTTxH64SG4sBNHakKQNbU=" ];
       };
     };
