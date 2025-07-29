@@ -63,29 +63,31 @@
               repoRoot
               ;
           };
-          modules = [
-            ./nixos/hosts/${host}/configuration.nix
-            home-manager.nixosModules.home-manager
-            {
-              home-manager.extraSpecialArgs = {
-                inherit
-                  inputs
-                  host
-                  username
-                  repoRoot
-                  ;
-              };
-              home-manager.useGlobalPkgs = true;
-              home-manager.useUserPackages = true;
-              home-manager.backupFileExtension = "bak.home-manager-${
-                self.shortRev or self.dirtyShortRev or self.lastModified or "unknown"
-              }";
-              home-manager.users.${username} = import ./nixos/users/${username}/home.nix;
-            }
-            sops-nix.nixosModules.sops
-          ] ++ (nixpkgs.lib.optionals (nixpkgs.lib.strings.hasSuffix "wsl2" host) [
-            nixos-wsl.nixosModules.wsl
-          ]);
+          modules =
+            [
+              ./nixos/hosts/${host}/configuration.nix
+              home-manager.nixosModules.home-manager
+              {
+                home-manager.extraSpecialArgs = {
+                  inherit
+                    inputs
+                    host
+                    username
+                    repoRoot
+                    ;
+                };
+                home-manager.useGlobalPkgs = true;
+                home-manager.useUserPackages = true;
+                home-manager.backupFileExtension = "bak.home-manager-${
+                  self.shortRev or self.dirtyShortRev or self.lastModified or "unknown"
+                }";
+                home-manager.users.${username} = import ./nixos/users/${username}/home.nix;
+              }
+              sops-nix.nixosModules.sops
+            ]
+            ++ (nixpkgs.lib.optionals (nixpkgs.lib.strings.hasSuffix "wsl2" host) [
+              nixos-wsl.nixosModules.wsl
+            ]);
         };
     in
     {
