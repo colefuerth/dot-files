@@ -114,7 +114,7 @@
         };
         cole-wsl2 = mkNixosConfiguration {
           host = "cole-wsl2";
-          username = "nixos";
+          username = "cole";
           system = "x86_64-linux";
           repoRoot = builtins.toString ./.;
         };
