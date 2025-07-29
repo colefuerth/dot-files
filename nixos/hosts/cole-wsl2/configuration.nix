@@ -34,6 +34,10 @@
     users = [ username ];
   };
 
+  boot.kernelPackages = pkgs.linuxPackages;
+
+  networking.hostName = host;
+
   time.timeZone = "America/Los_Angeles";
 
   i18n.defaultLocale = "en_US.UTF-8";
@@ -54,7 +58,7 @@
 
   users.users.${username} = {
     isNormalUser = true;
-    description = "Cole Fuerth";
+    description = ${username};
     extraGroups = [
       # TODO: dialout and docker may be security risks
       "dialout"
@@ -82,11 +86,6 @@
   virtualisation.docker.daemon.settings.features.cdi = true;
 
   programs = {
-    gnupg.agent = {
-      enable = true;
-      enableSSHSupport = true;
-    };
-    java.enable = true;
     nix-ld = {
       # required for vscode-server to run as a service
       enable = true;

@@ -49,21 +49,21 @@ in
     #   key = "token";
     # };
     programs.ssh = {
-      extraConfig = ''
-        # Use the shared key for builds and store read/write(s)
-        Host eu.nixbuild.net
-          PubkeyAcceptedKeyTypes ssh-ed25519
-          ServerAliveInterval 60
-          IPQoS throughput
-          IdentityFile /data/awatwe/.ssh/nixbuild/heaviside-shared
-        # Keep an admin SSH config
-        Host nixbuild-admin
-          Hostname eu.nixbuild.net
-          PubkeyAcceptedKeyTypes ssh-ed25519
-          ServerAliveInterval 60
-          IPQoS throughput
-          IdentityFile /data/awatwe/.ssh/nixbuild/heaviside-admin
-      '';
+      # extraConfig = ''
+      #   # Use the shared key for builds and store read/write(s)
+      #   Host eu.nixbuild.net
+      #     PubkeyAcceptedKeyTypes ssh-ed25519
+      #     ServerAliveInterval 60
+      #     IPQoS throughput
+      #     IdentityFile /data/awatwe/.ssh/nixbuild/heaviside-shared
+      #   # Keep an admin SSH config
+      #   Host nixbuild-admin
+      #     Hostname eu.nixbuild.net
+      #     PubkeyAcceptedKeyTypes ssh-ed25519
+      #     ServerAliveInterval 60
+      #     IPQoS throughput
+      #     IdentityFile /data/awatwe/.ssh/nixbuild/heaviside-admin
+      # '';
       knownHosts = {
         nixbuild = {
           hostNames = [ "eu.nixbuild.net" ];
