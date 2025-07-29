@@ -1,5 +1,5 @@
 #!/bin/sh
-/usr/bin/neofetch
+neofetch
 echo
 echo "SYSTEM DISK USAGE"
 export TERM=xterm; inxi -D
