@@ -9,7 +9,7 @@ This project is for quick bringup and easy synchronization of shell environments
 ```bash
 SYSTEM="cole-laptop"
 sudo echo "sudo acquired" # nom cuts off the sudo prompt, so preauthenticate
-sudo nixos-rebuild --flake github:colefuerth/dot-files#$SYSTEM --log-format internal-json -v switch |& nix run --extra-experimental-features "nix-command flakes" nixpkgs#nom -- --json
+sudo nixos-rebuild --flake github:colefuerth/dot-files#$SYSTEM --log-format internal-json -v switch |& nix run --extra-experimental-features "nix-command flakes" nixpkgs#nix-output-monitor -- --json
 ```
 
 ### cloning and switching locally
