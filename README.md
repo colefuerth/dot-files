@@ -21,13 +21,19 @@ sudo nixos-rebuild --flake .#cole-laptop --log-format internal-json -v switch |&
 ### build without deploying
 
 ```bash
+SYSTEM="cole-laptop"
 nixos-rebuild --flake .#cole-laptop --log-format internal-json -v build |& nom --json
+
+# OR
+
+SYSTEM="cole-vm"
+nix build --log-format internal-json --verbose .#nixosConfigurations.$SYSTEM.config.system.build.toplevel |& nom --json
 ```
 
 ### test locally
 
 ```bash
-sudo nixos-rebuild --flake .#cole-laptop test
+sudo nixos-rebuild --flake .#$SYSTEM test
 
 ## Installation on Ubuntu/Pop
 

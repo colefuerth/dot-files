@@ -20,6 +20,10 @@
     };
     nix-vscode-extensions.url = "github:nix-community/nix-vscode-extensions";
     nix-vscode-extensions.inputs.nixpkgs.follows = "nixpkgs";
+    nixos-wsl = {
+      url = "github:nix-community/NixOS-WSL";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -28,6 +32,7 @@
       nixpkgs,
       home-manager,
       sops-nix,
+      nixos-wsl,
       ...
     }@inputs:
     let
@@ -78,7 +83,9 @@
               home-manager.users.${username} = import ./nixos/users/${username}/home.nix;
             }
             sops-nix.nixosModules.sops
-          ];
+          ] ++ (nixpkgs.lib.optionals (nixpkgs.lib.strings.hasSuffix "wsl2" host) [
+            nixos-wsl.nixosModules.wsl
+          ]);
         };
     in
     {
@@ -99,6 +106,12 @@
       nixosConfigurations = rec {
         cole-laptop = mkNixosConfiguration {
           host = "cole-laptop";
+          username = "cole";
+          system = "x86_64-linux";
+          repoRoot = builtins.toString ./.;
+        };
+        cole-wsl2 = mkNixosConfiguration {
+          host = "cole-wsl2";
           username = "cole";
           system = "x86_64-linux";
           repoRoot = builtins.toString ./.;
