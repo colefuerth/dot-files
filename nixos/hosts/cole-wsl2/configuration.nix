@@ -58,7 +58,7 @@
 
   users.users.${username} = {
     isNormalUser = true;
-    description = ${username};
+    description = username;
     extraGroups = [
       # TODO: dialout and docker may be security risks
       "dialout"
