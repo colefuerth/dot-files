@@ -13,7 +13,7 @@ sudo nixos-rebuild --flake github:colefuerth/dot-files#cole-laptop --log-format 
 ### cloning and switching locally
 
 ```bash
-nix run --extra-experimental-features nix-command --extra-experimental-features flakes nixpkgs#git -- clone https://github.com/colefuerth/dot-files.git
+nix run --extra-experimental-features "nix-command flakes" nixpkgs#git -- clone https://github.com/colefuerth/dot-files.git
 cd dot-files
 sudo nixos-rebuild --flake .#cole-laptop --log-format internal-json -v switch |& nom --json
 ```
@@ -21,8 +21,8 @@ sudo nixos-rebuild --flake .#cole-laptop --log-format internal-json -v switch |&
 ### build without deploying
 
 ```bash
-SYSTEM="cole-laptop"
-nixos-rebuild --flake .#cole-laptop --log-format internal-json -v build |& nom --json
+SYSTEM="cole-wsl2"
+nixos-rebuild --flake .#$SYSTEM --log-format internal-json -v build |& nom --json
 
 # OR
 
