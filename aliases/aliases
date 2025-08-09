@@ -6,6 +6,7 @@ cpaths=(
     "$HOME/.cargo/bin"
     "$HOME/.platformio/penv/bin"
     "/usr/local/bin"
+    "$HOME/.platform-tools"
 )
 for p in "${cpaths[@]}"; do
     if [ -d "$p" ]; then

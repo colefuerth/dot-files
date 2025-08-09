@@ -2,16 +2,6 @@
 
 # for those wondering: your old zshrc file is under "~/.zsh_aliases/.zshrc"
 
-ZSH="$HOME/.oh-my-zsh"
-
-# Theme
-ZSH_THEME=""
-
-# Plugins
-plugins=(git zsh-autosuggestions nix-zsh-completions)
-DISABLE_UPDATE_PROMPT=true
-source $ZSH/oh-my-zsh.sh
-
 # auto updating only happens if the scripts_dir exists, the config is set, and auto_update has been set to true
 SCRIPTS_DIR="$HOME/dot-files"
 if [ ! -z SCRIPTS_DIR ] && [ -r "$SCRIPTS_DIR/config.bash" ] && grep -q "AUTO_UPDATE=true" "$SCRIPTS_DIR/config.bash"; then
@@ -20,12 +10,22 @@ fi
 
 export SHRC="zsh"
 
-# Load Zsh alias files from ~/zsh_aliases/
-for file in $HOME/.zsh_aliases/*; do
-    source "$file"
-done
+ZSH="$HOME/.oh-my-zsh"
+
+# Theme
+ZSH_THEME=""
+
+# Plugins
+plugins=(git zsh-autosuggestions nix-zsh-completions zsh-syntax-highlighting) #syntax must be last
+DISABLE_UPDATE_PROMPT=true
+source $ZSH/oh-my-zsh.sh
 
 # load completion functions for custom scripts, if installed
 if [ -d ~/.bash_completion.d ]; then
     for f in ~/.bash_completion.d/*; do source $f; done
 fi
+
+# Load Zsh alias files from ~/zsh_aliases/
+for file in $HOME/.zsh_aliases/*; do
+    source "$file"
+done

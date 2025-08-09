@@ -65,6 +65,11 @@ if $SETUP_ZSH; then
     else
         cd ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/nix-zsh-completions && git pull
     fi
+    if [ ! -e "${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting" ]; then
+        git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
+    else
+        cd ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting && git pull
+    fi
 
     # .zsh_aliases setup
 
@@ -124,10 +129,19 @@ if $SETUP_BASH; then
 
     # .bashrc setup
     if [ -e "$HOME/.bashrc" ]; then
-        mv "$HOME/.bashrc" "$HOME/.bash_aliases/.bashrc"
+        mv "$HOME/.bashrc" "$HOME/.bash_aliases/bashrc"
     fi
     cp dot-rc/bashrc $HOME/.bashrc
     sed -i "s|^SCRIPTS_DIR=\".*\"|SCRIPTS_DIR=\"$BASE\"|" $HOME/.bashrc
+
+    mkdir -p $HOME/.local $HOME/.repos
+
+    # bash syntax highlighting setup
+    git clone --recursive --depth 1 --shallow-submodules https://github.com/akinomyoga/ble.sh.git $HOME/.repos/ble.sh
+    make -C $HOME/.repos/ble.sh install PREFIX=$HOME/.local
+
+    # bash autocomplete
+    git clone https://github.com/armoar334/linecomp.git $HOME/.repos/linecomp
 fi
 
 if $INSTALL_TOOLS; then

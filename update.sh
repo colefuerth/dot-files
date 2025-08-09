@@ -1,5 +1,11 @@
 #!/bin/bash
 
+set -x pipefail
+if [ ! -d "$HOME/dot-files" ]; then
+    echo "SD Scripts Error: dot-files directory not found in home directory."
+    exit 1
+fi
+
 [ ! -r "config.bash" ] && cp config.bash.example config.bash
 . config.bash
 
