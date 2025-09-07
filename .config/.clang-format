@@ -1,0 +1,14 @@
+---
+BasedOnStyle: LLVM
+IndentWidth: 4
+AlignAfterOpenBracket: BlockIndent
+AlignArrayOfStructures: Right
+AlignConsecutiveMacros: Consecutive
+AlignEscapedNewlines: LeftWithLastLine
+AlignOperands: AlignAfterOperator
+AlignTrailingComments: Always
+AllowShortFunctionsOnASingleLine: All
+AllowShortEnumsOnASingleLine: true
+AllowShortIfStatementsOnASingleLine: AllIfsAndElse
+AllowShortLambdasOnASingleLine: All
+BreakBeforeBraces: Linux
