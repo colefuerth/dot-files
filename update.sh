@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -x pipefail
+# set -x pipefail
 if [ ! -d "$HOME/dot-files" ]; then
     echo "SD Scripts Error: dot-files directory not found in home directory."
     exit 1
