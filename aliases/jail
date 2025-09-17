@@ -13,6 +13,8 @@ jail() {
         docker run -it --privileged \
             -v $HOME/.ssh:/home/$(whoami)/.ssh:ro \
             -v jail_home:/home/$(whoami) \
+            -v "$PWD:/workspace:rw" \
+            -w /workspace \
             -e USERNAME=$(whoami) \
             --name ${container_name} \
             jail

@@ -7,6 +7,8 @@ cpaths=(
     "$HOME/.platformio/penv/bin"
     "/usr/local/bin"
     "$HOME/.platform-tools"
+    "/opt/microchip/mplabx/v6.25/mplab_platform/bin"
+    "/opt/microchip/mplabx/v6.20/mplab_platform/bin"
 )
 for p in "${cpaths[@]}"; do
     if [ -d "$p" ]; then
