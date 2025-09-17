@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+set -euxo pipefail
+if ! command -v curl &> /dev/null; then
+    echo "curl is not installed. Please install it first."
+    exit 1
+fi
+if ! command -v apt &> /dev/null; then
+    echo "This script is intended for Debian-based systems. Please use the appropriate package manager for your system."
+    exit 1
+fi
+
+url="https://discord.com/api/download?platform=linux&format=deb"
+curl -L -o /tmp/discord.deb $url
+sudo apt install /tmp/discord.deb
+rm /tmp/discord.deb
+echo "Discord has been updated."
+exit 0

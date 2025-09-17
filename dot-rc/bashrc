@@ -2,6 +2,7 @@
 
 # for those wondering: your old bashrc file is under "~/.bash_aliases/.bashrc"
 
+# auto updating only happens if the scripts_dir exists, the config is set, and auto_update has been set to true
 SCRIPTS_DIR="$HOME/dot-files"
 if [ ! -z SCRIPTS_DIR ] && [ -r "$SCRIPTS_DIR/config.bash" ] && grep -q "AUTO_UPDATE=true" "$SCRIPTS_DIR/config.bash"; then
     (cd $SCRIPTS_DIR && ./update.sh)
@@ -18,3 +19,9 @@ done
 if [ -d ~/.bash_completion.d ]; then
     for f in ~/.bash_completion.d/*; do source $f; done
 fi
+
+# syntax highlighting
+[ -f ~/.local/share/blesh/ble.sh ] && source ~/.local/share/blesh/ble.sh
+
+# autocomplete
+[ -f ~/.repos/linecomp/linecomp.sh ] && source ~/.repos/linecomp/linecomp.sh
