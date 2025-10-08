@@ -29,3 +29,6 @@ fi
 for file in $HOME/.zsh_aliases/*; do
     source "$file"
 done
+
+unsetopt share_history
+setopt inc_append_history
