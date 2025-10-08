@@ -1,0 +1,21 @@
+#!/usr/bin/python3
+
+from intelhex import IntelHex
+import sys
+
+if len(sys.argv) < 3:
+    print("usage: mergehex <output.hex> <input1.hex> <input2.hex> ...")
+    sys.exit(1)
+
+output_file = sys.argv[1]
+input_files = sys.argv[2:]
+
+merged = IntelHex()
+
+for input_file in input_files:
+    ih = IntelHex(input_file)
+    merged.merge(ih, overlap='error')
+
+with open(output_file, 'w') as output:
+    merged.write_hex_file(output)
+print(f"Merged {len(input_files)} files into {output_file}")
