@@ -273,11 +273,9 @@ fi
 if $SETUP_GIT; then
     # git config
     # get the user's name and email from cli
-    EMAIL=""
     while [ -z "$EMAIL" ]; do
         read -p "Enter your email for git: " EMAIL
     done
-    NAME=""
     while [ -z "$NAME" ]; do
         read -p "Enter your name for git: " NAME
     done
