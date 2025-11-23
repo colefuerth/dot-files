@@ -46,6 +46,37 @@
           }) systems
         );
 
+      # Helper to create the common module list for a host configuration
+      mkConfigModules =
+        {
+          host,
+          username,
+          repoRoot,
+          backupSuffix ? "bak.home-manager-${self.shortRev or self.dirtyShortRev or self.lastModified or "unknown"}",
+        }:
+        [
+          ./nixos/hosts/${host}/configuration.nix
+          home-manager.nixosModules.home-manager
+          {
+            home-manager.extraSpecialArgs = {
+              inherit
+                inputs
+                host
+                username
+                repoRoot
+                ;
+            };
+            home-manager.useGlobalPkgs = true;
+            home-manager.useUserPackages = true;
+            home-manager.backupFileExtension = backupSuffix;
+            home-manager.users.${username} = import ./nixos/users/${username}/home.nix;
+          }
+          sops-nix.nixosModules.sops
+        ]
+        ++ (nixpkgs.lib.optionals (nixpkgs.lib.strings.hasSuffix "wsl2" host) [
+          nixos-wsl.nixosModules.wsl
+        ]);
+
       mkNixosConfiguration =
         {
           host,
@@ -63,31 +94,13 @@
               repoRoot
               ;
           };
-          modules =
-            [
-              ./nixos/hosts/${host}/configuration.nix
-              home-manager.nixosModules.home-manager
-              {
-                home-manager.extraSpecialArgs = {
-                  inherit
-                    inputs
-                    host
-                    username
-                    repoRoot
-                    ;
-                };
-                home-manager.useGlobalPkgs = true;
-                home-manager.useUserPackages = true;
-                home-manager.backupFileExtension = "bak.home-manager-${
-                  self.shortRev or self.dirtyShortRev or self.lastModified or "unknown"
-                }";
-                home-manager.users.${username} = import ./nixos/users/${username}/home.nix;
-              }
-              sops-nix.nixosModules.sops
-            ]
-            ++ (nixpkgs.lib.optionals (nixpkgs.lib.strings.hasSuffix "wsl2" host) [
-              nixos-wsl.nixosModules.wsl
-            ]);
+          modules = mkConfigModules {
+            inherit
+              host
+              username
+              repoRoot
+              ;
+          };
         };
     in
     {
@@ -125,5 +138,58 @@
           repoRoot = builtins.toString ./.;
         };
       };
+
+      packages = forAllSystems (
+        system:
+        {
+          # Interactive VMs for each configuration
+          cole-laptop-vm = self.nixosConfigurations.cole-laptop.config.system.build.vm;
+          cole-vm-vm = self.nixosConfigurations.cole-vm.config.system.build.vm;
+          cole-wsl2-vm = self.nixosConfigurations.cole-wsl2.config.system.build.vm;
+        }
+      );
+
+      checks = forAllSystems (
+        system:
+        let
+          pkgs = nixpkgs.legacyPackages.${system};
+
+          # Helper function to create a test for a configuration
+          mkConfigTest =
+            {
+              name,
+              host,
+              username,
+            }:
+            pkgs.testers.runNixOSTest {
+              inherit name;
+              nodes.machine = {
+                imports = mkConfigModules {
+                  inherit host username;
+                  repoRoot = builtins.toString ./.;
+                  backupSuffix = "bak.home-manager-test";
+                };
+              };
+
+              testScript = ''
+                machine.wait_for_unit("multi-user.target")
+                machine.succeed("systemctl status")
+              '';
+            };
+        in
+        {
+          cole-laptop-test = mkConfigTest {
+            name = "cole-laptop-test";
+            host = "cole-laptop";
+            username = "cole";
+          };
+          cole-vm-test = mkConfigTest {
+            name = "cole-vm-test";
+            host = "cole-vm";
+            username = "cole";
+          };
+          # Skip cole-wsl2 as WSL configurations may not work well in QEMU
+        }
+      );
     };
 }

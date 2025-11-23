@@ -1,8 +1,9 @@
 ---
 BasedOnStyle: LLVM
-IndentWidth: 4
 AlignAfterOpenBracket: BlockIndent
 AlignArrayOfStructures: Right
+AlignConsecutiveAssignments: true
+AlignConsecutiveDeclarations: true
 AlignConsecutiveMacros: Consecutive
 AlignEscapedNewlines: LeftWithLastLine
 AlignOperands: AlignAfterOperator
@@ -11,4 +12,17 @@ AllowShortFunctionsOnASingleLine: All
 AllowShortEnumsOnASingleLine: true
 AllowShortIfStatementsOnASingleLine: AllIfsAndElse
 AllowShortLambdasOnASingleLine: All
+BinPackArguments: false
+BinPackParameters: false
 BreakBeforeBraces: Linux
+IncludeBlocks: Preserve
+IndentWidth: 4
+InsertBraces: true
+KeepEmptyLines:
+  AtEndOfFile: true
+LineEnding: LF
+MaxEmptyLinesToKeep: 1
+SeparateDefinitionBlocks: Always
+SortIncludes: true
+SortUsingDeclarations: true
+SpaceAfterCStyleCast: false
