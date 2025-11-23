@@ -180,8 +180,6 @@
       zsh = rec {
         enable = true;
         enableCompletion = true;
-        enableSyntaxHighlighting = true;
-        enableAutosuggestions = true;
         autosuggestion.enable = true;
         syntaxHighlighting.enable = true;
 

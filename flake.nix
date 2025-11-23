@@ -141,11 +141,21 @@
 
       packages = forAllSystems (
         system:
+        let
+          pkgs = import nixpkgs {
+            inherit system;
+            config.allowUnfreePredicate = pkg: builtins.elem (nixpkgs.lib.getName pkg) [ "claude-code" ];
+          };
+          repoRoot = builtins.toString ./.;
+        in
         {
           # Interactive VMs for each configuration
           cole-laptop-vm = self.nixosConfigurations.cole-laptop.config.system.build.vm;
           cole-vm-vm = self.nixosConfigurations.cole-vm.config.system.build.vm;
           cole-wsl2-vm = self.nixosConfigurations.cole-wsl2.config.system.build.vm;
+
+          # Standalone shell environment
+          default = import ./shell.nix { inherit pkgs repoRoot; };
         }
       );
 
