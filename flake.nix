@@ -36,7 +36,10 @@
       ...
     }@inputs:
     let
-      systems = [ "x86_64-linux" ];
+      systems = [
+        "x86_64-linux"
+        "aarch64-linux"
+      ];
       forAllSystems =
         f:
         builtins.listToAttrs (
@@ -52,7 +55,9 @@
           host,
           username,
           repoRoot,
-          backupSuffix ? "bak.home-manager-${self.shortRev or self.dirtyShortRev or self.lastModified or "unknown"}",
+          backupSuffix ? "bak.home-manager-${
+            self.shortRev or self.dirtyShortRev or self.lastModified or "unknown"
+          }",
         }:
         [
           ./nixos/hosts/${host}/configuration.nix
@@ -94,13 +99,7 @@
               repoRoot
               ;
           };
-          modules = mkConfigModules {
-            inherit
-              host
-              username
-              repoRoot
-              ;
-          };
+          modules = mkConfigModules { inherit host username repoRoot; };
         };
     in
     {
