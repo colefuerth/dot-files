@@ -2,6 +2,16 @@
 
 This project is for quick bringup and easy synchronization of shell environments between my machines, and has been modified to also support configuration and mods.
 
+## Interactive Shell
+
+Start by installing nix
+
+```bash
+curl -fsSL https://install.determinate.systems/nix | sh -s -- install
+echo "experimental-features = nix-command flakes" | sudo tee --append /etc/nix/nix.conf
+nix run github:colefuerth/dot-files
+```
+
 ## Installation on NixOS
 
 ### switch without cloning (from fresh nixos)
