@@ -79,9 +79,15 @@ pkgs.writeShellScriptBin "cole-shell" ''
   bindkey "^[[H" beginning-of-line
   bindkey "^[[F" end-of-line
 
+  # Add Nix completions to fpath (modern nix commands)
+  fpath=(${pkgs.nix}/share/zsh/site-functions $fpath)
+
   # Completions
   autoload -U compinit && compinit
   autoload -U colors && colors
+
+  # Make nom use the same completions as nix
+  compdef nom=nix
 
   # Load zsh plugins
   source ${pkgs.zsh-autosuggestions}/share/zsh-autosuggestions/zsh-autosuggestions.zsh

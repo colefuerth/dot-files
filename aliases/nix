@@ -2,4 +2,5 @@
 if [ -e '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh' ]; then
   . '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh'
 fi
-# End Nix
+fpath=('/nix/var/nix/profiles/default/share/zsh/site-functions' $fpath)
+compdef nom=nix
