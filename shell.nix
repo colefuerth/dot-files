@@ -33,6 +33,13 @@ pkgs.writeShellScriptBin "cole-shell" ''
   # ncdu wrapper to use config from repo
   alias ncdu='XDG_CONFIG_HOME="${repoRoot}/.config" ncdu'
 
+  # Add Nix completions to fpath (modern nix commands)
+  fpath=(${pkgs.nix}/share/zsh/site-functions $fpath)
+
+  # Initialize completion system EARLY before loading aliases
+  autoload -U compinit && compinit
+  autoload -U colors && colors
+
   # Load completions
   if [[ -d "${repoRoot}/completions" ]] && [[ -n "$(ls -A ${repoRoot}/completions 2>/dev/null)" ]]; then
     for f in ${repoRoot}/completions/*; do
@@ -78,16 +85,6 @@ pkgs.writeShellScriptBin "cole-shell" ''
   bindkey "^[[3~" delete-char
   bindkey "^[[H" beginning-of-line
   bindkey "^[[F" end-of-line
-
-  # Add Nix completions to fpath (modern nix commands)
-  fpath=(${pkgs.nix}/share/zsh/site-functions $fpath)
-
-  # Completions
-  autoload -U compinit && compinit
-  autoload -U colors && colors
-
-  # Make nom use the same completions as nix
-  compdef nom=nix
 
   # Load zsh plugins
   source ${pkgs.zsh-autosuggestions}/share/zsh-autosuggestions/zsh-autosuggestions.zsh
