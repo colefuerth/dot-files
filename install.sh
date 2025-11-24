@@ -59,11 +59,11 @@ if $SETUP_ZSH; then
     else
         cd ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions && git pull
     fi
-    if [ ! -e "${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/nix-zsh-completions" ]; then
-        git clone https://github.com/nix-community/nix-zsh-completions.git \
-            ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/nix-zsh-completions
+    if [ ! -e "${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autocomplete" ]; then
+        git clone https://github.com/marlonrichert/zsh-autocomplete.git \
+            ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autocomplete
     else
-        cd ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/nix-zsh-completions && git pull
+        cd ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autocomplete && git pull
     fi
     if [ ! -e "${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting" ]; then
         git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
