@@ -54,6 +54,14 @@ pkgs.writeShellScriptBin "cole-shell" ''
     fi
   done
 
+  # History configuration (must be before mcfly)
+  HISTFILE=~/.zsh_history
+  HISTSIZE=10000
+  SAVEHIST=10000
+
+  # Create history file if it doesn't exist
+  [[ -f "$HISTFILE" ]] || touch "$HISTFILE"
+
   # Enable starship
   eval "$(${pkgs.starship}/bin/starship init zsh)"
 
@@ -71,10 +79,7 @@ pkgs.writeShellScriptBin "cole-shell" ''
   autoload -U compinit && compinit
   autoload -U colors && colors
 
-  # History
-  HISTFILE=~/.zsh_history
-  HISTSIZE=10000
-  SAVEHIST=10000
+  # History options
   setopt HIST_IGNORE_DUPS
   setopt HIST_EXPIRE_DUPS_FIRST
   setopt EXTENDED_HISTORY
