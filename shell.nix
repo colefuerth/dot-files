@@ -29,6 +29,9 @@ pkgs.writeShellScriptBin "cole-shell" ''
   touch $TMPDIR/.zshenv
 
   cat > $TMPDIR/.zshrc << 'ZSHRC_EOF'
+  # ncdu wrapper to use config from repo
+  alias ncdu='XDG_CONFIG_HOME="${repoRoot}/.config" ncdu'
+
   # Load completions
   if [[ -d "${repoRoot}/completions" ]] && [[ -n "$(ls -A ${repoRoot}/completions 2>/dev/null)" ]]; then
     for f in ${repoRoot}/completions/*; do
