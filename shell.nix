@@ -12,6 +12,9 @@ let
     ranger
     starship
     zsh
+    zsh-autosuggestions
+    zsh-autocomplete
+    zsh-syntax-highlighting
   ];
 in
 pkgs.writeShellScriptBin "cole-shell" ''
@@ -79,6 +82,12 @@ pkgs.writeShellScriptBin "cole-shell" ''
   # Completions
   autoload -U compinit && compinit
   autoload -U colors && colors
+
+  # Load zsh plugins
+  source ${pkgs.zsh-autosuggestions}/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+  source ${pkgs.zsh-autocomplete}/share/zsh-autocomplete/zsh-autocomplete.plugin.zsh
+  # Syntax highlighting must be loaded last
+  source ${pkgs.zsh-syntax-highlighting}/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
   # History options
   setopt HIST_IGNORE_DUPS
