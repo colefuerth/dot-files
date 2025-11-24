@@ -1,3 +1,4 @@
 config.bash
 /result
 /.opencode/
+*.qcow2
