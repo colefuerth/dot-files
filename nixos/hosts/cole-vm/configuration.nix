@@ -72,6 +72,31 @@ in
   # Enable the X11 windowing system.
   services.xserver.enable = false;
 
+  # VM configuration for headless operation with serial console
+  virtualisation.vmVariant = {
+    virtualisation = {
+      memorySize = 2048;
+      cores = 2;
+      graphics = false;
+      # Use serial console for terminal access
+      qemu.options = [
+        "-nographic"
+        "-serial mon:stdio"
+      ];
+      # Forward SSH port for easy access
+      forwardPorts = [
+        {
+          from = "host";
+          host.port = 2222;
+          guest.port = 22;
+        }
+      ];
+    };
+    # Enable serial console getty
+    boot.kernelParams = [ "console=ttyS0" ];
+    systemd.services."serial-getty@ttyS0".enable = true;
+  };
+
   # fonts = {
   #   enableDefaultPackages = true;
   #   enableGhostscriptFonts = true;
@@ -146,10 +171,13 @@ in
   # Enable touchpad support (enabled default in most desktopManager).
   # services.xserver.libinput.enable = true;
 
-  # Define a user account. Don't forget to set a password with ‘passwd’.
+  # Define a user account. Don't forget to set a password with 'passwd'.
+  users.mutableUsers = false; # Required for declarative password management in VMs
+  users.users.root.initialPassword = "root"; # Root login for debugging
   users.users.${username} = {
     isNormalUser = true;
     description = "Cole Fuerth";
+    initialPassword = " ";
     extraGroups = [
       # TODO: dialout and docker may be security risks
       "dialout"
