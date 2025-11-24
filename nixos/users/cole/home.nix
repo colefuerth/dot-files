@@ -203,6 +203,10 @@
         # Fix Ctrl+Left/Right key bindings for word movement
         initContent =
           let
+            # Add nix completions to fpath BEFORE compinit runs
+            zshConfigPreInit = lib.mkOrder 100 ''
+              fpath=(${pkgs.nix}/share/zsh/site-functions $fpath)
+            '';
             # autocompletion - skip bash-only completion files
             zshConfigEarlyInit = lib.mkOrder 500 ''
               if [[ -d "${repoRoot}/completions" ]] && [[ -n "$(ls -A ${repoRoot}/completions 2>/dev/null)" ]]; then
@@ -218,6 +222,10 @@
             zshConfig = lib.mkOrder 1000 ''
               # Set SHRC variable for compatibility with your scripts
               export SHRC="zsh"
+
+              # ncdu wrapper to use config from repo
+              alias ncdu='XDG_CONFIG_HOME="${repoRoot}/.config" ncdu'
+
               # Load all aliases (skip mcfly and starship since handled by home-manager)
               for f in ${repoRoot}/aliases/*; do
                 if [[ -f "$f" ]]; then
@@ -251,6 +259,7 @@
             '';
           in
           lib.mkMerge [
+            zshConfigPreInit
             zshConfigEarlyInit
             zshConfig
             zshConfigLateInit
