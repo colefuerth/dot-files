@@ -25,6 +25,9 @@ pkgs.writeShellScriptBin "cole-shell" ''
   TMPDIR=$(mktemp -d)
   trap "rm -rf $TMPDIR" EXIT
 
+  # Create .zshenv to prevent new-user wizard
+  touch $TMPDIR/.zshenv
+
   cat > $TMPDIR/.zshrc << 'ZSHRC_EOF'
   # Load completions
   if [[ -d "${repoRoot}/completions" ]] && [[ -n "$(ls -A ${repoRoot}/completions 2>/dev/null)" ]]; then
@@ -84,5 +87,6 @@ pkgs.writeShellScriptBin "cole-shell" ''
   fi
   ZSHRC_EOF
 
-  exec ${pkgs.zsh}/bin/zsh -c "source $TMPDIR/.zshrc; exec ${pkgs.zsh}/bin/zsh"
+  export ZDOTDIR=$TMPDIR
+  exec ${pkgs.zsh}/bin/zsh
 ''
