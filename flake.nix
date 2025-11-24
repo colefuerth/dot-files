@@ -104,17 +104,6 @@
     in
     {
       formatter = forAllSystems (system: nixpkgs.legacyPackages.${system}.nixfmt-rfc-style);
-      legacyPackages = forAllSystems (
-        system:
-        let
-          pkgs = import inputs.nixpkgs {
-            inherit system;
-            config.allowUnfree = true;
-            overlays = [ self.overlays.default ];
-          };
-        in
-        pkgs
-      );
       overlays.default = import ./overlays;
 
       nixosConfigurations = rec {
