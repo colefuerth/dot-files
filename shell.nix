@@ -7,10 +7,8 @@ let
     direnv
     eza
     git
-    inxi
     mcfly
     ncdu
-    neofetch
     ranger
     starship
     zsh
@@ -89,10 +87,6 @@ pkgs.writeShellScriptBin "cole-shell" ''
   setopt APPEND_HISTORY
   setopt SHARE_HISTORY
 
-  # Run welcome screen
-  if [[ -f "${repoRoot}/10-welcome" ]]; then
-    bash "${repoRoot}/10-welcome"
-  fi
   ZSHRC_EOF
 
   export ZDOTDIR=$TMPDIR
