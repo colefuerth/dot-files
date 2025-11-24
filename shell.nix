@@ -10,6 +10,7 @@ let
     inxi
     mcfly
     ncdu
+    neofetch
     ranger
     starship
     zsh
