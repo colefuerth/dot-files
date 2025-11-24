@@ -27,7 +27,6 @@
     nixpkgs.config.allowUnfreePredicate = (p: builtins.elem (lib.getName p) [ "claude-code" ]);
 
     programs = {
-      awscli.enable = true;
       btop.enable = true;
       direnv.enable = true;
       firefox = with pkgs; {

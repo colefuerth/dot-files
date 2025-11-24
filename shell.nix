@@ -3,21 +3,14 @@
 let
   # Packages for the shell environment
   shellPackages = with pkgs; [
-    _7zz
-    awscli2
     btop
-    cargo
-    claude-code
     direnv
     eza
-    gh
     git
     inxi
     mcfly
     ncdu
-    python314
     ranger
-    rustup
     starship
     zsh
   ];
