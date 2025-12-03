@@ -102,6 +102,24 @@ in
   services.xserver.displayManager.gdm.enable = true;
   services.xserver.desktopManager.gnome.enable = true;
 
+  # Configure GNOME keyboard shortcuts and terminal
+  services.xserver.desktopManager.gnome.extraGSettingsOverrides = ''
+    [org.gnome.settings-daemon.plugins.media-keys]
+    custom-keybindings=['/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/']
+
+    [org.gnome.settings-daemon.plugins.media-keys.custom-keybindings.custom0]
+    binding='<Primary><Alt>t'
+    command='gnome-terminal'
+    name='Open Terminal'
+
+    [org.gnome.Terminal.Legacy.Settings]
+    default-show-menubar=false
+
+    [org.gnome.Terminal.Legacy.Profile]
+    use-custom-command=true
+    custom-command='${pkgs.zsh}/bin/zsh'
+  '';
+
   # Enable automatic login for the user.
   services.displayManager.autoLogin.enable = true;
   services.displayManager.autoLogin.user = "cole";
@@ -166,6 +184,7 @@ in
   users.users.${username} = {
     isNormalUser = true;
     description = "Cole Fuerth";
+    shell = pkgs.zsh;
     extraGroups = [
       # TODO: dialout and docker may be security risks
       "dialout"
@@ -192,6 +211,7 @@ in
     # dfu-util
     e2fsprogs
     firefoxpwa
+    gnome-terminal
     gparted
     jq
     neofetch
@@ -292,6 +312,7 @@ in
       defaultEditor = false;
     };
     # wireshark.enable = true;
+    zsh.enable = true;
   };
 
 }

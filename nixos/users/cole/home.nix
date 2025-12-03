@@ -88,94 +88,18 @@
       starship = {
         enable = true;
       };
-      # vscode = {
-      #   enable = true;
-      #   extensions = with pkgs.open-vsx; [
-      #     akamud.vscode-theme-onedark
-      #     anthropic.claude-code
-      #     ardupilot-org.ardupilot-devenv
-      #     bierner.markdown-preview-github-styles
-      #     brettm12345.nixfmt-vscode
-      #     chadbaileyvh.oled-pure-black---vscode
-      #     christian-kohler.path-intellisense
-      #     circleci.circleci
-      #     codezombiech.gitignore
-      #     davidanson.vscode-markdownlint
-      #     docker.docker
-      #     donjayamanne.python-extension-pack
-      #     dracula-theme.theme-dracula
-      #     eamodio.gitlens
-      #     formulahendry.docker-explorer
-      #     formulahendry.docker-extension-pack
-      #     foxundermoon.shell-format
-      #     github.copilot
-      #     github.copilot-chat
-      #     github.github-vscode-theme
-      #     github.vscode-pull-request-github
-      #     hangxingliu.vscode-systemd-support
-      #     hashhar.gitattributes
-      #     iliazeus.vscode-ansi
-      #     james-yu.latex-workshop
-      #     janisdd.vscode-edit-csv
-      #     jasonnutter.vscode-codeowners
-      #     jeff-hykin.better-cpp-syntax
-      #     jnoortheen.nix-ide
-      #     kevinrose.vsc-python-indent
-      #     mads-hartmann.bash-ide-vscode
-      #     mathworks.language-matlab
-      #     ms-azuretools.vscode-containers
-      #     ms-azuretools.vscode-docker
-      #     ms-python.autopep8
-      #     ms-python.debugpy
-      #     ms-python.isort
-      #     ms-python.python
-      #     ms-python.vscode-pylance
-      #     ms-python.vscode-python-envs
-      #     ms-toolsai.jupyter
-      #     ms-toolsai.jupyter-keymap
-      #     ms-toolsai.jupyter-renderers
-      #     ms-toolsai.vscode-jupyter-cell-tags
-      #     ms-toolsai.vscode-jupyter-slideshow
-      #     ms-vscode-remote.remote-containers
-      #     ms-vscode-remote.remote-ssh
-      #     ms-vscode-remote.remote-ssh-edit
-      #     ms-vscode-remote.remote-wsl
-      #     ms-vscode.cmake-tools
-      #     ms-vscode.cpptools
-      #     ms-vscode.cpptools-extension-pack
-      #     ms-vscode.cpptools-themes
-      #     ms-vscode.hexeditor
-      #     ms-vscode.remote-explorer
-      #     ms-vscode.remote-server
-      #     ms-vscode.vscode-serial-monitor
-      #     ms-vsliveshare.vsliveshare
-      #     mutantdino.resourcemonitor
-      #     naumovs.color-highlight
-      #     njpwerner.autodocstring
-      #     pbkit.vscode-pbkit
-      #     pkief.material-icon-theme
-      #     platformio.platformio-ide
-      #     plex.vscode-protolint
-      #     plorefice.devicetree
-      #     redhat.vscode-xml
-      #     redhat.vscode-yaml
-      #     rogalmic.bash-debug
-      #     rust-lang.rust-analyzer
-      #     sumneko.lua
-      #     tabbyml.vscode-tabby
-      #     tamasfe.even-better-toml
-      #     tomoki1207.pdf
-      #     visualstudioexptteam.intellicode-api-usage-examples
-      #     visualstudioexptteam.vscodeintellicode
-      #     volatile-static.vscmat
-      #     vscode-arduino.vscode-arduino-community
-      #     wholroyd.jinja
-      #     xaver.clang-format
-      #     yzane.markdown-pdf
-      #     yzhang.markdown-all-in-one
-      #     zhuangtongfa.material-theme
-      #   ];
-      # };
+      vscode = {
+        enable = true;
+        package = pkgs.vscodium;
+        extensions = with pkgs.vscode-extensions; [
+          # Essential extensions that should be available
+          ms-python.python
+          rust-lang.rust-analyzer
+          ms-vscode.cpptools
+          jnoortheen.nix-ide
+          eamodio.gitlens
+        ];
+      };
       zsh = rec {
         enable = true;
         enableCompletion = true;
