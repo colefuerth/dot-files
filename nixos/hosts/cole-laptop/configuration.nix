@@ -218,6 +218,7 @@ in
     libsForQt5.okular
     # picocom
     # slack
+    spotify
     steam
     # wireshark
     # zoom-us
