@@ -33,6 +33,6 @@ in
     # TODO: make this better with nix lib code to
     #       read the ./cachix dir and compile attrs
     // (import ./cachix/nix-community.nix)
-    // (import ./cachix/cuda-maintainers.nix)
-    // (import ./cachix/heaviside-industries.nix);
+    // (import ./cachix/cuda-maintainers.nix);
+    # // (import ./cachix/heaviside-industries.nix)
 }

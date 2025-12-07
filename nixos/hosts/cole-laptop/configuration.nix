@@ -16,6 +16,8 @@ in
   imports = [
     ../../common
     ../../common/cachix.nix
+    ../../common/hyprland.nix
+    ../../common/gnome.nix
     # ../../common/nixbuild.nix
     # Include the results of the hardware scan.
     ./hardware-configuration.nix
@@ -27,6 +29,11 @@ in
     enable = true;
     users = [ username ];
   };
+  
+  # Desktop Environment Configuration
+  # Enable only one at a time:
+  nixcfg.hyprland.enable = false;
+  nixcfg.gnome.enable = true;
   # nixcfg.nixbuild = {
   #   enable = false;
   #   disableThisSystem = false;
@@ -95,62 +102,7 @@ in
     ]; # todo: add
   };
 
-  # Enable the X11 windowing system.
-  services.xserver.enable = true;
-
-  # Enable the GNOME Desktop Environment.
-  services.xserver.displayManager.gdm.enable = true;
-  services.xserver.desktopManager.gnome.enable = true;
-
-  # Configure GNOME keyboard shortcuts and terminal
-  services.xserver.desktopManager.gnome.extraGSettingsOverrides = ''
-    [org.gnome.settings-daemon.plugins.media-keys]
-    custom-keybindings=['/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/']
-
-    [org.gnome.settings-daemon.plugins.media-keys.custom-keybindings.custom0]
-    binding='<Primary><Alt>t'
-    command='gnome-terminal'
-    name='Open Terminal'
-
-    [org.gnome.Terminal.Legacy.Settings]
-    default-show-menubar=false
-
-    [org.gnome.Terminal.Legacy.Profile]
-    use-custom-command=true
-    custom-command='${pkgs.zsh}/bin/zsh'
-  '';
-
-  # Enable automatic login for the user.
-  services.displayManager.autoLogin.enable = true;
-  services.displayManager.autoLogin.user = "cole";
-
-  # Workaround for GNOME autologin: https://github.com/NixOS/nixpkgs/issues/103746#issuecomment-945091229
-  systemd.services."getty@tty1".enable = false;
-  systemd.services."autovt@tty1".enable = false;
-
-  # Exclude default GNOME apps
-  environment.gnome.excludePackages = (
-    with pkgs;
-    [
-      atomix # puzzle game
-      cheese # webcam tool
-      epiphany # web browser
-      evince # document viewer
-      geary # email reader
-      # gedit # text editor
-      # gnome-calendar # calendar application
-      # gnome-characters
-      # gnome-music
-      # gnome-photos
-      # gnome-terminal
-      # gnome-weather
-      # gnome-tour
-      hitori # sudoku game
-      iagno # go game
-      tali # poker game
-      totem # video player
-    ]
-  );
+  # X11 is configured by the desktop environment modules
 
   # Configure keymap in X11
   services.xserver.xkb = {
