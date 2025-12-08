@@ -72,6 +72,46 @@ in
         package = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
         systemd.enable = true;
         xwayland.enable = true;
+
+        settings = {
+          # Basic configuration
+          "$mod" = "SUPER";
+
+          # Monitor configuration
+          monitor = ",preferred,auto,1";
+
+          # Execute apps at launch
+          exec-once = [
+            "kitty"
+          ];
+
+          # Bindings
+          bind = [
+            "$mod, Q, exec, kitty"
+            "$mod, C, killactive"
+            "$mod, M, exit"
+            "$mod, E, exec, dolphin"
+            "$mod, V, togglefloating"
+            "$mod, F, fullscreen"
+
+            # Move focus
+            "$mod, left, movefocus, l"
+            "$mod, right, movefocus, r"
+            "$mod, up, movefocus, u"
+            "$mod, down, movefocus, d"
+          ];
+
+          # Window rules
+          general = {
+            gaps_in = 5;
+            gaps_out = 10;
+            border_size = 2;
+          };
+
+          decoration = {
+            rounding = 10;
+          };
+        };
       };
     };
   };

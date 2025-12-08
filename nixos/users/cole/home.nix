@@ -14,7 +14,7 @@
       # Set the base home-manager options
       inherit username;
       homeDirectory = "/home/${username}";
-      stateVersion = "25.05";
+      stateVersion = "25.11";
       language.base = "en_US.UTF-8";
       packages = with pkgs; [
         claude-code
@@ -37,13 +37,17 @@
       gh.enable = true;
       git = {
         enable = true;
-        userName = "Cole Fuerth";
-        userEmail = "colefuerth@gmail.com";
-        extraConfig = {
+        settings = {
+          user = {
+            name = "Cole Fuerth";
+            email = "colefuerth@gmail.com";
+            signingkey = "/home/cole/.ssh/id_ed25519.pub";
+          };
           commit.gpgsign = true;
-          gpg.format = "ssh";
-          gpg.ssh.allowedSignersFile = "/home/cole/.ssh/allowed_signers";
-          user.signingkey = "/home/cole/.ssh/id_ed25519.pub";
+          gpg = {
+            format = "ssh";
+            ssh.allowedSignersFile = "/home/cole/.ssh/allowed_signers";
+          };
         };
       };
       gpg = {
@@ -91,14 +95,18 @@
       vscode = {
         enable = true;
         package = pkgs.vscodium;
-        extensions = with pkgs.vscode-extensions; [
-          # Essential extensions that should be available
-          ms-python.python
-          rust-lang.rust-analyzer
-          ms-vscode.cpptools
-          jnoortheen.nix-ide
-          eamodio.gitlens
-        ];
+        profiles = {
+          default = {
+            extensions = with pkgs.vscode-extensions; [
+              # Essential extensions that should be available
+              ms-python.python
+              rust-lang.rust-analyzer
+              ms-vscode.cpptools
+              jnoortheen.nix-ide
+              eamodio.gitlens
+            ];
+          };
+        };
       };
       zsh = rec {
         enable = true;

@@ -1,7 +1,7 @@
 final: prev:
 let
-  inherit (prev) system lib hostPlatform;
-  inherit (hostPlatform) isLinux;
+  inherit (prev) system lib stdenv;
+  inherit (stdenv.hostPlatform) isLinux;
   args = lib.optionals isLinux [
     # If the host platform is linux, we'd like to prefer ozone-platform=wayland.
     "--ozone-platform=wayland"

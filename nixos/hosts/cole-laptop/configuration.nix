@@ -167,7 +167,7 @@ in
     gparted
     jq
     neofetch
-    libsForQt5.okular
+    kdePackages.okular
     # picocom
     # slack
     spotify
@@ -203,9 +203,11 @@ in
 
   system.stateVersion = "25.11";
 
-  services.logind = {
-    extraConfig = "HandlePowerKey=suspend";
-    lidSwitch = "suspend";
+  services.logind.settings = {
+    Login = {
+      HandlePowerKey = "suspend";
+      HandleLidSwitch = "suspend";
+    };
   };
 
   # Use simple graphics configuration like working /etc config
