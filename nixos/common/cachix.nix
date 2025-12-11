@@ -34,5 +34,5 @@ in
     #       read the ./cachix dir and compile attrs
     // (import ./cachix/nix-community.nix)
     // (import ./cachix/cuda-maintainers.nix);
-    # // (import ./cachix/heaviside-industries.nix)
+  # // (import ./cachix/heaviside-industries.nix)
 }

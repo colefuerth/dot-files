@@ -29,11 +29,11 @@ in
     enable = true;
     users = [ username ];
   };
-  
+
   # Desktop Environment Configuration
   # Enable only one at a time:
-  nixcfg.hyprland.enable = false;
-  nixcfg.gnome.enable = true;
+  nixcfg.hyprland.enable = true;
+  nixcfg.gnome.enable = false;
   # nixcfg.nixbuild = {
   #   enable = false;
   #   disableThisSystem = false;

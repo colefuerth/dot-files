@@ -103,7 +103,7 @@
         };
     in
     {
-      formatter = forAllSystems (system: nixpkgs.legacyPackages.${system}.nixfmt-rfc-style);
+      formatter = forAllSystems (system: nixpkgs.legacyPackages.${system}.nixfmt-tree);
       overlays.default = import ./overlays;
 
       nixosConfigurations = rec {
