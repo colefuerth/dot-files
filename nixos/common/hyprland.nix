@@ -38,6 +38,7 @@ in
       systemPackages = [
         pkgs.kitty # required for the default Hyprland config
         pkgs.adwaita-icon-theme # GNOME cursor theme
+        pkgs.nerd-fonts.consolas
       ];
       # Optional, hint Electron apps to use Wayland:
       sessionVariables.NIXOS_OZONE_WL = "1";
@@ -74,6 +75,14 @@ in
         size = 24;
         gtk.enable = true;
         x11.enable = true;
+      };
+
+      programs.kitty = {
+        enable = true;
+        font = {
+          name = "Consolas NF";
+          size = 12;
+        };
       };
 
       wayland.windowManager.hyprland = {
