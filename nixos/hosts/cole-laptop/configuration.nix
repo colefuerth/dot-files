@@ -148,8 +148,9 @@ in
       "wheel"
     ];
     packages = with pkgs; [
-      # packages I want to install for all users
+      # packages I want to install in userspace
     ];
+    initialHashedPassword = "$y$j9T$YcR7aNLjwHuI5yMbcA8UB.$UbVZuOsp9AsovPS8ApWj4flsMZJUBStWA3e1E8SSBo1";
   };
 
   # Allow unfree packages
