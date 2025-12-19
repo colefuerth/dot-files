@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+# Use nix-output-monitor is available else fall back to nix
+NIX=$(if [ ! -z $(which nom) ]; then echo "nom"; else echo "nix"; fi)
+
+REMOTE="t"
+
+RESULT_PATH=$(
+    $NIX build -L \
+        --print-out-paths \
+        --system x86_64-linux \
+        --max-jobs 20 \
+        --eval-store auto \
+        --store ssh-ng://$REMOTE \
+        --verbose \
+        $*
+)
+# if `nix-store --verify-path $RESULT_PATH` fails, then we need to copy the result to the local store, make sure to mute stderr
+if ! nix-store --verify-path $RESULT_PATH 2>/dev/null; then
+    nix-copy-closure --gzip --from "$REMOTE" $RESULT_PATH
+fi
+echo $RESULT_PATH
