@@ -222,16 +222,6 @@ in
   virtualisation.docker.enable = true;
   virtualisation.docker.daemon.settings.features.cdi = true;
 
-  xdg.portal = {
-    enable = true;
-    wlr.enable = true;
-    extraPortals = with pkgs; [
-      # xdg-desktop-portal-wlr
-      # xdg-desktop-portal-gtk
-      xdg-desktop-portal-gnome
-    ];
-  };
-
   services.fwupd.enable = true;
 
   services.fprintd.enable = true;
