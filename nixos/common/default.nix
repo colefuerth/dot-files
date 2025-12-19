@@ -29,7 +29,7 @@ in
     };
   };
   config = lib.mkIf cfg.enable {
-    nixpkgs.overlays = lib.optionals cfg.applyOverlay [ (import ../../overlays) ];
+    nixpkgs.overlays = lib.optionals cfg.applyOverlay [ (import ../../overlays inputs) ];
 
     nix = {
       gc = {

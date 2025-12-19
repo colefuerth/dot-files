@@ -1,4 +1,4 @@
-final: prev:
+inputs: final: prev:
 let
   inherit (prev) lib;
 in
@@ -7,6 +7,7 @@ in
   # (import ./firefoxpwa)
   # disable SSH overlay and use home-manager to fix ~/.ssh/config perms
   # (import ./openssh)
+  # (import ./cosmic inputs)  # No longer needed - using nixos-unstable directly
 ])
   final
   prev

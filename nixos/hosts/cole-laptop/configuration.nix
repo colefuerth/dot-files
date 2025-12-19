@@ -18,6 +18,7 @@ in
     ../../common/cachix.nix
     ../../common/hyprland.nix
     ../../common/gnome.nix
+    ../../common/cosmic.nix
     # ../../common/nixbuild.nix
     # Include the results of the hardware scan.
     ./hardware-configuration.nix
@@ -32,8 +33,9 @@ in
 
   # Desktop Environment Configuration
   # Enable only one at a time:
-  nixcfg.hyprland.enable = true;
+  nixcfg.hyprland.enable = false;
   nixcfg.gnome.enable = false;
+  nixcfg.cosmic.enable = true;
   # nixcfg.nixbuild = {
   #   enable = false;
   #   disableThisSystem = false;
