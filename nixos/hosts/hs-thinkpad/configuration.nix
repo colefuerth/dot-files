@@ -194,6 +194,14 @@ in
 
   system.stateVersion = "25.11";
 
+  # VM-specific configuration (only applies when building as a VM)
+  virtualisation.vmVariant = {
+    virtualisation = {
+      cores = 8;
+      memorySize = 8192;
+    };
+  };
+
   services.logind.settings = {
     Login = {
       HandlePowerKey = "suspend";
@@ -259,8 +267,6 @@ in
     };
     steam = {
       enable = true;
-      remotePlay.openFirewall = true; # Open ports in the firewall for Steam Remote Play
-      dedicatedServer.openFirewall = true; # Open ports in the firewall for Source Dedicated Server
     };
     vim = {
       enable = true;
