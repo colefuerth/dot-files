@@ -23,8 +23,15 @@
       ];
     };
 
+    # enable wayland native on compatible systems (only enable if you are using the wayland compositor)
+    # home.sessionVariables = {
+    #   NIXOS_OZONE_WL = "1";
+    # };
+
     # Allow certain unfree packages
-    nixpkgs.config.allowUnfreePredicate = (p: builtins.elem (lib.getName p) [ "claude-code" ]);
+    nixpkgs.config = {
+      allowUnfree = true; # Simplified for now - can restrict later if needed
+    };
 
     programs = {
       btop.enable = true;
@@ -87,6 +94,23 @@
             hostname = "192.168.1.155";
             serverAliveInterval = 60;
           };
+          "t" = {
+            user = "heaviside_ai";
+            hostname = "10.100.20.38";
+            identityFile = "/home/cole/.ssh/id_ed25519";
+          };
+          "mothpi" = {
+            user = "moth";
+            hostname = "moth.local";
+            identityFile = "/home/cole/.ssh/id_rsa";
+            forwardX11 = true;
+            forwardX11Trusted = true;
+          };
+          "bms_test" = {
+            user = "heaviside";
+            hostname = "moth-production-tester.local";
+            identityFile = "/home/cole/.ssh/id_rsa";
+          };
         };
       };
       starship = {
@@ -97,14 +121,106 @@
         package = pkgs.vscodium;
         profiles = {
           default = {
-            extensions = with pkgs.vscode-extensions; [
-              # Essential extensions that should be available
-              ms-python.python
-              rust-lang.rust-analyzer
-              ms-vscode.cpptools
-              jnoortheen.nix-ide
+            extensions = with pkgs.vscode-marketplace; [
+              # Themes
+              akamud.vscode-theme-onedark
+              chadbaileyvh.oled-pure-black---vscode
+              github.github-vscode-theme
+              pkief.material-icon-theme
+              zhuangtongfa.material-theme
+              # AI/Code assistance
+              anthropic.claude-code
+              github.copilot
+              github.copilot-chat
+              tabbyml.vscode-tabby
+              # Git/Version Control
+              codezombiech.gitignore
               eamodio.gitlens
+              github.vscode-pull-request-github
+              hashhar.gitattributes
+              jasonnutter.vscode-codeowners
+              # Nix
+              jnoortheen.nix-ide
+              # Python
+              donjayamanne.python-extension-pack
+              kevinrose.vsc-python-indent
+              ms-python.autopep8
+              ms-python.debugpy
+              ms-python.isort
+              ms-python.python
+              ms-python.vscode-pylance
+              ms-python.vscode-python-envs
+              njpwerner.autodocstring
+              # Jupyter
+              ms-toolsai.jupyter
+              ms-toolsai.jupyter-keymap
+              ms-toolsai.jupyter-renderers
+              ms-toolsai.vscode-jupyter-cell-tags
+              ms-toolsai.vscode-jupyter-slideshow
+              # C/C++/Embedded
+              # dan-c-underwood.arm
+              # eclipse-cdt.memory-inspector
+              jeff-hykin.better-cpp-syntax
+              llvm-vs-code-extensions.vscode-clangd
+              ms-vscode.cpptools
+              ms-vscode.cpptools-extension-pack
+              ms-vscode.cpptools-themes
+              # platformio.platformio-ide
+              plorefice.devicetree
+              # vscode-arduino.vscode-arduino-community
+              xaver.clang-format
+              # Microchip MPLAB
+              # microchip.mplab-clangd
+              # microchip.mplab-code-configurator
+              # microchip.mplab-core-da
+              # microchip.mplab-data-visualizer
+              # microchip.mplab-extension-pack
+              # microchip.mplab-extensions-core
+              # microchip.mplab-extensions-platforms
+              # microchip.mplab-kconfig
+              # microchip.mplab-ui
+              # microchip.mplabx-importer
+              # microchip.runcmake
+              # microchip.toolchains
+              # Rust
+              rust-lang.rust-analyzer
+              # Docker/Containers
+              docker.docker
+              formulahendry.docker-explorer
+              formulahendry.docker-extension-pack
+              ms-azuretools.vscode-containers
+              ms-azuretools.vscode-docker
+              ms-vscode-remote.remote-containers
+              # Remote Development
+              ms-vscode-remote.remote-ssh
+              ms-vscode-remote.remote-ssh-edit
+              ms-vscode-remote.remote-wsl
+              ms-vscode.remote-explorer
+              ms-vscode.remote-server
+              ms-vsliveshare.vsliveshare
+              # Shell/Bash
+              foxundermoon.shell-format
+              mads-hartmann.bash-ide-vscode
+              # Markdown
+              bierner.markdown-preview-github-styles
+              davidanson.vscode-markdownlint
+              tomoki1207.pdf
+              yzane.markdown-pdf
+              yzhang.markdown-all-in-one
+              # Other tools
+              christian-kohler.path-intellisense
+              hangxingliu.vscode-systemd-support
+              james-yu.latex-workshop
+              janisdd.vscode-edit-csv
+              ms-vscode.hexeditor
+              ms-vscode.vscode-serial-monitor
+              mutantdino.resourcemonitor
+              pbkit.vscode-pbkit
+              redhat.vscode-xml
+              tamasfe.even-better-toml
+              wholroyd.jinja
             ];
+            enableExtensionUpdateCheck = true;
           };
         };
       };

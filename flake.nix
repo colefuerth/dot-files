@@ -33,6 +33,7 @@
       home-manager,
       sops-nix,
       nixos-wsl,
+      nix-vscode-extensions,
       ...
     }@inputs:
     let
@@ -55,12 +56,17 @@
           host,
           username,
           repoRoot,
+          system,
           backupSuffix ? "bak.home-manager-${
             self.shortRev or self.dirtyShortRev or self.lastModified or "unknown"
           }",
         }:
         [
           ./nixos/hosts/${host}/configuration.nix
+          # Configure nixpkgs with vscode-extensions overlay and allowUnfree
+          {
+            nixpkgs.overlays = [ nix-vscode-extensions.overlays.default ];
+          }
           home-manager.nixosModules.home-manager
           {
             home-manager.extraSpecialArgs = {
@@ -99,7 +105,14 @@
               repoRoot
               ;
           };
-          modules = mkConfigModules { inherit host username repoRoot; };
+          modules = mkConfigModules {
+            inherit
+              host
+              username
+              repoRoot
+              system
+              ;
+          };
         };
     in
     {
@@ -125,6 +138,12 @@
           system = "x86_64-linux";
           repoRoot = builtins.toString ./.;
         };
+        hs-thinkpad = mkNixosConfiguration {
+          host = "hs-thinkpad";
+          username = "cole";
+          system = "x86_64-linux";
+          repoRoot = builtins.toString ./.;
+        };
       };
 
       packages = forAllSystems (
@@ -139,6 +158,7 @@
         {
           # Interactive VMs for each configuration
           cole-laptop-vm = self.nixosConfigurations.cole-laptop.config.system.build.vm;
+          hs-thinkpad-vm = self.nixosConfigurations.hs-thinkpad.config.system.build.vm;
           cole-vm-vm = self.nixosConfigurations.cole-vm.config.system.build.vm;
           cole-wsl2-vm = self.nixosConfigurations.cole-wsl2.config.system.build.vm;
 
@@ -163,7 +183,7 @@
               inherit name;
               nodes.machine = {
                 imports = mkConfigModules {
-                  inherit host username;
+                  inherit host username system;
                   repoRoot = builtins.toString ./.;
                   backupSuffix = "bak.home-manager-test";
                 };
@@ -184,6 +204,11 @@
           cole-vm-test = mkConfigTest {
             name = "cole-vm-test";
             host = "cole-vm";
+            username = "cole";
+          };
+          hs-thinkpad-test = mkConfigTest {
+            name = "hs-thinkpad-test";
+            host = "hs-thinkpad";
             username = "cole";
           };
           # Skip cole-wsl2 as WSL configurations may not work well in QEMU
