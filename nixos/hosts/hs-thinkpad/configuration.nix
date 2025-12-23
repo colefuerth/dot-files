@@ -214,6 +214,18 @@ in
   ];
 
   hardware.logitech.wireless.enable = true;
+  hardware.logitech.wireless.enableGraphical = true;
+
+  # Start Solaar minimized at boot
+  systemd.user.services.solaar = {
+    description = "Solaar - Logitech Device Manager";
+    wantedBy = [ "graphical-session.target" ];
+    after = [ "graphical-session.target" ];
+    serviceConfig = {
+      ExecStart = "${pkgs.solaar}/bin/solaar --window=hide";
+      Restart = "on-failure";
+    };
+  };
 
   hardware.nvidia = {
     open = false;
