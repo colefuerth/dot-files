@@ -1,5 +1,6 @@
 {
   config,
+  home-manager,
   host,
   inputs,
   lib,
@@ -46,8 +47,21 @@ in
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
-  # boot.initrd.luks.devices."luks-468fc01f-17de-4294-9822-0f4f5d8f8d2f".device =
-  #   "/dev/disk/by-uuid/468fc01f-17de-4294-9822-0f4f5d8f8d2f";
+  # Boot with systemd output visible
+  boot.kernelParams = [
+    "nosplash"
+    "debug"
+  ];
+  boot.plymouth.enable = false;
+  boot.consoleLogLevel = 7;
+
+  boot.swraid = {
+    enable = true;
+    mdadmConf = "ARRAY /dev/md0 level=raid0 num-devices=2 devices=/dev/nvme0n1p2,/dev/nvme1n1p2";
+  };
+
+  # Ensure mdadm is available in initrd
+  boot.initrd.availableKernelModules = [ "raid0" ];
 
   networking.hostName = host; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
@@ -90,16 +104,13 @@ in
       cache32Bit = true;
       useEmbeddedBitmaps = true;
       defaultFonts = {
-        monospace = [ "Consolas" ];
+        monospace = [ "Consolas Nerd Font Mono" ];
       };
     };
     packages = with pkgs; [
-      # todo: add
-      # fira-code
-      # fira-code-symbols
+      consolas-nf
       vista-fonts
-      # nerdfonts.consolas
-    ]; # todo: add
+    ];
   };
 
   # X11 is configured by the desktop environment modules
@@ -132,7 +143,6 @@ in
     description = "Cole Fuerth";
     shell = pkgs.zsh;
     extraGroups = [
-      # TODO: dialout and docker may be security risks
       "dialout"
       "docker"
       "networkmanager"
@@ -140,7 +150,14 @@ in
       "wheel"
     ];
     packages = with pkgs; [
-      # packages I want to install in userspace
+      chromium
+      discord
+      firefoxpwa
+      kdePackages.okular
+      signal-desktop
+      slack
+      spotify
+      steam
     ];
     initialHashedPassword = "$y$j9T$YcR7aNLjwHuI5yMbcA8UB.$UbVZuOsp9AsovPS8ApWj4flsMZJUBStWA3e1E8SSBo1";
   };
@@ -153,18 +170,12 @@ in
   environment.systemPackages = with pkgs; [
     # bmap-tools
     cachix
-    chromium
-    discord
     e2fsprogs
-    firefoxpwa
     gnome-terminal
     gparted
     jq
-    kdePackages.okular
     neofetch
-    slack
-    spotify
-    steam
+    solaar
   ];
 
   # Removed CUDA/NVIDIA session variables
@@ -216,12 +227,14 @@ in
     "nvidia" # use nvidia proprietary driver
   ];
 
+  hardware.logitech.wireless.enable = true;
+
   hardware.nvidia = {
     open = false;
     prime = {
       # [offload, sync, reverseSync] only one should be true
       offload.enable = true; # use igpu for everything except when using the offload cmd
-      offload.enableOffloadCmd = true;
+      offload.enableOffloadCmd = false;
       sync.enable = false; # render everything on the dgpu; igpu used for display only
       reverseSync.enable = false; # use the dgpu for everything
       intelBusId = "PCI:0:2:0";

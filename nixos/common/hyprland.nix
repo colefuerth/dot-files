@@ -38,7 +38,7 @@ in
       systemPackages = [
         pkgs.kitty # required for the default Hyprland config
         pkgs.adwaita-icon-theme # GNOME cursor theme
-        pkgs.nerd-fonts.consolas
+        pkgs.consolas-nf # Consolas Nerd Font
       ];
       # Optional, hint Electron apps to use Wayland:
       sessionVariables.NIXOS_OZONE_WL = "1";
@@ -80,7 +80,7 @@ in
       programs.kitty = {
         enable = true;
         font = {
-          name = "Consolas NF";
+          name = "Consolas Nerd Font Mono";
           size = 12;
         };
       };

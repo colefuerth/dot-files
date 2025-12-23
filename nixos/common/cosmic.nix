@@ -35,6 +35,9 @@ in
     # Enable clipboard access for COSMIC apps
     environment.sessionVariables.COSMIC_DATA_CONTROL_ENABLED = "1";
 
+    # Enable Wayland support for Electron/Chromium apps
+    environment.sessionVariables.NIXOS_OZONE_WL = "1";
+
     # Optional: Exclude some default COSMIC applications
     environment.cosmic.excludePackages = with pkgs; [
       # cosmic-edit  # Uncomment to exclude COSMIC text editor
@@ -44,7 +47,7 @@ in
     environment.systemPackages = with pkgs; [
       cosmic-term # COSMIC terminal
       adwaita-icon-theme # Icon theme
-      nerd-fonts.fira-code # Font
+      consolas-nf
     ];
 
     home-manager.users.cole = {

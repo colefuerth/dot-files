@@ -110,7 +110,7 @@ in
   #     cache32Bit = true;
   #     useEmbeddedBitmaps = true;
   #     defaultFonts = {
-  #       monospace = [ "Consolas" ];
+  #       monospace = [ "Consolas Nerd Font Mono" ];
   #     };
   #   };
   #   packages = with pkgs; [

@@ -92,15 +92,12 @@ in
       cache32Bit = true;
       useEmbeddedBitmaps = true;
       defaultFonts = {
-        monospace = [ "Consolas" ];
+        monospace = [ "Consolas Nerd Font Mono" ];
       };
     };
     packages = with pkgs; [
-      # todo: add
-      # fira-code
-      # fira-code-symbols
+      (pkgs.callPackage ../../../packages/consolas-nf {})
       vista-fonts
-      # nerdfonts.consolas
     ]; # todo: add
   };
 

@@ -23,11 +23,6 @@
       ];
     };
 
-    # enable wayland native on compatible systems (only enable if you are using the wayland compositor)
-    # home.sessionVariables = {
-    #   NIXOS_OZONE_WL = "1";
-    # };
-
     # Allow certain unfree packages
     nixpkgs.config = {
       allowUnfree = true; # Simplified for now - can restrict later if needed
@@ -119,6 +114,36 @@
       vscode = {
         enable = true;
         package = pkgs.vscodium;
+        userSettings = {
+          "editor.fontFamily" = "'Consolas Nerd Font Mono'";
+          "nix.enableLanguageServer" = true;
+          "nix.serverPath" = "nil"; # or "nixd", or ["executable", "argument1", ...]
+          # LSP config can be passed via the ``nix.serverSettings.{lsp}`` as shown below.
+          "nix.serverSettings" = {
+            # check https://github.com/oxalica/nil/blob/main/docs/configuration.md for all options available
+            "nil" = {
+              # "diagnostics" = {
+              #  "ignored" = ["unused_binding", "unused_with"],
+              # },
+              "formatting" = {
+                "command" = [
+                  "treefmt"
+                ];
+              };
+              "nix" = {
+                "maxMemoryMB" = 8192;
+                "flake" = {
+                  "autoArchive" = true;
+                  "autoEvalInputs" = true;
+                  "nixpkgsInputName" = "nixpkgs";
+                };
+              };
+            };
+          };
+          "claudeCode.preferredLocation" = "panel";
+          "claudeCode.useTerminal" = true;
+          "terminal.integrated.shellIntegration.history" = 1000000;
+        };
         profiles = {
           default = {
             extensions = with pkgs.vscode-marketplace; [
@@ -194,7 +219,6 @@
               # Remote Development
               ms-vscode-remote.remote-ssh
               ms-vscode-remote.remote-ssh-edit
-              ms-vscode-remote.remote-wsl
               ms-vscode.remote-explorer
               ms-vscode.remote-server
               ms-vsliveshare.vsliveshare
@@ -242,8 +266,8 @@
         history.ignoreDups = true;
 
         loginExtra = ''
-          # Run the welcome screen on shell startup
-          if [[ -f "${repoRoot}/10-welcome" ]]; then
+          # Run the welcome screen on shell startup (only in interactive shells)
+          if [[ -o interactive ]] && [[ -f "${repoRoot}/10-welcome" ]]; then
             bash "${repoRoot}/10-welcome"
           fi
         '';

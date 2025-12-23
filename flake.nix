@@ -63,9 +63,12 @@
         }:
         [
           ./nixos/hosts/${host}/configuration.nix
-          # Configure nixpkgs with vscode-extensions overlay and allowUnfree
+          # Configure nixpkgs with overlays
           {
-            nixpkgs.overlays = [ nix-vscode-extensions.overlays.default ];
+            nixpkgs.overlays = [
+              nix-vscode-extensions.overlays.default
+              (self.overlays.default inputs)
+            ];
           }
           home-manager.nixosModules.home-manager
           {
@@ -151,7 +154,11 @@
         let
           pkgs = import nixpkgs {
             inherit system;
-            config.allowUnfreePredicate = pkg: builtins.elem (nixpkgs.lib.getName pkg) [ "claude-code" ];
+            config.allowUnfreePredicate = pkg: builtins.elem (nixpkgs.lib.getName pkg) [
+              "claude-code"
+              "consolas-nf"
+            ];
+            overlays = [ (self.overlays.default inputs) ];
           };
           repoRoot = builtins.toString ./.;
         in
@@ -161,6 +168,9 @@
           hs-thinkpad-vm = self.nixosConfigurations.hs-thinkpad.config.system.build.vm;
           cole-vm-vm = self.nixosConfigurations.cole-vm.config.system.build.vm;
           cole-wsl2-vm = self.nixosConfigurations.cole-wsl2.config.system.build.vm;
+
+          # Custom packages
+          consolas-nf = pkgs.consolas-nf;
 
           # Standalone shell environment
           default = import ./shell.nix { inherit pkgs repoRoot; };
