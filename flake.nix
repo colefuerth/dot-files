@@ -154,10 +154,12 @@
         let
           pkgs = import nixpkgs {
             inherit system;
-            config.allowUnfreePredicate = pkg: builtins.elem (nixpkgs.lib.getName pkg) [
-              "claude-code"
-              "consolas-nf"
-            ];
+            config.allowUnfreePredicate =
+              pkg:
+              builtins.elem (nixpkgs.lib.getName pkg) [
+                "claude-code"
+                "consolas-nf"
+              ];
             overlays = [ (self.overlays.default inputs) ];
           };
           repoRoot = builtins.toString ./.;

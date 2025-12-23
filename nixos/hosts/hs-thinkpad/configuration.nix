@@ -1,6 +1,5 @@
 {
   config,
-  home-manager,
   host,
   inputs,
   lib,
@@ -48,27 +47,14 @@ in
   boot.loader.efi.canTouchEfiVariables = true;
 
   # Boot with systemd output visible
-  boot.kernelParams = [
-    "nosplash"
-    "debug"
-  ];
+  # boot.kernelParams = [
+  #   "nosplash"
+  #   "debug"
+  # ];
   boot.plymouth.enable = false;
-  boot.consoleLogLevel = 7;
-
-  boot.swraid = {
-    enable = true;
-    mdadmConf = "ARRAY /dev/md0 level=raid0 num-devices=2 devices=/dev/nvme0n1p2,/dev/nvme1n1p2";
-  };
-
-  # Ensure mdadm is available in initrd
-  boot.initrd.availableKernelModules = [ "raid0" ];
+  # boot.consoleLogLevel = 7;
 
   networking.hostName = host; # Define your hostname.
-  # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
-
-  # Configure network proxy if necessary
-  # networking.proxy.default = "http://user:password@proxy:port/";
-  # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
 
   # Enable networking
   networking.networkmanager.enable = true;
@@ -168,14 +154,17 @@ in
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
-    # bmap-tools
     cachix
     e2fsprogs
+    gamescope
     gnome-terminal
     gparted
     jq
     neofetch
+    nil
+    nixfmt-tree
     solaar
+    steam
   ];
 
   # Removed CUDA/NVIDIA session variables

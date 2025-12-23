@@ -96,7 +96,7 @@ in
       };
     };
     packages = with pkgs; [
-      (pkgs.callPackage ../../../packages/consolas-nf {})
+      consolas-nf
       vista-fonts
     ]; # todo: add
   };

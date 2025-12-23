@@ -143,6 +143,7 @@
           "claudeCode.preferredLocation" = "panel";
           "claudeCode.useTerminal" = true;
           "terminal.integrated.shellIntegration.history" = 1000000;
+          "git.confirmSync" = false;
         };
         profiles = {
           default = {
