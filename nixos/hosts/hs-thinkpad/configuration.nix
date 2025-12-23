@@ -143,7 +143,6 @@ in
       signal-desktop
       slack
       spotify
-      steam
     ];
     initialHashedPassword = "$y$j9T$YcR7aNLjwHuI5yMbcA8UB.$UbVZuOsp9AsovPS8ApWj4flsMZJUBStWA3e1E8SSBo1";
   };
@@ -156,7 +155,6 @@ in
   environment.systemPackages = with pkgs; [
     cachix
     e2fsprogs
-    gamescope
     gnome-terminal
     gparted
     jq
@@ -164,7 +162,6 @@ in
     nil
     nixfmt-tree
     solaar
-    steam
   ];
 
   # Removed CUDA/NVIDIA session variables
@@ -269,6 +266,7 @@ in
     };
     steam = {
       enable = true;
+      protontricks.enable = true;
     };
     vim = {
       enable = true;
