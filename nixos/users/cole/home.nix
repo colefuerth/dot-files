@@ -114,37 +114,37 @@
       vscode = {
         enable = true;
         package = pkgs.vscodium;
-        userSettings = {
-          "editor.fontFamily" = "'Consolas Nerd Font Mono'";
-          "nix.enableLanguageServer" = true;
-          "nix.serverPath" = "nil"; # or "nixd", or ["executable", "argument1", ...]
-          # LSP config can be passed via the ``nix.serverSettings.{lsp}`` as shown below.
-          "nix.serverSettings" = {
-            # check https://github.com/oxalica/nil/blob/main/docs/configuration.md for all options available
-            "nil" = {
-              # "diagnostics" = {
-              #  "ignored" = ["unused_binding", "unused_with"],
-              # },
-              "formatting" = {
-                "command" = [
-                  "treefmt"
-                ];
-              };
-              "nix" = {
-                "maxMemoryMB" = 8192;
-                "flake" = {
-                  "autoArchive" = true;
-                  "autoEvalInputs" = true;
-                  "nixpkgsInputName" = "nixpkgs";
-                };
-              };
-            };
-          };
-          "claudeCode.preferredLocation" = "panel";
-          "claudeCode.useTerminal" = true;
-          "terminal.integrated.shellIntegration.history" = 1000000;
-          "git.confirmSync" = false;
-        };
+        # userSettings = {
+        #   "editor.fontFamily" = "'Consolas Nerd Font Mono'";
+        #   "nix.enableLanguageServer" = true;
+        #   "nix.serverPath" = "nil"; # or "nixd", or ["executable", "argument1", ...]
+        #   # LSP config can be passed via the ``nix.serverSettings.{lsp}`` as shown below.
+        #   "nix.serverSettings" = {
+        #     # check https://github.com/oxalica/nil/blob/main/docs/configuration.md for all options available
+        #     "nil" = {
+        #       # "diagnostics" = {
+        #       #  "ignored" = ["unused_binding", "unused_with"],
+        #       # },
+        #       "formatting" = {
+        #         "command" = [
+        #           "treefmt"
+        #         ];
+        #       };
+        #       "nix" = {
+        #         "maxMemoryMB" = 8192;
+        #         "flake" = {
+        #           "autoArchive" = true;
+        #           "autoEvalInputs" = true;
+        #           "nixpkgsInputName" = "nixpkgs";
+        #         };
+        #       };
+        #     };
+        #   };
+        #   "claudeCode.preferredLocation" = "panel";
+        #   "claudeCode.useTerminal" = true;
+        #   "terminal.integrated.shellIntegration.history" = 1000000;
+        #   "git.confirmSync" = false;
+        # };
         profiles = {
           default = {
             extensions = with pkgs.vscode-marketplace; [
