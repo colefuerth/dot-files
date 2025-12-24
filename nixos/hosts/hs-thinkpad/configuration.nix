@@ -111,6 +111,7 @@ in
   services.printing.enable = true;
 
   # Enable sound with pipewire.
+  boot.kernelModules = [ "snd_hda_intel" ];  # Load the sound driver for Intel/AMD audio chips
   services.pulseaudio.enable = false;
   security.rtkit.enable = true;
   services.pipewire = {
@@ -136,9 +137,9 @@ in
       "wheel"
     ];
     packages = with pkgs; [
-      chromium
       discord
       firefoxpwa
+      google-chrome
       kdePackages.okular
       signal-desktop
       slack
