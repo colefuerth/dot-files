@@ -299,12 +299,12 @@ in
     services.linux-wallpaperengine = {
       # https://github.com/nix-community/home-manager/blob/master/modules/services/linux-wallpaperengine.nix
       enable = true;
-      assetsPath = "/home/cole/.local/share/Steam/steamapps/workshop/content/431960/";
+      assetsPath = "/home/cole/.local/share/Steam/steamapps/common/wallpaper_engine/assets";
       wallpapers = [
         {
           monitor = "eDP-1"; # Your laptop's internal display
-          wallpaperId = 
-            # "3346104040"; # polish cow dandadan
+          wallpaperId =
+            "3346104040"; # polish cow dandadan
             # "3136351729"; # ascii donut
             # "3348560292"; # jjp
             # "3250755486"; # cat eating chips
@@ -312,14 +312,14 @@ in
             # "2472509205"; # floppa ps1
             # "2421217072"; # eminem goose
             # "2620623306"; # ricardo
-            # "2156652467"; # misato clock
+            # "2156652467"; # misato clock (no clock)
             # "1756162891"; # end of evangelion beer
             # "1542633413"; # tblz
-            # "1731760875"; # minecraft redstone clock
+            # "1731760875"; # minecraft redstone clock (also broken)
             # "2190879698"; # get stick bugged lol
-            "1922177752"; # firewatch clock
-            # "1945071673"; # witcher clock (particle assets not supported yet)
-          # scaling = "fill"; # "stretch", "fit", "fill", or "default"
+            # "1922177752"; # firewatch clock (no clock)
+            # "1945071673"; # witcher clock (particle assets not supported yet) (also no clock)
+          scaling = "fill"; # "stretch", "fit", "fill", or "default"
           # fps = 25;
           # audio.silent = true;
         }
