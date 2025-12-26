@@ -287,6 +287,22 @@ in
   virtualisation.docker.enable = true;
   virtualisation.docker.daemon.settings.features.cdi = true;
 
+  # Home-manager configuration for this machine
+  home-manager.users.${username}.services.linux-wallpaperengine = {
+    enable = true;
+    assetsPath = "/home/cole/.local/share/Steam/steamapps/workshop/content/431960/";
+    wallpapers = [
+      {
+        monitor = "eDP-1"; # Your laptop's internal display
+        wallpaperId = "3346104040";
+        # Optional settings:
+        # scaling = "fill"; # "stretch", "fit", "fill", or "default"
+        # fps = 30;
+        # audio.silent = true;
+      }
+    ];
+  };
+
   services.fwupd.enable = true;
 
   services.fprintd.enable = true;
