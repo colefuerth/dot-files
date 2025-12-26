@@ -112,7 +112,7 @@ in
   services.printing.enable = true;
 
   # Enable sound with pipewire.
-  boot.kernelModules = [ "snd_hda_intel" ];  # Load the sound driver for Intel/AMD audio chips
+  boot.kernelModules = [ "snd_hda_intel" ]; # Load the sound driver for Intel/AMD audio chips
   services.pulseaudio.enable = false;
   security.rtkit.enable = true;
   services.pipewire = {
@@ -205,6 +205,7 @@ in
     Login = {
       HandlePowerKey = "suspend";
       HandleLidSwitch = "suspend";
+      HandleLidSwitchExternalPower = "ignore";
     };
   };
 
@@ -215,8 +216,42 @@ in
     "nvidia" # use nvidia proprietary driver
   ];
 
+  # mx master 3s
   hardware.logitech.wireless.enable = true;
   hardware.logitech.wireless.enableGraphical = true;
+
+  # stuff needed to use an xbox one controller
+  hardware = {
+    bluetooth = {
+      enable = true;
+      # package = pkgs.bluez-experimental;
+      powerOnBoot = true;
+      settings.General = {
+        # experimental = true;
+        Privacy = "Device";
+        JustWorksRepairing = "always";
+        FastConnectable = true;
+      };
+      settings.Policy.AutoEnable = true;
+    };
+    xone.enable = false;
+    xpad-noone.enable = false;
+    xpadneo.enable = true;
+  };
+  boot = {
+    extraModulePackages = with config.boot.kernelPackages; [
+      xpadneo
+    ];
+    extraModprobeConfig = ''
+      options bluetooth disable_ertm=Y
+    '';
+    blacklistedKernelModules = [
+      "xpad-noone"
+      "xone"
+    ];
+  };
+  # services.blueman.enable = true;
+  environment.sessionVariables.SDL_JOYSTICK_HIDAPI = "0";
 
   # Start Solaar minimized at boot
   systemd.user.services.solaar = {
