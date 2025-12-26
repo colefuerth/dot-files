@@ -287,20 +287,30 @@ in
   virtualisation.docker.enable = true;
   virtualisation.docker.daemon.settings.features.cdi = true;
 
+  # Udev rule to automatically start/stop wallpaper based on AC power
+  services.udev.extraRules = ''
+    # Monitor AC adapter state changes and toggle wallpaper service
+    SUBSYSTEM=="power_supply", ATTR{online}=="0", RUN+="${pkgs.systemd}/bin/systemctl --user --machine=${username}@.host stop linux-wallpaperengine.service"
+    SUBSYSTEM=="power_supply", ATTR{online}=="1", RUN+="${pkgs.systemd}/bin/systemctl --user --machine=${username}@.host start linux-wallpaperengine.service"
+  '';
+
   # Home-manager configuration for this machine
-  home-manager.users.${username}.services.linux-wallpaperengine = {
-    enable = true;
-    assetsPath = "/home/cole/.local/share/Steam/steamapps/workshop/content/431960/";
-    wallpapers = [
-      {
-        monitor = "eDP-1"; # Your laptop's internal display
-        wallpaperId = "3346104040";
-        # Optional settings:
-        # scaling = "fill"; # "stretch", "fit", "fill", or "default"
-        # fps = 30;
-        # audio.silent = true;
-      }
-    ];
+  home-manager.users.${username} = {
+    services.linux-wallpaperengine = {
+      # https://github.com/nix-community/home-manager/blob/master/modules/services/linux-wallpaperengine.nix
+      enable = true;
+      assetsPath = "/home/cole/.local/share/Steam/steamapps/workshop/content/431960/";
+      wallpapers = [
+        {
+          monitor = "eDP-1"; # Your laptop's internal display
+          wallpaperId = "3346104040";
+          # scaling = "fill"; # "stretch", "fit", "fill", or "default"
+          # fps = 25;
+          # audio.silent = true;
+        }
+      ];
+    };
+    systemd.user.services.linux-wallpaperengine.Unit.ConditionACPower = true;
   };
 
   services.fwupd.enable = true;
