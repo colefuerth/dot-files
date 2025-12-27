@@ -4,6 +4,8 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
     nixpkgs-unstable.url = "github:nixos/nixpkgs?ref=nixos-unstable";
+    determinate.url = "https://flakehub.com/f/DeterminateSystems/determinate/*";
+    determinate.inputs.nixpkgs.follows = "nixpkgs";
     home-manager = {
       url = "github:nix-community/home-manager?ref=master";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -36,6 +38,7 @@
     {
       self,
       nixpkgs,
+      determinate,
       home-manager,
       sops-nix,
       nixos-wsl,
@@ -92,6 +95,7 @@
             home-manager.users.${username} = import ./nixos/users/${username}/home.nix;
           }
           sops-nix.nixosModules.sops
+          determinate.nixosModules.default
         ]
         ++ (nixpkgs.lib.optionals (nixpkgs.lib.strings.hasSuffix "wsl2" host) [
           nixos-wsl.nixosModules.wsl
