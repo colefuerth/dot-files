@@ -20,6 +20,7 @@
         claude-code
         ncdu
         inxi
+        vlc
       ];
     };
 
