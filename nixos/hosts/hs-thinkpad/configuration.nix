@@ -208,6 +208,11 @@ in
     };
   };
 
+  powerManagement = {
+    enable = true;
+    powertop.enable = true;
+  };
+
   # Use simple graphics configuration like working /etc config
   hardware.graphics.enable = true;
   services.xserver.videoDrivers = [
