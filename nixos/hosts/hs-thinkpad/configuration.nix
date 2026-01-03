@@ -308,12 +308,12 @@ in
         {
           monitor = "eDP-1"; # Your laptop's internal display
           wallpaperId =
-            "3346104040"; # polish cow dandadan
+            # "3346104040"; # polish cow dandadan
             # "3136351729"; # ascii donut
             # "3348560292"; # jjp
             # "3250755486"; # cat eating chips
             # "2717323779"; # dog dvd
-            # "2472509205"; # floppa ps1
+            "2472509205"; # floppa ps1
             # "2421217072"; # eminem goose
             # "2620623306"; # ricardo
             # "2156652467"; # misato clock (no clock)
@@ -325,7 +325,11 @@ in
             # "1945071673"; # witcher clock (particle assets not supported yet) (also no clock)
           scaling = "fill"; # "stretch", "fit", "fill", or "default"
           # fps = 25;
-          # audio.silent = true;
+          audio.silent = true;
+          # extraOptions = [
+          #   "--set-property spacemode=1"
+          #   "--set-property backgroundcolor=0.0,0.0,0.0"
+          # ];
         }
       ];
     };
