@@ -19,7 +19,6 @@ in
     ../../common/cosmic.nix
     ../../common/nixbuild.nix
     ./hardware-configuration.nix
-    ./globalprotect.nix
   ];
 
   # Enable common NixOS configuration settings

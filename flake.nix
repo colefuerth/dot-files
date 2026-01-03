@@ -28,10 +28,6 @@
     };
 
     # Private work repo - only used by hs-thinkpad
-    heaviside-nixpkgs = {
-      url = "git+ssh://git@github.com/heaviside-industries/heaviside-nixpkgs.git?ref=cf/globalprotect";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
   };
 
   outputs =
