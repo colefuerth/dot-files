@@ -18,8 +18,9 @@
       language.base = "en_US.UTF-8";
       packages = with pkgs; [
         claude-code
-        ncdu
         inxi
+        ncdu
+        xfce.ristretto
         vlc
       ];
     };

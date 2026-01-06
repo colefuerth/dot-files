@@ -96,6 +96,7 @@ in
       usbutils
       vim
       wget
+      zip
     ];
 
     programs.vim.enable = true;

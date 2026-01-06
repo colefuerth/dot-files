@@ -144,6 +144,7 @@ in
       signal-desktop
       slack
       spotify
+      tidal-hifi
     ];
     initialHashedPassword = "$y$j9T$YcR7aNLjwHuI5yMbcA8UB.$UbVZuOsp9AsovPS8ApWj4flsMZJUBStWA3e1E8SSBo1";
   };
@@ -163,6 +164,7 @@ in
     nil
     nixfmt-tree
     solaar
+    xfce.tumbler # thumbnail daemon for ristretto
   ];
 
   # Removed CUDA/NVIDIA session variables
