@@ -180,6 +180,11 @@ in
     gnome-terminal
     gparted
     jq
+    platformio
+    (python312.withPackages (ps: with ps; [
+      pip
+      pyserial
+    ]))
     neofetch
     nil
     nixfmt-tree
