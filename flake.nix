@@ -16,16 +16,10 @@
     hyprland-plugins.inputs.nixpkgs.follows = "nixpkgs";
     nix-vscode-extensions.url = "github:nix-community/nix-vscode-extensions";
     nix-vscode-extensions.inputs.nixpkgs.follows = "nixpkgs";
-    nixos-wsl = {
-      url = "github:nix-community/NixOS-WSL";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    # Private work repo - only used by hs-thinkpad
-    heaviside-nixpkgs = {
-      url = "git+ssh://git@github.com/heaviside-industries/heaviside-nixpkgs.git?ref=cf/globalprotect";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    nixos-wsl.url = "github:nix-community/NixOS-WSL";
+    nixos-wsl.inputs.nixpkgs.follows = "nixpkgs";
+    heaviside-nixpkgs.url = "git+ssh://git@github.com/heaviside-industries/heaviside-nixpkgs.git?ref=cf/globalprotect";
+    heaviside-nixpkgs.inputs.nixpkgs.follows = "nixpkgs";
   };
 
   outputs =
