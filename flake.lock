@@ -1,5 +1,171 @@
 {
   "nodes": {
+    "ChibiOS": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1725242052,
+        "narHash": "sha256-VDfiTw5PcUrisopVvy/MjY8LpqNqQWDAe7g7wl7dg8Q=",
+        "ref": "master",
+        "rev": "88b84600b59d2f39c9d9137aacdc9f098b374b4a",
+        "revCount": 11501,
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries-mirrors/ChibiOS"
+      },
+      "original": {
+        "ref": "master",
+        "rev": "88b84600b59d2f39c9d9137aacdc9f098b374b4a",
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries-mirrors/ChibiOS"
+      }
+    },
+    "CrashDebug": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1635957814,
+        "narHash": "sha256-p1tmm+pFjVMxghwZm7zq4zPZGQZ5nD8v8+BlXf+08Yo=",
+        "ref": "master",
+        "rev": "599965086437137ec0fe66e185611f43f335f889",
+        "revCount": 105,
+        "submodules": true,
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries-mirrors/CrashDebug"
+      },
+      "original": {
+        "ref": "master",
+        "rev": "599965086437137ec0fe66e185611f43f335f889",
+        "submodules": true,
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries-mirrors/CrashDebug"
+      }
+    },
+    "DroneCAN-DSDL": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1729477036,
+        "narHash": "sha256-qXcOnsnUQv6gY5IjWKdX96lpyOScAaNruIJcU0u83Bc=",
+        "ref": "master",
+        "rev": "0856687a5acb42b55d29bbad8f4fc9e19b4989fc",
+        "revCount": 49,
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries-mirrors/DSDL"
+      },
+      "original": {
+        "ref": "master",
+        "rev": "0856687a5acb42b55d29bbad8f4fc9e19b4989fc",
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries-mirrors/DSDL"
+      }
+    },
+    "DroneCAN-dronecan_dsdlc": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1721537877,
+        "narHash": "sha256-k5aKDPRP4UZUmwHI4k8G2rVYtBsKSpGuELGDmrNU8Ds=",
+        "ref": "master",
+        "rev": "43d8a9ed909e18f169c001a0f418edc72269b36b",
+        "revCount": 41,
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries-mirrors/dronecan_dsdlc"
+      },
+      "original": {
+        "ref": "master",
+        "rev": "43d8a9ed909e18f169c001a0f418edc72269b36b",
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries-mirrors/dronecan_dsdlc"
+      }
+    },
+    "DroneCAN-libcanard": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1727212726,
+        "narHash": "sha256-o3+oqPtkNUweWcSToFf4Ml+WxaBns8N99l6iZvKpi0M=",
+        "ref": "master",
+        "rev": "6f74bc67656882a4ee51966c7c0022d04fa1a3fb",
+        "revCount": 484,
+        "submodules": true,
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries-mirrors/libcanard"
+      },
+      "original": {
+        "ref": "master",
+        "rev": "6f74bc67656882a4ee51966c7c0022d04fa1a3fb",
+        "submodules": true,
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries-mirrors/libcanard"
+      }
+    },
+    "DroneCAN-pydronecan": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1704596861,
+        "narHash": "sha256-ESZPqg79Tdl9MQMWnbWhXIYa8OxaRRF7LPUIkVDHJHQ=",
+        "ref": "master",
+        "rev": "1f494e9a56ac9930f1e11c2f453789414b10d54e",
+        "revCount": 418,
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries-mirrors/pydronecan"
+      },
+      "original": {
+        "ref": "master",
+        "rev": "1f494e9a56ac9930f1e11c2f453789414b10d54e",
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries-mirrors/pydronecan"
+      }
+    },
+    "Micro-CDR": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1671001900,
+        "narHash": "sha256-X5kE8dMpwXL2hzpT6vY+BHa70Fw21z++vs8nVARpxNk=",
+        "ref": "master",
+        "rev": "3d1b17703c7cf4f22def2910bc845bdb5152d7b5",
+        "revCount": 216,
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries-mirrors/Micro-CDR"
+      },
+      "original": {
+        "ref": "master",
+        "rev": "3d1b17703c7cf4f22def2910bc845bdb5152d7b5",
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries-mirrors/Micro-CDR"
+      }
+    },
+    "Micro-XRCE-DDS-Client": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1688981111,
+        "narHash": "sha256-5ytTxZrYLEW7iGdppCjwTfiAHkUghtVSXcJ9OymZBAY=",
+        "ref": "master",
+        "rev": "97175304425c5bee87c6fddd99de1ef8d0c394dc",
+        "revCount": 690,
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries-mirrors/Micro-XRCE-DDS-Client"
+      },
+      "original": {
+        "ref": "master",
+        "rev": "97175304425c5bee87c6fddd99de1ef8d0c394dc",
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries-mirrors/Micro-XRCE-DDS-Client"
+      }
+    },
+    "android_openssl-qgc": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1632980616,
+        "narHash": "sha256-nGFaEVER9x7F1DUeAX8CkL6MfcJ15w+4rroWW1iNHYs=",
+        "ref": "refs/tags/1.1.1l_1.0.2u",
+        "rev": "aa3c67c59160715216e89ae2c48291d6021601fa",
+        "revCount": 31,
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries-mirrors/android_openssl"
+      },
+      "original": {
+        "ref": "refs/tags/1.1.1l_1.0.2u",
+        "rev": "aa3c67c59160715216e89ae2c48291d6021601fa",
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries-mirrors/android_openssl"
+      }
+    },
     "aquamarine": {
       "inputs": {
         "hyprutils": [
@@ -31,6 +197,238 @@
         "owner": "hyprwm",
         "repo": "aquamarine",
         "type": "github"
+      }
+    },
+    "arducopter-bebop": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1722018236,
+        "narHash": "sha256-lD5w6t6iICiRb6Xk2tJW3kyMzYOfbcsAIPE3RsMczCM=",
+        "ref": "refs/heads/parrot-bebop",
+        "rev": "9c46c4c25357bfbc1d3f8697ff314b5b3b25338b",
+        "revCount": 62156,
+        "submodules": true,
+        "type": "git",
+        "url": "https://github.com/lopsided98/ardupilot"
+      },
+      "original": {
+        "ref": "refs/heads/parrot-bebop",
+        "submodules": true,
+        "type": "git",
+        "url": "https://github.com/lopsided98/ardupilot"
+      }
+    },
+    "arducopter-beta": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1750377107,
+        "narHash": "sha256-lu/O8kW2Rra5r4yww0fy9PT1nLX3i1hTH08CcKAbPck=",
+        "ref": "refs/tags/ArduCopter-beta",
+        "rev": "57591cb8235973a00004459ae441865fdb5afaf7",
+        "revCount": 65754,
+        "submodules": true,
+        "type": "git",
+        "url": "https://github.com/ArduPilot/ardupilot"
+      },
+      "original": {
+        "ref": "refs/tags/ArduCopter-beta",
+        "submodules": true,
+        "type": "git",
+        "url": "https://github.com/ArduPilot/ardupilot"
+      }
+    },
+    "arducopter-stable": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1750377107,
+        "narHash": "sha256-lu/O8kW2Rra5r4yww0fy9PT1nLX3i1hTH08CcKAbPck=",
+        "ref": "refs/tags/ArduCopter-stable",
+        "rev": "57591cb8235973a00004459ae441865fdb5afaf7",
+        "revCount": 65754,
+        "submodules": true,
+        "type": "git",
+        "url": "https://github.com/ArduPilot/ardupilot"
+      },
+      "original": {
+        "ref": "refs/tags/ArduCopter-stable",
+        "submodules": true,
+        "type": "git",
+        "url": "https://github.com/ArduPilot/ardupilot"
+      }
+    },
+    "ardupilot": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1754370438,
+        "narHash": "sha256-KHKjMb4/16HqFp6kdLZJL7MM+HEEt9OZ+trCjmD7/7k=",
+        "ref": "refs/heads/release/locust/master",
+        "rev": "59be71aa7f0808e63e466ed30ae03dd14d511fb5",
+        "revCount": 65433,
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries-forks/ardupilot"
+      },
+      "original": {
+        "ref": "refs/heads/release/locust/master",
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries-forks/ardupilot"
+      }
+    },
+    "ardupilot-builder": {
+      "inputs": {
+        "arducopter-bebop": "arducopter-bebop",
+        "arducopter-beta": "arducopter-beta",
+        "arducopter-stable": "arducopter-stable",
+        "arduplane-beta": "arduplane-beta",
+        "arduplane-masters-thesis": "arduplane-masters-thesis",
+        "arduplane-stable": "arduplane-stable",
+        "flake-utils": [
+          "heaviside-nixpkgs",
+          "flake-utils"
+        ],
+        "nixpkgs": [
+          "heaviside-nixpkgs",
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1750768560,
+        "narHash": "sha256-wow8CqMVfs0/fb9GbQcocHikWA4ZbdoITuqI7ytXJN0=",
+        "ref": "main",
+        "rev": "09a12e4c1270e690b1374250b37dd858530ebc53",
+        "revCount": 546,
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries-mirrors/ardupilot-flake"
+      },
+      "original": {
+        "ref": "main",
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries-mirrors/ardupilot-flake"
+      }
+    },
+    "ardupilot-parameter-repository-qgc": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1753307638,
+        "narHash": "sha256-AcvcRsYmZvXf/gPeNTVx9ZF5o36fv4IiAtR9fNwTtNo=",
+        "ref": "release/heaviside-forks/locust_params",
+        "rev": "d58e0a8573a647b2bccafad9a9bff4d46d674dea",
+        "revCount": 8,
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries-forks/ArduPilot-Parameter-Repository"
+      },
+      "original": {
+        "ref": "release/heaviside-forks/locust_params",
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries-forks/ArduPilot-Parameter-Repository"
+      }
+    },
+    "arduplane-beta": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1750377107,
+        "narHash": "sha256-lu/O8kW2Rra5r4yww0fy9PT1nLX3i1hTH08CcKAbPck=",
+        "ref": "refs/tags/ArduPlane-beta",
+        "rev": "57591cb8235973a00004459ae441865fdb5afaf7",
+        "revCount": 65754,
+        "submodules": true,
+        "type": "git",
+        "url": "https://github.com/ArduPilot/ardupilot"
+      },
+      "original": {
+        "ref": "refs/tags/ArduPlane-beta",
+        "submodules": true,
+        "type": "git",
+        "url": "https://github.com/ArduPilot/ardupilot"
+      }
+    },
+    "arduplane-masters-thesis": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1689042098,
+        "narHash": "sha256-sd5GXFSwo6XF4VdyKQCHlUDEpX82Bc2JZ7t2+oTC/1U=",
+        "ref": "refs/heads/masters-thesis",
+        "rev": "70a2891a77bbf55302fcb49412caad15bcf4acf6",
+        "revCount": 55180,
+        "submodules": true,
+        "type": "git",
+        "url": "https://github.com/lopsided98/ardupilot"
+      },
+      "original": {
+        "ref": "refs/heads/masters-thesis",
+        "submodules": true,
+        "type": "git",
+        "url": "https://github.com/lopsided98/ardupilot"
+      }
+    },
+    "arduplane-stable": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1750377107,
+        "narHash": "sha256-lu/O8kW2Rra5r4yww0fy9PT1nLX3i1hTH08CcKAbPck=",
+        "ref": "refs/tags/ArduPlane-stable",
+        "rev": "57591cb8235973a00004459ae441865fdb5afaf7",
+        "revCount": 65754,
+        "submodules": true,
+        "type": "git",
+        "url": "https://github.com/ArduPilot/ardupilot"
+      },
+      "original": {
+        "ref": "refs/tags/ArduPlane-stable",
+        "submodules": true,
+        "type": "git",
+        "url": "https://github.com/ArduPilot/ardupilot"
+      }
+    },
+    "bark": {
+      "inputs": {
+        "naersk": [
+          "heaviside-nixpkgs",
+          "naersk"
+        ],
+        "nixpkgs": [
+          "heaviside-nixpkgs",
+          "nixpkgs"
+        ],
+        "protos": [
+          "heaviside-nixpkgs",
+          "protos"
+        ]
+      },
+      "locked": {
+        "lastModified": 1753928387,
+        "narHash": "sha256-gcKOB7Ha5Hv6EA+lBEbgQi+HPsnWUyxJG5GSD5Xmnh0=",
+        "ref": "refs/heads/master",
+        "rev": "dbe5a24cfb026475ed5f121f1ddbe14717eb54ba",
+        "revCount": 16,
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries/bark"
+      },
+      "original": {
+        "ref": "refs/heads/master",
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries/bark"
+      }
+    },
+    "chitter": {
+      "inputs": {
+        "nixpkgs": [
+          "heaviside-nixpkgs",
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1753292804,
+        "narHash": "sha256-hbREu8uwa9xubS1mmD/ZrJHwGvGxw0jZy68Q/zZfGjo=",
+        "ref": "refs/heads/master",
+        "rev": "0a60b960fea394b437e7f39e40fc0a146b61855f",
+        "revCount": 30,
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries/chitter"
+      },
+      "original": {
+        "ref": "refs/heads/master",
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries/chitter"
       }
     },
     "determinate": {
@@ -90,6 +488,43 @@
       "original": {
         "type": "file",
         "url": "https://install.determinate.systems/determinate-nixd/tag/v3.15.1/x86_64-linux"
+      }
+    },
+    "eigen-qgc": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1607118821,
+        "narHash": "sha256-JMIG7CLMndUsECfbKpXE3BtVFuAjn+CZvf8GXZpLkFQ=",
+        "ref": "refs/tags/3.3.9",
+        "rev": "0fd6b4f71dd85b2009ee4d1aeb296e2c11fc9d68",
+        "revCount": 9250,
+        "submodules": true,
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries-mirrors/eigen"
+      },
+      "original": {
+        "ref": "refs/tags/3.3.9",
+        "submodules": true,
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries-mirrors/eigen"
+      }
+    },
+    "etl": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1740314839,
+        "narHash": "sha256-3UnhTAFEuXNBJFBWZSMZOXQLQpEIqb+t9fdY3eullHE=",
+        "ref": "master",
+        "rev": "c882a9c5004d546bb23bd0f758ae40cd57d1b063",
+        "revCount": 5145,
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries-mirrors/etl"
+      },
+      "original": {
+        "ref": "master",
+        "rev": "c882a9c5004d546bb23bd0f758ae40cd57d1b063",
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries-mirrors/etl"
       }
     },
     "flake-compat": {
@@ -161,6 +596,42 @@
         "url": "https://flakehub.com/f/hercules-ci/flake-parts/0.1"
       }
     },
+    "flake-utils": {
+      "inputs": {
+        "systems": "systems"
+      },
+      "locked": {
+        "lastModified": 1731533236,
+        "narHash": "sha256-l0KFg5HjrsfsO/JpG+r7fRrqm12kzFHyUHqHCVpMMbI=",
+        "ref": "refs/heads/main",
+        "rev": "11707dc2f618dd54ca8739b309ec4fc024de578b",
+        "revCount": 102,
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries-mirrors/flake-utils"
+      },
+      "original": {
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries-mirrors/flake-utils"
+      }
+    },
+    "gbenchmark": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1668175263,
+        "narHash": "sha256-gg3g/0Ki29FnGqKv9lDTs5oA9NjH23qQ+hTdVtSU+zo=",
+        "ref": "main",
+        "rev": "d572f4777349d43653b21d6c2fc63020ab326db2",
+        "revCount": 1341,
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries-mirrors/benchmark"
+      },
+      "original": {
+        "ref": "main",
+        "rev": "d572f4777349d43653b21d6c2fc63020ab326db2",
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries-mirrors/benchmark"
+      }
+    },
     "git-hooks-nix": {
       "inputs": {
         "flake-compat": "flake-compat",
@@ -207,6 +678,197 @@
         "owner": "hercules-ci",
         "repo": "gitignore.nix",
         "type": "github"
+      }
+    },
+    "gpsdriver-qgc": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1718750355,
+        "narHash": "sha256-3h1H1N27dBxgy93Abnwv9saKA4mL99I3saYDTXPJ1HQ=",
+        "ref": "refs/heads/main",
+        "rev": "a41210ede8c2d22dd8e9fdcf388fca927c1fc5e1",
+        "revCount": 221,
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries-mirrors/PX4-GPSDrivers"
+      },
+      "original": {
+        "ref": "refs/heads/main",
+        "rev": "a41210ede8c2d22dd8e9fdcf388fca927c1fc5e1",
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries-mirrors/PX4-GPSDrivers"
+      }
+    },
+    "gsoap": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1629890055,
+        "narHash": "sha256-Ev3DwWuAdVFGeAczPauSBE2sqTI1b6yhQsM73TM1aLI=",
+        "ref": "master",
+        "rev": "e1f690585d4803402584962bfaa8240ecaf1db30",
+        "revCount": 7,
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries-mirrors/gsoap"
+      },
+      "original": {
+        "ref": "master",
+        "rev": "e1f690585d4803402584962bfaa8240ecaf1db30",
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries-mirrors/gsoap"
+      }
+    },
+    "gst-plugins-good-qgc": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1642781495,
+        "narHash": "sha256-ES7SXBsHCutaOmkYb7FHLAqHWkvY623ZoKHh7oWKhYA=",
+        "ref": "refs/heads/qgroundcontrol",
+        "rev": "b0caadca11ecf7a54139d37bced91b1cd0347cf3",
+        "revCount": 18492,
+        "submodules": true,
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries-mirrors/gst-plugins-good"
+      },
+      "original": {
+        "ref": "refs/heads/qgroundcontrol",
+        "rev": "b0caadca11ecf7a54139d37bced91b1cd0347cf3",
+        "submodules": true,
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries-mirrors/gst-plugins-good"
+      }
+    },
+    "gtest": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1654991212,
+        "narHash": "sha256-1lrRc44VYpP3PtWIFAzKz6c/wpIU/uqV1k2mWCqwwaA=",
+        "ref": "master",
+        "rev": "c5fed93f941865a0e912e9baf46ded713506590a",
+        "revCount": 3212,
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries-mirrors/googletest"
+      },
+      "original": {
+        "ref": "master",
+        "rev": "c5fed93f941865a0e912e9baf46ded713506590a",
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries-mirrors/googletest"
+      }
+    },
+    "heavidog": {
+      "inputs": {
+        "naersk": [
+          "heaviside-nixpkgs",
+          "naersk"
+        ],
+        "nixpkgs": [
+          "heaviside-nixpkgs",
+          "nixpkgs"
+        ],
+        "protos": [
+          "heaviside-nixpkgs",
+          "protos"
+        ]
+      },
+      "locked": {
+        "lastModified": 1753928377,
+        "narHash": "sha256-RCZ2zbxxBZ5p814bCKDkfHyh2psUaGKHhv7IOwzkiYA=",
+        "ref": "refs/heads/master",
+        "rev": "1344409170c1c0fd973206c80b392943ac401a62",
+        "revCount": 14,
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries/heavidog"
+      },
+      "original": {
+        "ref": "refs/heads/master",
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries/heavidog"
+      }
+    },
+    "heaviside-nixpkgs": {
+      "inputs": {
+        "ChibiOS": "ChibiOS",
+        "CrashDebug": "CrashDebug",
+        "DroneCAN-DSDL": "DroneCAN-DSDL",
+        "DroneCAN-dronecan_dsdlc": "DroneCAN-dronecan_dsdlc",
+        "DroneCAN-libcanard": "DroneCAN-libcanard",
+        "DroneCAN-pydronecan": "DroneCAN-pydronecan",
+        "Micro-CDR": "Micro-CDR",
+        "Micro-XRCE-DDS-Client": "Micro-XRCE-DDS-Client",
+        "android_openssl-qgc": "android_openssl-qgc",
+        "ardupilot": "ardupilot",
+        "ardupilot-builder": "ardupilot-builder",
+        "ardupilot-parameter-repository-qgc": "ardupilot-parameter-repository-qgc",
+        "bark": "bark",
+        "chitter": "chitter",
+        "eigen-qgc": "eigen-qgc",
+        "etl": "etl",
+        "flake-utils": "flake-utils",
+        "gbenchmark": "gbenchmark",
+        "gpsdriver-qgc": "gpsdriver-qgc",
+        "gsoap": "gsoap",
+        "gst-plugins-good-qgc": "gst-plugins-good-qgc",
+        "gtest": "gtest",
+        "heavidog": "heavidog",
+        "jetpack-nixos": "jetpack-nixos",
+        "kennelmaster": "kennelmaster",
+        "libevents-qgc": "libevents-qgc",
+        "libvideo": "libvideo",
+        "locust-test": "locust-test",
+        "lwip": "lwip",
+        "mavlink": "mavlink",
+        "mavlink-0mq-bridge": "mavlink-0mq-bridge",
+        "mavlink-router": "mavlink-router",
+        "mavsdk": "mavsdk",
+        "mavsdk-proto": "mavsdk-proto",
+        "microhardd": "microhardd",
+        "mini-compile-commands": "mini-compile-commands",
+        "moth": "moth",
+        "naersk": "naersk",
+        "nixos-hardware": "nixos-hardware",
+        "nixpkgs": [
+          "nixpkgs"
+        ],
+        "nixpkgs-25_11": "nixpkgs-25_11",
+        "nixpkgs-unstable": "nixpkgs-unstable",
+        "powerlatch": "powerlatch",
+        "protos": "protos",
+        "qgroundcontrol": "qgroundcontrol",
+        "qmdnsengine-qgc": "qmdnsengine-qgc",
+        "rust-overlay": "rust-overlay",
+        "scodes": "scodes",
+        "seek-thermal-sdk": "seek-thermal-sdk",
+        "shapelib-qgc": "shapelib-qgc",
+        "speex": "speex",
+        "ti-edgeai-app-stack": "ti-edgeai-app-stack",
+        "ti-edgeai-apps-utils": "ti-edgeai-apps-utils",
+        "ti-edgeai-dl-inferer": "ti-edgeai-dl-inferer",
+        "ti-edgeai-gst-apps": "ti-edgeai-gst-apps",
+        "ti-edgeai-gst-plugins": "ti-edgeai-gst-plugins",
+        "ti-edgeai-tiovx-apps": "ti-edgeai-tiovx-apps",
+        "ti-edgeai-tiovx-kernels": "ti-edgeai-tiovx-kernels",
+        "ti-edgeai-tiovx-modules": "ti-edgeai-tiovx-modules",
+        "ti-linux-kernel": "ti-linux-kernel",
+        "ti-nixos": "ti-nixos",
+        "ti-processor-sdk-vision_apps": "ti-processor-sdk-vision_apps",
+        "ti-source": "ti-source",
+        "ti-tiovx": "ti-tiovx",
+        "ti-u-boot": "ti-u-boot",
+        "waf": "waf",
+        "xz-embedded-qgc": "xz-embedded-qgc"
+      },
+      "locked": {
+        "lastModified": 1766581069,
+        "narHash": "sha256-Gukk8Kz/QA9vy+7ETvI3sbsFnDsxSNMElwLIJjY/+xo=",
+        "ref": "cf/globalprotect",
+        "rev": "ce3ace061a4eb81c1f13dadf54fc857d866cf599",
+        "revCount": 114,
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries/heaviside-nixpkgs.git"
+      },
+      "original": {
+        "ref": "cf/globalprotect",
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries/heaviside-nixpkgs.git"
       }
     },
     "home-manager": {
@@ -299,9 +961,9 @@
         "hyprutils": "hyprutils",
         "hyprwayland-scanner": "hyprwayland-scanner",
         "hyprwire": "hyprwire",
-        "nixpkgs": "nixpkgs_2",
+        "nixpkgs": "nixpkgs_3",
         "pre-commit-hooks": "pre-commit-hooks",
-        "systems": "systems",
+        "systems": "systems_2",
         "xdph": "xdph"
       },
       "locked": {
@@ -577,6 +1239,316 @@
         "type": "github"
       }
     },
+    "jetpack-nixos": {
+      "inputs": {
+        "nixpkgs": "nixpkgs_2"
+      },
+      "locked": {
+        "lastModified": 1737012813,
+        "narHash": "sha256-R1yp3Ql7NQEL9gYvt5sbDyrrFQlAsTAUIZQCLPoxW3E=",
+        "ref": "refs/heads/master",
+        "rev": "d8d927bc052678c0ae0054bb73fb01a954091732",
+        "revCount": 374,
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries-mirrors/jetpack-nixos"
+      },
+      "original": {
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries-mirrors/jetpack-nixos"
+      }
+    },
+    "kennelmaster": {
+      "inputs": {
+        "naersk": [
+          "heaviside-nixpkgs",
+          "naersk"
+        ],
+        "nixpkgs": [
+          "heaviside-nixpkgs",
+          "nixpkgs"
+        ],
+        "protos": [
+          "heaviside-nixpkgs",
+          "protos"
+        ]
+      },
+      "locked": {
+        "lastModified": 1754071755,
+        "narHash": "sha256-eQVTQWaSiKkwhFg1ArbbVhzpvbO2spgAWi4LIz0ywxo=",
+        "ref": "refs/heads/master",
+        "rev": "8ed16002790f447cc1469b65204a6e12f01962aa",
+        "revCount": 20,
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries/kennelmaster"
+      },
+      "original": {
+        "ref": "refs/heads/master",
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries/kennelmaster"
+      }
+    },
+    "libevents-qgc": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1695734717,
+        "narHash": "sha256-C6VPJukcb66MvuF5bze9su4281hNf1h7ymyEgsCEcWo=",
+        "ref": "refs/heads/main",
+        "rev": "59f7f5c0ec2e76fadbc1dc40cc0705d614472edc",
+        "revCount": 59,
+        "submodules": true,
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries-mirrors/mavlink-libevents"
+      },
+      "original": {
+        "ref": "refs/heads/main",
+        "rev": "59f7f5c0ec2e76fadbc1dc40cc0705d614472edc",
+        "submodules": true,
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries-mirrors/mavlink-libevents"
+      }
+    },
+    "libvideo": {
+      "inputs": {
+        "nixpkgs": [
+          "heaviside-nixpkgs",
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1755542590,
+        "narHash": "sha256-VO8Rw+GAouHS6BD5507bK1WXN8USpsF0dlfNkBaOlfo=",
+        "ref": "refs/heads/master",
+        "rev": "fe1c907959b4fda85d64601fa672c3c588380f36",
+        "revCount": 28,
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries/libvideo"
+      },
+      "original": {
+        "ref": "refs/heads/master",
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries/libvideo"
+      }
+    },
+    "locust-test": {
+      "inputs": {
+        "nixpkgs": [
+          "heaviside-nixpkgs",
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1744149060,
+        "narHash": "sha256-DEMZsbmyuCBpsD21BZpLkqVICoQ5hMnPjf51VVbx870=",
+        "ref": "refs/heads/master",
+        "rev": "9abbc23eee0a018983d72af80004c0c199101065",
+        "revCount": 3,
+        "submodules": true,
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries/locust-test"
+      },
+      "original": {
+        "ref": "refs/heads/master",
+        "submodules": true,
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries/locust-test"
+      }
+    },
+    "lwip": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1704918921,
+        "narHash": "sha256-NxQiI6oXlUsvzgqEouEZDJnirmc0LLzZkt3BHw2jqPc=",
+        "ref": "master",
+        "rev": "143a6a5cb8023921b5dced55c30551ffb752b640",
+        "revCount": 6773,
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries-mirrors/lwip"
+      },
+      "original": {
+        "ref": "master",
+        "rev": "143a6a5cb8023921b5dced55c30551ffb752b640",
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries-mirrors/lwip"
+      }
+    },
+    "mavlink": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1763157335,
+        "narHash": "sha256-vFcSVVAxFjxiBSAaOZ6iXeH2ejbQTtG1iOUf9oa6Zu4=",
+        "ref": "refs/heads/release/heaviside/master",
+        "rev": "60219abf6af7734f05f3a169c8a9ffd89b840531",
+        "revCount": 3103,
+        "submodules": true,
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries-forks/mavlink"
+      },
+      "original": {
+        "ref": "refs/heads/release/heaviside/master",
+        "submodules": true,
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries-forks/mavlink"
+      }
+    },
+    "mavlink-0mq-bridge": {
+      "inputs": {
+        "nixpkgs": [
+          "heaviside-nixpkgs",
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1754006385,
+        "narHash": "sha256-YGhM7gtJlc/gGEMpciMDV9iWo1YmMe7cYnsCEItIiXE=",
+        "ref": "refs/heads/master",
+        "rev": "9e5b2d223a42ddd236781b718e4c0181a1995f49",
+        "revCount": 12,
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries/mavlink-0mq-bridge"
+      },
+      "original": {
+        "ref": "refs/heads/master",
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries/mavlink-0mq-bridge"
+      }
+    },
+    "mavlink-router": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1724248737,
+        "narHash": "sha256-/RkuEb/N/jtik+H9Q+9xZ/VkDX8pGNcf/t13hTRrcfo=",
+        "ref": "refs/heads/master",
+        "rev": "c20337bbc61abda21463e7482172d58b654e66b6",
+        "revCount": 535,
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries-mirrors/mavlink-router"
+      },
+      "original": {
+        "ref": "refs/heads/master",
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries-mirrors/mavlink-router"
+      }
+    },
+    "mavsdk": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1742334844,
+        "narHash": "sha256-g2XewbA4Q0itor4jM56cTAKhot6TiByroPUOcFVg4Qs=",
+        "ref": "refs/heads/v3",
+        "rev": "c4a070f974b3d91375f096095d952cb8ef416849",
+        "revCount": 5893,
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries-mirrors/mavsdk"
+      },
+      "original": {
+        "ref": "refs/heads/v3",
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries-mirrors/mavsdk"
+      }
+    },
+    "mavsdk-proto": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1753311068,
+        "narHash": "sha256-4bQ+yyaREd8thmSo6P3yhDNZudrPpE76npK2GRsKass=",
+        "ref": "refs/heads/main",
+        "rev": "61b1b1a197966faed181f8c7c5f2fa57d832cf1f",
+        "revCount": 752,
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries-mirrors/mavsdk-proto"
+      },
+      "original": {
+        "ref": "refs/heads/main",
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries-mirrors/mavsdk-proto"
+      }
+    },
+    "microhardd": {
+      "inputs": {
+        "naersk": [
+          "heaviside-nixpkgs",
+          "naersk"
+        ],
+        "nixpkgs": [
+          "heaviside-nixpkgs",
+          "nixpkgs"
+        ],
+        "protos": [
+          "heaviside-nixpkgs",
+          "protos"
+        ]
+      },
+      "locked": {
+        "lastModified": 1754346464,
+        "narHash": "sha256-dGGgKBVjYvgfbyCoovMto00VSZMED4JnudEkSihGOuY=",
+        "ref": "refs/heads/master",
+        "rev": "6d9f417fcdb2d213ccda8d987df916db9659bcff",
+        "revCount": 82,
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries/microhardd"
+      },
+      "original": {
+        "ref": "refs/heads/master",
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries/microhardd"
+      }
+    },
+    "mini-compile-commands": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1738259546,
+        "narHash": "sha256-adUI86GOLKJLvfQTSa4+fxgdNdSO11/kxgcpnoq7Cvw=",
+        "ref": "refs/heads/main",
+        "rev": "4009fccb4e5293aec133861aeb1e7e706607b5a4",
+        "revCount": 57,
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries-mirrors/mini_compile_commands"
+      },
+      "original": {
+        "ref": "refs/heads/main",
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries-mirrors/mini_compile_commands"
+      }
+    },
+    "moth": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1746537637,
+        "narHash": "sha256-IHEAA/rhILwgRLfqr8/parN+yDO3UcjrXO0B0xwAgQY=",
+        "ref": "refs/heads/master",
+        "rev": "53d8b9a9c4d40822468f3958561183e0c4647375",
+        "revCount": 14,
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries/moth"
+      },
+      "original": {
+        "ref": "refs/heads/master",
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries/moth"
+      }
+    },
+    "naersk": {
+      "inputs": {
+        "nixpkgs": [
+          "heaviside-nixpkgs",
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1743800763,
+        "narHash": "sha256-YFKV+fxEpMgP5VsUcM6Il28lI0NlpM7+oB1XxbBAYCw=",
+        "ref": "refs/heads/master",
+        "rev": "ed0232117731a4c19d3ee93aa0c382a8fe754b01",
+        "revCount": 356,
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries-mirrors/naersk"
+      },
+      "original": {
+        "ref": "refs/heads/master",
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries-mirrors/naersk"
+      }
+    },
     "nix": {
       "inputs": {
         "flake-parts": "flake-parts",
@@ -616,6 +1588,22 @@
         "owner": "nix-community",
         "repo": "nix-vscode-extensions",
         "type": "github"
+      }
+    },
+    "nixos-hardware": {
+      "locked": {
+        "lastModified": 1764440730,
+        "narHash": "sha256-ZlJTNLUKQRANlLDomuRWLBCH5792x+6XUJ4YdFRjtO4=",
+        "ref": "refs/heads/master",
+        "rev": "9154f4569b6cdfd3c595851a6ba51bfaa472d9f3",
+        "revCount": 2540,
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries-mirrors/nixos-hardware"
+      },
+      "original": {
+        "ref": "refs/heads/master",
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries-mirrors/nixos-hardware"
       }
     },
     "nixos-wsl": {
@@ -669,6 +1657,22 @@
         "type": "github"
       }
     },
+    "nixpkgs-25_11": {
+      "locked": {
+        "lastModified": 1765311797,
+        "narHash": "sha256-mSD5Ob7a+T2RNjvPvOA1dkJHGVrNVl8ZOrAwBjKBDQo=",
+        "ref": "nixos-25.11",
+        "rev": "09eb77e94fa25202af8f3e81ddc7353d9970ac1b",
+        "revCount": 903162,
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries-mirrors/nixpkgs"
+      },
+      "original": {
+        "ref": "nixos-25.11",
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries-mirrors/nixpkgs"
+      }
+    },
     "nixpkgs-regression": {
       "locked": {
         "lastModified": 1643052045,
@@ -687,6 +1691,22 @@
     },
     "nixpkgs-unstable": {
       "locked": {
+        "lastModified": 1765186076,
+        "narHash": "sha256-hM20uyap1a0M9d344I692r+ik4gTMyj60cQWO+hAYP8=",
+        "ref": "nixos-unstable",
+        "rev": "addf7cf5f383a3101ecfba091b98d0a1263dc9b8",
+        "revCount": 908783,
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries-mirrors/nixpkgs"
+      },
+      "original": {
+        "ref": "nixos-unstable",
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries-mirrors/nixpkgs"
+      }
+    },
+    "nixpkgs-unstable_2": {
+      "locked": {
         "lastModified": 1766651565,
         "narHash": "sha256-QEhk0eXgyIqTpJ/ehZKg9IKS7EtlWxF3N7DXy42zPfU=",
         "owner": "nixos",
@@ -703,6 +1723,22 @@
     },
     "nixpkgs_2": {
       "locked": {
+        "lastModified": 1735669367,
+        "narHash": "sha256-tfYRbFhMOnYaM4ippqqid3BaLOXoFNdImrfBfCp4zn0=",
+        "owner": "nixos",
+        "repo": "nixpkgs",
+        "rev": "edf04b75c13c2ac0e54df5ec5c543e300f76f1c9",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nixos",
+        "ref": "nixos-24.11",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "nixpkgs_3": {
+      "locked": {
         "lastModified": 1766070988,
         "narHash": "sha256-G/WVghka6c4bAzMhTwT2vjLccg/awmHkdKSd2JrycLc=",
         "owner": "NixOS",
@@ -717,7 +1753,7 @@
         "type": "github"
       }
     },
-    "nixpkgs_3": {
+    "nixpkgs_4": {
       "locked": {
         "lastModified": 1766651565,
         "narHash": "sha256-QEhk0eXgyIqTpJ/ehZKg9IKS7EtlWxF3N7DXy42zPfU=",
@@ -731,6 +1767,30 @@
         "ref": "nixos-unstable",
         "repo": "nixpkgs",
         "type": "github"
+      }
+    },
+    "powerlatch": {
+      "inputs": {
+        "nixpkgs": [
+          "heaviside-nixpkgs",
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1752264877,
+        "narHash": "sha256-YQrDkLyrge7jp4fjP/7qnBR4LWwIexUWWSvvP+65UFw=",
+        "ref": "refs/heads/master",
+        "rev": "123c60b3c65f4a5c725b06e87e5a86110e2b52bc",
+        "revCount": 15,
+        "submodules": true,
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries/powerlatch-service"
+      },
+      "original": {
+        "ref": "refs/heads/master",
+        "submodules": true,
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries/powerlatch-service"
       }
     },
     "pre-commit-hooks": {
@@ -756,17 +1816,151 @@
         "type": "github"
       }
     },
+    "protos": {
+      "inputs": {
+        "nixpkgs": [
+          "heaviside-nixpkgs",
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1753479004,
+        "narHash": "sha256-wK3GfGhy1zgw1Ld9MtbPbCHF1Bjn+JsP5yoxerWr94U=",
+        "ref": "master",
+        "rev": "2c56a9103d3801c2e1965afeaec35968d8bb0530",
+        "revCount": 27,
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries/protos"
+      },
+      "original": {
+        "ref": "master",
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries/protos"
+      }
+    },
+    "qgroundcontrol": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1754370280,
+        "narHash": "sha256-XepsN9DjHbGjJs6ZLXYKXcqdjEPMvLWNi1+25qTWlFQ=",
+        "ref": "refs/heads/release/heaviside-forks/locust/master",
+        "rev": "89c6ecdf8f7b0667770928001c06ab10215cd462",
+        "revCount": 18967,
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries-forks/qgroundcontrol"
+      },
+      "original": {
+        "ref": "refs/heads/release/heaviside-forks/locust/master",
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries-forks/qgroundcontrol"
+      }
+    },
+    "qmdnsengine-qgc": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1629741898,
+        "narHash": "sha256-wL3qlbQKIqCr0G8gapw+R+36wZ2A4YeGRj0RMUojP4s=",
+        "ref": "refs/heads/master",
+        "rev": "bcae73281fd29ab8e7a41fc3246223b15d44d0df",
+        "revCount": 229,
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries-mirrors/qmdnsengine"
+      },
+      "original": {
+        "ref": "refs/heads/master",
+        "rev": "bcae73281fd29ab8e7a41fc3246223b15d44d0df",
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries-mirrors/qmdnsengine"
+      }
+    },
     "root": {
       "inputs": {
         "determinate": "determinate",
+        "heaviside-nixpkgs": "heaviside-nixpkgs",
         "home-manager": "home-manager",
         "hyprland": "hyprland",
         "hyprland-plugins": "hyprland-plugins",
         "nix-vscode-extensions": "nix-vscode-extensions",
         "nixos-wsl": "nixos-wsl",
-        "nixpkgs": "nixpkgs_3",
-        "nixpkgs-unstable": "nixpkgs-unstable",
+        "nixpkgs": "nixpkgs_4",
+        "nixpkgs-unstable": "nixpkgs-unstable_2",
         "sops-nix": "sops-nix"
+      }
+    },
+    "rust-overlay": {
+      "inputs": {
+        "nixpkgs": [
+          "heaviside-nixpkgs",
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1751856221,
+        "narHash": "sha256-/QE1eV0ckFvgRMcKjZqgdJDoXFNwSMepwRoBjaw2MCk=",
+        "ref": "refs/heads/master",
+        "rev": "34cae4b56929c5b340e1c5b10d9a98a425b2a51e",
+        "revCount": 1840,
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries-mirrors/rust-overlay"
+      },
+      "original": {
+        "ref": "refs/heads/master",
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries-mirrors/rust-overlay"
+      }
+    },
+    "scodes": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1736902100,
+        "narHash": "sha256-sTPLdXpHuqfYIQITAGCginMKsIK99nERa6ycER3BKSE=",
+        "ref": "release/heaviside-fork/qt5/bug_fix",
+        "rev": "c4ef101b3ab51daa658d194652d323c6122a2f5b",
+        "revCount": 103,
+        "submodules": true,
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries-forks/SCodes"
+      },
+      "original": {
+        "ref": "release/heaviside-fork/qt5/bug_fix",
+        "submodules": true,
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries-forks/SCodes"
+      }
+    },
+    "seek-thermal-sdk": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1720551252,
+        "narHash": "sha256-s4rLNyPQjq96GYXg2MQsVAWZwO/YnbV1D0EVG3jCm80=",
+        "ref": "refs/tags/4.4.2.0",
+        "rev": "d7151432553ba2111bc1db17964a5842c2ebecf5",
+        "revCount": 4,
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries/seek-thermal-sdk"
+      },
+      "original": {
+        "ref": "refs/tags/4.4.2.0",
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries/seek-thermal-sdk"
+      }
+    },
+    "shapelib-qgc": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1647729718,
+        "narHash": "sha256-qPjH+gOPRgK15+lcsd2I8OveWG1kpDl2fZIDNoJZrQI=",
+        "ref": "refs/heads/master",
+        "rev": "6189dbd83ba2382fe0ebbc8f2308e582832c93fa",
+        "revCount": 523,
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries-mirrors/shapelib"
+      },
+      "original": {
+        "ref": "refs/heads/master",
+        "rev": "6189dbd83ba2382fe0ebbc8f2308e582832c93fa",
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries-mirrors/shapelib"
       }
     },
     "sops-nix": {
@@ -789,7 +1983,41 @@
         "type": "github"
       }
     },
+    "speex": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1743599728,
+        "narHash": "sha256-TNMvAnz9yndGRP2wm2ADS45Abv7VZuHqzznn8jbOAf4=",
+        "ref": "refs/heads/master",
+        "rev": "3c288944fa0180002a9b2d9398376bba98acfb56",
+        "revCount": 2040,
+        "submodules": true,
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries-mirrors/speex"
+      },
+      "original": {
+        "ref": "refs/heads/master",
+        "submodules": true,
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries-mirrors/speex"
+      }
+    },
     "systems": {
+      "locked": {
+        "lastModified": 1681028828,
+        "narHash": "sha256-Vy1rq5AaRuLzOxct8nz4T6wlgyUR7zLU309k9mBC768=",
+        "owner": "nix-systems",
+        "repo": "default",
+        "rev": "da67096a3b9bf56a91d16901293e51ba5b49a27e",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nix-systems",
+        "repo": "default",
+        "type": "github"
+      }
+    },
+    "systems_2": {
       "locked": {
         "lastModified": 1689347949,
         "narHash": "sha256-12tWmuL2zgBgZkdoB6qXZsgJEH9LR3oUgpaQq2RbI80=",
@@ -802,6 +2030,294 @@
         "owner": "nix-systems",
         "repo": "default-linux",
         "type": "github"
+      }
+    },
+    "ti-edgeai-app-stack": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1739789857,
+        "narHash": "sha256-C6fJ0sRAg1QBd9QXrEyyzqzSc9K0+2OjsdnwSAnZZPg=",
+        "ref": "refs/heads/main",
+        "rev": "0d75167c5da6fc56b54d34ffcfd5ac709f6afd77",
+        "revCount": 34,
+        "submodules": true,
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries-mirrors/ti-edgeai-app-stack"
+      },
+      "original": {
+        "ref": "refs/heads/main",
+        "submodules": true,
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries-mirrors/ti-edgeai-app-stack"
+      }
+    },
+    "ti-edgeai-apps-utils": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1739885026,
+        "narHash": "sha256-F0FdH+80L4KGTxC7adSp/eEo2gfsNsbn3/UleOhIjsM=",
+        "ref": "refs/heads/main",
+        "rev": "5a5a694ae02f0d2e4e39028b847e1c777c465cbf",
+        "revCount": 40,
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries-mirrors/ti-edgeai-apps-utils"
+      },
+      "original": {
+        "ref": "refs/heads/main",
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries-mirrors/ti-edgeai-apps-utils"
+      }
+    },
+    "ti-edgeai-dl-inferer": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1732119175,
+        "narHash": "sha256-lPPDZWLH5xJ+XUwDU9Wvo++2kn4a4nZNP33hbOa16Qo=",
+        "ref": "refs/heads/main",
+        "rev": "f1592e41f8f859fc345865fa4e15efb85d06d3ec",
+        "revCount": 110,
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries-mirrors/ti-edgeai-dl-inferer"
+      },
+      "original": {
+        "ref": "refs/heads/main",
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries-mirrors/ti-edgeai-dl-inferer"
+      }
+    },
+    "ti-edgeai-gst-apps": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1749812622,
+        "narHash": "sha256-zeWLE1rT21ZK3q6gdPOI3xmDZnhTvbuRILMMxefj4XI=",
+        "ref": "refs/heads/main",
+        "rev": "799dcbda54f829eb7b234bf93a5669addcc1b919",
+        "revCount": 182,
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries-mirrors/ti-edgeai-gst-apps"
+      },
+      "original": {
+        "ref": "refs/heads/main",
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries-mirrors/ti-edgeai-gst-apps"
+      }
+    },
+    "ti-edgeai-gst-plugins": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1742308375,
+        "narHash": "sha256-JtX7O7p3PAzpk/TBJ1QY/dMs8kx+5p9cCnUaMuQjF50=",
+        "ref": "refs/heads/main",
+        "rev": "1e9614c7eeb467ed6856c6b448f92895b10b767d",
+        "revCount": 1815,
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries-mirrors/ti-edgeai-gst-plugins"
+      },
+      "original": {
+        "ref": "refs/heads/main",
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries-mirrors/ti-edgeai-gst-plugins"
+      }
+    },
+    "ti-edgeai-tiovx-apps": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1747812812,
+        "narHash": "sha256-QpEp0GUEszJ8TXo1BI1FDzE0mWJPkzEexAAddid2vlA=",
+        "ref": "refs/heads/main",
+        "rev": "bb50f5ab5765f9b634cd40d744399dcbce296c52",
+        "revCount": 265,
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries-mirrors/ti-edgeai-tiovx-apps"
+      },
+      "original": {
+        "ref": "refs/heads/main",
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries-mirrors/ti-edgeai-tiovx-apps"
+      }
+    },
+    "ti-edgeai-tiovx-kernels": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1747500924,
+        "narHash": "sha256-dIBhn0cgOa6wDGj16MlHbk6PQivD18owyF09N7S6/io=",
+        "ref": "refs/heads/main",
+        "rev": "b41bef631fcf037e8cb8b754d9db0d42d9ce3210",
+        "revCount": 47,
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries-mirrors/ti-edgeai-tiovx-kernels"
+      },
+      "original": {
+        "ref": "refs/heads/main",
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries-mirrors/ti-edgeai-tiovx-kernels"
+      }
+    },
+    "ti-edgeai-tiovx-modules": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1747089834,
+        "narHash": "sha256-eqjuPx7oCxIpyHWBJ5U9rAGjEemHm0bO9TPjUWF8SWE=",
+        "ref": "refs/heads/main",
+        "rev": "16ea980baf1b9c6549bd5cc33aa94ea9c351eb01",
+        "revCount": 159,
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries-mirrors/ti-edgeai-tiovx-modules"
+      },
+      "original": {
+        "ref": "refs/heads/main",
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries-mirrors/ti-edgeai-tiovx-modules"
+      }
+    },
+    "ti-linux-kernel": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1749681273,
+        "narHash": "sha256-3Db9nG/gxXobG33irjn2a4F3DY/CBact25CsVEp2Dog=",
+        "ref": "refs/heads/release/heaviside/10.00.08",
+        "rev": "31af1fa11eb033ea293966c142633721f48a4f45",
+        "revCount": 1225355,
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries-forks/ti-linux-kernel"
+      },
+      "original": {
+        "ref": "refs/heads/release/heaviside/10.00.08",
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries-forks/ti-linux-kernel"
+      }
+    },
+    "ti-nixos": {
+      "inputs": {
+        "nixpkgs": [
+          "heaviside-nixpkgs",
+          "nixpkgs"
+        ],
+        "nixpkgs-unstable": [
+          "heaviside-nixpkgs",
+          "nixpkgs-unstable"
+        ],
+        "ti-linux-kernel": [
+          "heaviside-nixpkgs",
+          "ti-linux-kernel"
+        ],
+        "ti-source": [
+          "heaviside-nixpkgs",
+          "ti-source"
+        ],
+        "ti-u-boot": [
+          "heaviside-nixpkgs",
+          "ti-u-boot"
+        ]
+      },
+      "locked": {
+        "lastModified": 1752860850,
+        "narHash": "sha256-7mGkh41c7upJYJca/cylXb0CiWZtFtkYvh+SApalWzs=",
+        "ref": "refs/heads/master",
+        "rev": "84f0ae3e0be0fdb778ab03064291addf55272b25",
+        "revCount": 114,
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries/ti-nixos"
+      },
+      "original": {
+        "ref": "refs/heads/master",
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries/ti-nixos"
+      }
+    },
+    "ti-processor-sdk-vision_apps": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1751029611,
+        "narHash": "sha256-r1NIhaH64+dxlf1GTDEMyEsCC6mayD4dkYr4kReQkYs=",
+        "ref": "refs/heads/main",
+        "rev": "16a8cbf4bd8acf1b99763caa45600a75ee4dc479",
+        "revCount": 1220,
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries-mirrors/ti-processor-sdk-vision_apps"
+      },
+      "original": {
+        "ref": "refs/heads/main",
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries-mirrors/ti-processor-sdk-vision_apps"
+      }
+    },
+    "ti-source": {
+      "inputs": {
+        "nixpkgs": [
+          "heaviside-nixpkgs",
+          "nixpkgs"
+        ],
+        "nixpkgs-unstable": [
+          "heaviside-nixpkgs",
+          "nixpkgs-unstable"
+        ]
+      },
+      "locked": {
+        "lastModified": 1751855043,
+        "narHash": "sha256-kjqj+wqnt1hiGD0iG1kdw5d411N8TTfBwxqIXzOXHCI=",
+        "ref": "refs/heads/master",
+        "rev": "8ea063b59bc725ea97025814f098a2d95f93f8c0",
+        "revCount": 10,
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries/ti-source"
+      },
+      "original": {
+        "ref": "refs/heads/master",
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries/ti-source"
+      }
+    },
+    "ti-tiovx": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1750968285,
+        "narHash": "sha256-zq5WbxD8waJIbD0pmzfGlYaQRBjY2J3YiwlOOhgw0e4=",
+        "ref": "refs/heads/main",
+        "rev": "faec41c52a8b4d345eece3013215266a2ffba7de",
+        "revCount": 3585,
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries-mirrors/ti-tiovx"
+      },
+      "original": {
+        "ref": "refs/heads/main",
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries-mirrors/ti-tiovx"
+      }
+    },
+    "ti-u-boot": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1748562623,
+        "narHash": "sha256-PJIpUAUkyIghFNnHnBnf2MLH0cVlQ6AQz8WJj5c/XX8=",
+        "ref": "refs/heads/release/heaviside/ti-u-boot-2024.04",
+        "rev": "f3c4450a6839c4417957503b5f4f98de813436b1",
+        "revCount": 92307,
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries-forks/ti-u-boot"
+      },
+      "original": {
+        "ref": "refs/heads/release/heaviside/ti-u-boot-2024.04",
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries-forks/ti-u-boot"
+      }
+    },
+    "waf": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1728342388,
+        "narHash": "sha256-1B2WY/oDNcdWTS60ecG6940LfKlahNRSTEcgmLp2GZw=",
+        "ref": "master",
+        "rev": "35eadbb64e2052099a853b571e507c33032b392c",
+        "revCount": 3234,
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries-mirrors/waf"
+      },
+      "original": {
+        "ref": "master",
+        "rev": "35eadbb64e2052099a853b571e507c33032b392c",
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries-mirrors/waf"
       }
     },
     "xdph": {
@@ -843,6 +2359,26 @@
         "owner": "hyprwm",
         "repo": "xdg-desktop-portal-hyprland",
         "type": "github"
+      }
+    },
+    "xz-embedded-qgc": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1604334816,
+        "narHash": "sha256-gwZpMv2CQLBr9JPjr48vYJ5/ZUK3CGIxf3opMOavZoY=",
+        "ref": "refs/heads/master",
+        "rev": "090e6a054d6283b144d20f5783852b95eade90ee",
+        "revCount": 105,
+        "submodules": true,
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries-mirrors/xz-embedded"
+      },
+      "original": {
+        "ref": "refs/heads/master",
+        "rev": "090e6a054d6283b144d20f5783852b95eade90ee",
+        "submodules": true,
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries-mirrors/xz-embedded"
       }
     }
   },
