@@ -181,10 +181,12 @@ in
     gparted
     jq
     platformio
-    (python312.withPackages (ps: with ps; [
-      pip
-      pyserial
-    ]))
+    (python312.withPackages (
+      ps: with ps; [
+        pip
+        pyserial
+      ]
+    ))
     neofetch
     nil
     nixfmt-tree
@@ -332,7 +334,8 @@ in
       enable = true;
       assetsPath = "/home/cole/.local/share/Steam/steamapps/common/wallpaper_engine/assets";
       wallpapers = [
-        { # laptop display
+        {
+          # laptop display
           monitor = "eDP-1"; # Your laptop's internal display
           wallpaperId = wallpaperIds.floppa-ps1;
           scaling = "fill"; # "stretch", "fit", "fill", or "default"
@@ -343,11 +346,13 @@ in
           #   "--set-property backgroundcolor=0.0,0.0,0.0"
           # ];
         }
-        { # Ultrawide
+        {
+          # Ultrawide
           monitor = "DP-3";
           wallpaperId = wallpaperIds.hyper-cube-oled;
         }
-        { # mini
+        {
+          # mini
           monitor = "DP-2";
           wallpaperId = wallpaperIds.ricardo;
         }
