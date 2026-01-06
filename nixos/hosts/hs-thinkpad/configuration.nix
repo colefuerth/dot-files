@@ -9,6 +9,25 @@
 }:
 let
   kernel-pkgs = config.boot.kernelPackages;
+
+  wallpaperIds = {
+    polish-cow-dandadan = "3346104040";
+    ascii-donut = "3136351729";
+    jjp = "3348560292";
+    cat-eating-chips = "3250755486";
+    dog-dvd = "2717323779";
+    floppa-ps1 = "2472509205";
+    eminem-goose = "2421217072";
+    hyper-cube-oled = "3437148262";
+    ricardo = "2620623306";
+    misato-clock = "2156652467";
+    evangelion-beer = "1756162891";
+    tblz = "1542633413";
+    minecraft-redstone-clock = "1731760875";
+    stick-bugged = "2190879698";
+    firewatch-clock = "1922177752";
+    witcher-clock = "1945071673";
+  };
 in
 {
   imports = [
@@ -308,31 +327,24 @@ in
       enable = true;
       assetsPath = "/home/cole/.local/share/Steam/steamapps/common/wallpaper_engine/assets";
       wallpapers = [
-        {
+        { # laptop display
           monitor = "eDP-1"; # Your laptop's internal display
-          wallpaperId =
-            # "3346104040"; # polish cow dandadan
-            # "3136351729"; # ascii donut
-            # "3348560292"; # jjp
-            # "3250755486"; # cat eating chips
-            # "2717323779"; # dog dvd
-            "2472509205"; # floppa ps1
-            # "2421217072"; # eminem goose
-            # "2620623306"; # ricardo
-            # "2156652467"; # misato clock (no clock)
-            # "1756162891"; # end of evangelion beer
-            # "1542633413"; # tblz
-            # "1731760875"; # minecraft redstone clock (also broken)
-            # "2190879698"; # get stick bugged lol
-            # "1922177752"; # firewatch clock (no clock)
-            # "1945071673"; # witcher clock (particle assets not supported yet) (also no clock)
+          wallpaperId = wallpaperIds.floppa-ps1;
           scaling = "fill"; # "stretch", "fit", "fill", or "default"
           # fps = 25;
-          audio.silent = true;
+          audio.silent = true; # only use this flag once for all monitors
           # extraOptions = [
           #   "--set-property spacemode=1"
           #   "--set-property backgroundcolor=0.0,0.0,0.0"
           # ];
+        }
+        { # Ultrawide
+          monitor = "DP-3";
+          wallpaperId = wallpaperIds.hyper-cube-oled;
+        }
+        { # mini
+          monitor = "DP-2";
+          wallpaperId = wallpaperIds.ricardo;
         }
       ];
     };
