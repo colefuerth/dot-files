@@ -120,7 +120,7 @@
       formatter = forAllSystems (system: nixpkgs.legacyPackages.${system}.nixfmt-tree);
       overlays.default = inputs: import ./overlays inputs;
 
-      nixosConfigurations = rec {
+      nixosConfigurations = {
         cole-laptop = mkNixosConfiguration {
           host = "cole-laptop";
           username = "cole";
