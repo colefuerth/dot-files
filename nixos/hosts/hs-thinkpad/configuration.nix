@@ -14,12 +14,12 @@ let
     polish-cow-dandadan = "3346104040";
     ascii-donut = "3136351729";
     jjp = "3348560292";
-    cat-eating-chips = "3250755486";
+    cat-eating-chips = "3250755486"; # pins a cpu
     dog-dvd = "2717323779";
     floppa-ps1 = "2472509205";
     eminem-goose = "2421217072";
     hyper-cube-oled = "3437148262";
-    ricardo = "2620623306";
+    ricardo = "2620623306"; # pins a cpu
     misato-clock = "2156652467";
     evangelion-beer = "1756162891";
     tblz = "1542633413";
@@ -61,7 +61,9 @@ in
   };
 
   # Select the kernel version
+  # Reverting to latest kernel for display support - Falcon Sensor needs investigation
   boot.kernelPackages = pkgs.linuxPackages;
+  boot.binfmt.emulatedSystems = [ "aarch64-linux" ];
 
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
@@ -176,6 +178,7 @@ in
       "wheel"
     ];
     packages = with pkgs; [
+      act
       discord
       firefoxpwa
       git-lfs
@@ -195,11 +198,8 @@ in
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
+    avrdude
     cachix
-    e2fsprogs
-    gnome-terminal
-    gparted
-    jq
     platformio
     (python312.withPackages (
       ps: with ps; [

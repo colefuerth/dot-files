@@ -74,19 +74,21 @@ in
     };
 
     environment.systemPackages = with pkgs; [
+      binutils # provides strings, objdump, nm, etc.
       btop
       curl
+      dig
       eza
+      file
       git
       gnupg
       gptfdisk
       inetutils
       iotop
+      lsof
       nano
       nix-index
       nix-output-monitor
-      # Since `nixfmt` is the classic style, use `nixfmt-rfc-style` for now
-      nixfmt-rfc-style
       nmap
       openssh
       openssl

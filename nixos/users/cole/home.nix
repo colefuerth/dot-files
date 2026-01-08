@@ -88,7 +88,7 @@
           "s" = {
             user = "cole";
             # hostname = "heaviside-thelio-server.local";
-            hostname = "192.168.1.155";
+            hostname = "10.100.20.28";
             serverAliveInterval = 60;
           };
           "t" = {
@@ -148,111 +148,111 @@
         #   "terminal.integrated.shellIntegration.history" = 1000000;
         #   "git.confirmSync" = false;
         # };
-        profiles = {
-          default = {
-            extensions = with pkgs.vscode-marketplace; [
-              # Themes
-              akamud.vscode-theme-onedark
-              chadbaileyvh.oled-pure-black---vscode
-              github.github-vscode-theme
-              pkief.material-icon-theme
-              zhuangtongfa.material-theme
-              # AI/Code assistance
-              anthropic.claude-code
-              github.copilot
-              github.copilot-chat
-              tabbyml.vscode-tabby
-              # Git/Version Control
-              codezombiech.gitignore
-              eamodio.gitlens
-              github.vscode-pull-request-github
-              hashhar.gitattributes
-              jasonnutter.vscode-codeowners
-              # Nix
-              jnoortheen.nix-ide
-              # Python
-              donjayamanne.python-extension-pack
-              kevinrose.vsc-python-indent
-              ms-python.autopep8
-              ms-python.debugpy
-              ms-python.isort
-              ms-python.python
-              ms-python.vscode-pylance
-              ms-python.vscode-python-envs
-              njpwerner.autodocstring
-              # Jupyter
-              ms-toolsai.jupyter
-              ms-toolsai.jupyter-keymap
-              ms-toolsai.jupyter-renderers
-              ms-toolsai.vscode-jupyter-cell-tags
-              ms-toolsai.vscode-jupyter-slideshow
-              # C/C++/Embedded
-              # dan-c-underwood.arm
-              # eclipse-cdt.memory-inspector
-              jeff-hykin.better-cpp-syntax
-              llvm-vs-code-extensions.vscode-clangd
-              ms-vscode.cpptools
-              ms-vscode.cpptools-extension-pack
-              ms-vscode.cpptools-themes
-              # platformio.platformio-ide
-              plorefice.devicetree
-              # vscode-arduino.vscode-arduino-community
-              xaver.clang-format
-              # Microchip MPLAB
-              # microchip.mplab-clangd
-              # microchip.mplab-code-configurator
-              # microchip.mplab-core-da
-              # microchip.mplab-data-visualizer
-              # microchip.mplab-extension-pack
-              # microchip.mplab-extensions-core
-              # microchip.mplab-extensions-platforms
-              # microchip.mplab-kconfig
-              # microchip.mplab-ui
-              # microchip.mplabx-importer
-              # microchip.runcmake
-              # microchip.toolchains
-              # Rust
-              rust-lang.rust-analyzer
-              # Docker/Containers
-              docker.docker
-              formulahendry.docker-explorer
-              formulahendry.docker-extension-pack
-              ms-azuretools.vscode-containers
-              ms-azuretools.vscode-docker
-              ms-vscode-remote.remote-containers
-              # Remote Development
-              ms-vscode-remote.remote-ssh
-              ms-vscode-remote.remote-ssh-edit
-              ms-vscode.remote-explorer
-              ms-vscode.remote-server
-              ms-vsliveshare.vsliveshare
-              # Shell/Bash
-              foxundermoon.shell-format
-              mads-hartmann.bash-ide-vscode
-              # Markdown
-              bierner.markdown-preview-github-styles
-              davidanson.vscode-markdownlint
-              tomoki1207.pdf
-              yzane.markdown-pdf
-              yzhang.markdown-all-in-one
-              # Other tools
-              christian-kohler.path-intellisense
-              hangxingliu.vscode-systemd-support
-              james-yu.latex-workshop
-              janisdd.vscode-edit-csv
-              ms-vscode.hexeditor
-              ms-vscode.vscode-serial-monitor
-              mutantdino.resourcemonitor
-              pbkit.vscode-pbkit
-              redhat.vscode-xml
-              tamasfe.even-better-toml
-              wholroyd.jinja
-            ];
-            enableExtensionUpdateCheck = true;
-          };
-        };
+        # profiles = {
+        #   default = {
+        #     extensions = with pkgs.vscode-marketplace; [
+        #       # Themes
+        #       akamud.vscode-theme-onedark
+        #       chadbaileyvh.oled-pure-black---vscode
+        #       github.github-vscode-theme
+        #       pkief.material-icon-theme
+        #       zhuangtongfa.material-theme
+        #       # AI/Code assistance
+        #       anthropic.claude-code
+        #       github.copilot
+        #       github.copilot-chat
+        #       tabbyml.vscode-tabby
+        #       # Git/Version Control
+        #       codezombiech.gitignore
+        #       eamodio.gitlens
+        #       github.vscode-pull-request-github
+        #       hashhar.gitattributes
+        #       jasonnutter.vscode-codeowners
+        #       # Nix
+        #       jnoortheen.nix-ide
+        #       # Python
+        #       donjayamanne.python-extension-pack
+        #       kevinrose.vsc-python-indent
+        #       ms-python.autopep8
+        #       ms-python.debugpy
+        #       ms-python.isort
+        #       ms-python.python
+        #       ms-python.vscode-pylance
+        #       ms-python.vscode-python-envs
+        #       njpwerner.autodocstring
+        #       # Jupyter
+        #       ms-toolsai.jupyter
+        #       ms-toolsai.jupyter-keymap
+        #       ms-toolsai.jupyter-renderers
+        #       ms-toolsai.vscode-jupyter-cell-tags
+        #       ms-toolsai.vscode-jupyter-slideshow
+        #       # C/C++/Embedded
+        #       # dan-c-underwood.arm
+        #       # eclipse-cdt.memory-inspector
+        #       jeff-hykin.better-cpp-syntax
+        #       llvm-vs-code-extensions.vscode-clangd
+        #       ms-vscode.cpptools
+        #       ms-vscode.cpptools-extension-pack
+        #       ms-vscode.cpptools-themes
+        #       # platformio.platformio-ide
+        #       plorefice.devicetree
+        #       # vscode-arduino.vscode-arduino-community
+        #       xaver.clang-format
+        #       # Microchip MPLAB
+        #       # microchip.mplab-clangd
+        #       # microchip.mplab-code-configurator
+        #       # microchip.mplab-core-da
+        #       # microchip.mplab-data-visualizer
+        #       # microchip.mplab-extension-pack
+        #       # microchip.mplab-extensions-core
+        #       # microchip.mplab-extensions-platforms
+        #       # microchip.mplab-kconfig
+        #       # microchip.mplab-ui
+        #       # microchip.mplabx-importer
+        #       # microchip.runcmake
+        #       # microchip.toolchains
+        #       # Rust
+        #       rust-lang.rust-analyzer
+        #       # Docker/Containers
+        #       docker.docker
+        #       formulahendry.docker-explorer
+        #       formulahendry.docker-extension-pack
+        #       ms-azuretools.vscode-containers
+        #       ms-azuretools.vscode-docker
+        #       ms-vscode-remote.remote-containers
+        #       # Remote Development
+        #       ms-vscode-remote.remote-ssh
+        #       ms-vscode-remote.remote-ssh-edit
+        #       ms-vscode.remote-explorer
+        #       ms-vscode.remote-server
+        #       ms-vsliveshare.vsliveshare
+        #       # Shell/Bash
+        #       foxundermoon.shell-format
+        #       mads-hartmann.bash-ide-vscode
+        #       # Markdown
+        #       bierner.markdown-preview-github-styles
+        #       davidanson.vscode-markdownlint
+        #       tomoki1207.pdf
+        #       yzane.markdown-pdf
+        #       yzhang.markdown-all-in-one
+        #       # Other tools
+        #       christian-kohler.path-intellisense
+        #       hangxingliu.vscode-systemd-support
+        #       james-yu.latex-workshop
+        #       janisdd.vscode-edit-csv
+        #       ms-vscode.hexeditor
+        #       ms-vscode.vscode-serial-monitor
+        #       mutantdino.resourcemonitor
+        #       pbkit.vscode-pbkit
+        #       redhat.vscode-xml
+        #       tamasfe.even-better-toml
+        #       wholroyd.jinja
+        #     ];
+        #     enableExtensionUpdateCheck = true;
+        #   };
+        # };
       };
-      zsh = rec {
+      zsh = {
         enable = true;
         enableCompletion = true;
         autosuggestion.enable = true;
