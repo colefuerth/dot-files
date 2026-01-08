@@ -5,7 +5,7 @@ set -euo pipefail
 # Use nix-output-monitor is available else fall back to nix
 NIX=$(if [ ! -z $(which nom) ]; then echo "nom"; else echo "nix"; fi)
 
-REMOTE="eu.nixbuild.net"
+REMOTE="s"
 
 RESULT_PATH=$(
     $NIX build -L \
