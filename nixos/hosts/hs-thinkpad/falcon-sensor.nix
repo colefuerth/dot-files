@@ -11,5 +11,7 @@
     #   sudo falconctl -s --cid=YOUR_CID --provisioning-token=YOUR_TOKEN
     # Or configure via sops-nix:
     #   cid = config.sops.secrets.falcon-cid.value;
+    # cid = "";
+    # provisioning-token = "";
   };
 }
