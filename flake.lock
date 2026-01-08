@@ -379,6 +379,25 @@
         "url": "https://github.com/ArduPilot/ardupilot"
       }
     },
+    "assets": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1767897002,
+        "lfs": true,
+        "narHash": "sha256-F7hAYZyG8s+REOjofxu3oGo91BcVqYZ8RRlX/tivQJ8=",
+        "ref": "refs/heads/master",
+        "rev": "319db58cdba41b0c9a3641ad5bc7d856b2e7a5ed",
+        "revCount": 2,
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries/assets"
+      },
+      "original": {
+        "lfs": true,
+        "ref": "refs/heads/master",
+        "type": "git",
+        "url": "ssh://git@github.com/heaviside-industries/assets"
+      }
+    },
     "bark": {
       "inputs": {
         "naersk": [
@@ -798,6 +817,7 @@
         "ardupilot": "ardupilot",
         "ardupilot-builder": "ardupilot-builder",
         "ardupilot-parameter-repository-qgc": "ardupilot-parameter-repository-qgc",
+        "assets": "assets",
         "bark": "bark",
         "chitter": "chitter",
         "eigen-qgc": "eigen-qgc",
@@ -857,16 +877,16 @@
         "xz-embedded-qgc": "xz-embedded-qgc"
       },
       "locked": {
-        "lastModified": 1766581069,
-        "narHash": "sha256-Gukk8Kz/QA9vy+7ETvI3sbsFnDsxSNMElwLIJjY/+xo=",
-        "ref": "cf/globalprotect",
-        "rev": "ce3ace061a4eb81c1f13dadf54fc857d866cf599",
-        "revCount": 114,
+        "lastModified": 1767901458,
+        "narHash": "sha256-2I9F6STb4TsqhvyurvW4lYQTHtOCf36IKKUlomVowtE=",
+        "ref": "refs/heads/master",
+        "rev": "d14618ad3d5431f5cd6c8a9b69b39f92f4ba0e15",
+        "revCount": 111,
         "type": "git",
         "url": "ssh://git@github.com/heaviside-industries/heaviside-nixpkgs.git"
       },
       "original": {
-        "ref": "cf/globalprotect",
+        "ref": "refs/heads/master",
         "type": "git",
         "url": "ssh://git@github.com/heaviside-industries/heaviside-nixpkgs.git"
       }
