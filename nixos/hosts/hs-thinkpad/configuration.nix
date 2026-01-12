@@ -177,18 +177,30 @@ in
       "video"
       "wheel"
     ];
-    packages = with pkgs; [
-      act
-      discord
-      firefoxpwa
-      git-lfs
-      google-chrome
-      kdePackages.okular
-      signal-desktop
-      slack
-      spotify
-      tidal-hifi
-    ];
+    packages =
+      with pkgs;
+      [
+        act
+        discord
+        firefoxpwa
+        git-lfs
+        google-chrome
+        kdePackages.okular
+        signal-desktop
+        slack
+        spotify
+        tidal-hifi
+      ]
+      ++ [
+        # Wrapper for rpi-imager to run with sudo and proper Wayland support
+        (pkgs.writeShellScriptBin "rpi-imager" ''
+          exec sudo -E env \
+            "WAYLAND_DISPLAY=$WAYLAND_DISPLAY" \
+            "XDG_RUNTIME_DIR=$XDG_RUNTIME_DIR" \
+            "QT_QPA_PLATFORM=wayland" \
+            ${pkgs.rpi-imager}/bin/rpi-imager "$@"
+        '')
+      ];
     initialHashedPassword = "$y$j9T$YcR7aNLjwHuI5yMbcA8UB.$UbVZuOsp9AsovPS8ApWj4flsMZJUBStWA3e1E8SSBo1";
   };
 
@@ -200,6 +212,10 @@ in
   environment.systemPackages = with pkgs; [
     avrdude
     cachix
+    libclang
+    neofetch
+    nil
+    nixfmt-tree
     platformio
     (python312.withPackages (
       ps: with ps; [
@@ -207,9 +223,6 @@ in
         pyserial
       ]
     ))
-    neofetch
-    nil
-    nixfmt-tree
     solaar
     xfce.tumbler # thumbnail daemon for ristretto
   ];
