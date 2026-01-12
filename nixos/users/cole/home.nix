@@ -61,55 +61,6 @@
       mcfly.enable = true;
       # nix-index.enable = true;  # Disabled temporarily - run `nix-index` manually when needed
       spotify-player.enable = true;
-      ssh = {
-        enable = true;
-        package = pkgs.openssh.override { withKerberos = true; };
-        # # IdentityAgent does not yet exist in matchBlocks so we need to
-        # # use the extraConfig option.
-        # extraConfig = ''
-        #   IdentityAgent ${onePassPath}
-        # '';
-        matchBlocks = {
-          "eu.nixbuild.net" = {
-            hostname = "eu.nixbuild.net";
-            # PubkeyAcceptedKeyTypes ssh-ed25519
-            serverAliveInterval = 60;
-            # IPQoS throughput
-            identityFile = "/home/cole/.ssh/nixbuild/heaviside-shared";
-          };
-          "pi" = {
-            user = "cole";
-            hostname = "colepi.local";
-            serverAliveInterval = 60;
-            identityFile = "/home/cole/.ssh/id_rsa";
-            forwardX11 = true;
-            forwardX11Trusted = true;
-          };
-          "s" = {
-            user = "cole";
-            # hostname = "heaviside-thelio-server.local";
-            hostname = "10.100.20.28";
-            serverAliveInterval = 60;
-          };
-          "t" = {
-            user = "heaviside_ai";
-            hostname = "10.100.20.38";
-            identityFile = "/home/cole/.ssh/id_ed25519";
-          };
-          "mothpi" = {
-            user = "moth";
-            hostname = "moth.local";
-            identityFile = "/home/cole/.ssh/id_rsa";
-            forwardX11 = true;
-            forwardX11Trusted = true;
-          };
-          "bms_test" = {
-            user = "heaviside";
-            hostname = "moth-production-tester.local";
-            identityFile = "/home/cole/.ssh/id_rsa";
-          };
-        };
-      };
       starship = {
         enable = true;
       };

@@ -192,6 +192,13 @@ in
     shell = pkgs.zsh;
   };
 
+  home-manager.users.${username} = {
+    programs.ssh = {
+      enable = true;
+      package = pkgs.openssh.override { withKerberos = true; };
+    };
+  };
+
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
 

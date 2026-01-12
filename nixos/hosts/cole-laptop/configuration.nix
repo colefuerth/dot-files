@@ -79,6 +79,13 @@ in
     LC_TIME = "en_US.UTF-8";
   };
 
+  home-manager.users.${username} = {
+    programs.ssh = {
+      enable = true;
+      package = pkgs.openssh.override { withKerberos = true; };
+    };
+  };
+
   fonts = {
     enableDefaultPackages = true;
     enableGhostscriptFonts = true;
