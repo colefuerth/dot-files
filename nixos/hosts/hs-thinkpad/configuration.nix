@@ -40,8 +40,8 @@ in
     ../../common/cosmic.nix
     ../../common/nixbuild.nix
     ./hardware-configuration.nix
-    ./globalprotect.nix
-    ./falcon-sensor.nix
+    # ./globalprotect.nix
+    # ./falcon-sensor.nix
   ];
 
   # Enable common NixOS configuration settings
@@ -207,7 +207,7 @@ in
   };
 
   # Allow unfree packages
-  nixpkgs.config.allowUnfree = true;
+  nixpkgs.config.allowUnfree = lib.mkDefault true;
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
