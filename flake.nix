@@ -52,12 +52,21 @@
         {
           host,
           username,
-          repoRoot,
           system,
           backupSuffix ? "bak.home-manager-${
             self.shortRev or self.dirtyShortRev or self.lastModified or "unknown"
           }",
         }:
+        let
+          pkgs = import nixpkgs {
+            inherit system;
+            overlays = [
+              nix-vscode-extensions.overlays.default
+              (self.overlays.default inputs)
+            ];
+          };
+          dotFilesPackages = import ./packages.nix { inherit pkgs; };
+        in
         [
           ./nixos/hosts/${host}/configuration.nix
           # Configure nixpkgs with overlays
@@ -74,7 +83,7 @@
                 inputs
                 host
                 username
-                repoRoot
+                dotFilesPackages
                 ;
             };
             home-manager.useGlobalPkgs = true;
@@ -94,7 +103,6 @@
           host,
           username,
           system,
-          repoRoot,
         }:
         nixpkgs.lib.nixosSystem {
           inherit system;
@@ -103,14 +111,12 @@
               inputs
               host
               username
-              repoRoot
               ;
           };
           modules = mkConfigModules {
             inherit
               host
               username
-              repoRoot
               system
               ;
           };
@@ -125,25 +131,21 @@
           host = "cole-laptop";
           username = "cole";
           system = "x86_64-linux";
-          repoRoot = builtins.toString ./.;
         };
         cole-wsl2 = mkNixosConfiguration {
           host = "cole-wsl2";
           username = "cole";
           system = "x86_64-linux";
-          repoRoot = builtins.toString ./.;
         };
         cole-vm = mkNixosConfiguration {
           host = "cole-vm";
           username = "cole";
           system = "x86_64-linux";
-          repoRoot = builtins.toString ./.;
         };
         hs-thinkpad = mkNixosConfiguration {
           host = "hs-thinkpad";
           username = "cole";
           system = "x86_64-linux";
-          repoRoot = builtins.toString ./.;
         };
       };
 
@@ -160,7 +162,7 @@
               ];
             overlays = [ (self.overlays.default inputs) ];
           };
-          repoRoot = builtins.toString ./.;
+          dotFilesPackages = import ./packages.nix { inherit pkgs; };
         in
         {
           # Interactive VMs for each configuration
@@ -173,7 +175,7 @@
           consolas-nf = pkgs.consolas-nf;
 
           # Standalone shell environment
-          default = import ./shell.nix { inherit pkgs repoRoot; };
+          default = import ./shell.nix { inherit pkgs dotFilesPackages; };
         }
       );
 
@@ -194,7 +196,6 @@
               nodes.machine = {
                 imports = mkConfigModules {
                   inherit host username system;
-                  repoRoot = builtins.toString ./.;
                   backupSuffix = "bak.home-manager-test";
                 };
               };

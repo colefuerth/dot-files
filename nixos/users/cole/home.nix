@@ -5,7 +5,7 @@
   lib,
   pkgs,
   username,
-  repoRoot,
+  dotFilesPackages,
   ...
 }:
 {
@@ -222,8 +222,8 @@
 
         loginExtra = ''
           # Run the welcome screen on shell startup (only in interactive shells)
-          if [[ -o interactive ]] && [[ -f "${repoRoot}/10-welcome" ]]; then
-            bash "${repoRoot}/10-welcome"
+          if [[ -o interactive ]] && [[ -f "${dotFilesPackages.welcome}" ]]; then
+            bash "${dotFilesPackages.welcome}"
           fi
         '';
 
@@ -236,8 +236,8 @@
             '';
             # autocompletion - skip bash-only completion files
             zshConfigEarlyInit = lib.mkOrder 500 ''
-              if [[ -d "${repoRoot}/completions" ]] && [[ -n "$(ls -A ${repoRoot}/completions 2>/dev/null)" ]]; then
-                for f in ${repoRoot}/completions/*; do
+              if [[ -d "${dotFilesPackages.completions}" ]] && [[ -n "$(ls -A ${dotFilesPackages.completions} 2>/dev/null)" ]]; then
+                for f in ${dotFilesPackages.completions}/*; do
                   # Skip bash completion files that use 'complete' command
                   if [[ -f "$f" ]] && ! grep -q "^complete " "$f" 2>/dev/null; then
                     source "$f"
@@ -251,10 +251,10 @@
               export SHRC="zsh"
 
               # ncdu wrapper to use config from repo
-              alias ncdu='XDG_CONFIG_HOME="${repoRoot}/.config" ncdu'
+              alias ncdu='XDG_CONFIG_HOME="${dotFilesPackages.configs}" ncdu'
 
               # Load all aliases (skip mcfly and starship since handled by home-manager)
-              for f in ${repoRoot}/aliases/*; do
+              for f in ${dotFilesPackages.aliases}/*; do
                 if [[ -f "$f" ]]; then
                   fname="$(basename "$f")"
                   case "$fname" in
@@ -273,7 +273,7 @@
                   esac
                 fi
               done
-              export PATH=$PATH:${repoRoot}/scripts
+              export PATH=$PATH:${dotFilesPackages.scripts}/bin
             '';
             # dev shell setup
             zshConfigLateInit = lib.mkOrder 1500 ''
@@ -297,9 +297,10 @@
     home.file.".ssh/allowed_signers".text = ''
       * ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIIw7/9vkQKS0ultxI6Pbb7wqDlkE120uUw/Hr2UVvcG
     '';
-    home.file.".config/btop/btop.conf".source = "${repoRoot}/.config/btop/btop.conf";
-    home.file.".config/ncdu/config".source = "${repoRoot}/.config/ncdu/config";
-    home.file.".config/starship.toml".source = "${repoRoot}/.config/starship.toml";
+    home.file.".config/btop/btop.conf".source = "${dotFilesPackages.configs}/btop/btop.conf";
+    home.file.".config/ncdu/config".source = "${dotFilesPackages.configs}/ncdu/config";
+    home.file.".config/.clang-format".source = "${dotFilesPackages.configs}/clang-format/.clang-format";
+    home.file.".config/starship.toml".source = "${dotFilesPackages.configs}/starship.toml";
     # home.file.".ssh/config" = {
     #   target = ".ssh/config_source";
     #   force = true;
