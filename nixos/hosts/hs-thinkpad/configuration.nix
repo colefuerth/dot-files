@@ -11,12 +11,14 @@ let
   kernel-pkgs = config.boot.kernelPackages;
 
   wallpaperIds = {
+    amogus = "2427281874";
     polish-cow-dandadan = "3346104040";
     ascii-donut = "3136351729";
     jjp = "3348560292";
     cat-eating-chips = "3250755486"; # pins a cpu
     dog-dvd = "2717323779";
     floppa-ps1 = "2472509205";
+    frieren-cold = "3168641857";
     eminem-goose = "2421217072";
     hyper-cube-oled = "3437148262";
     ricardo = "2620623306"; # pins a cpu
@@ -382,7 +384,7 @@ in
         {
           # Ultrawide
           monitor = "DP-3";
-          wallpaperId = wallpaperIds.hyper-cube-oled;
+          wallpaperId = wallpaperIds.frieren-cold;
         }
         {
           # mini
@@ -391,7 +393,13 @@ in
         }
       ];
     };
-    systemd.user.services.linux-wallpaperengine.Unit.ConditionACPower = true;
+    systemd.user.services.linux-wallpaperengine = {
+      Unit.ConditionACPower = true;
+      Service = {
+        Restart = lib.mkForce "always";
+        RestartSec = "3s";
+      };
+    };
     programs.ssh = {
       enable = true;
       package = pkgs.openssh.override { withKerberos = true; };
