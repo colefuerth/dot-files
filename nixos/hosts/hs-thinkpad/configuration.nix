@@ -15,13 +15,13 @@ let
     polish-cow-dandadan = "3346104040";
     ascii-donut = "3136351729";
     jjp = "3348560292";
-    cat-eating-chips = "3250755486"; # pins a cpu
+    cat-eating-chips = "3250755486";
     dog-dvd = "2717323779";
     floppa-ps1 = "2472509205";
     frieren-cold = "3168641857";
     eminem-goose = "2421217072";
     hyper-cube-oled = "3437148262";
-    ricardo = "2620623306"; # pins a cpu
+    ricardo = "2620623306";
     misato-clock = "2156652467";
     evangelion-beer = "1756162891";
     tblz = "1542633413";
@@ -278,7 +278,13 @@ in
   };
 
   # Use simple graphics configuration like working /etc config
-  hardware.graphics.enable = true;
+  hardware.graphics = {
+    enable = true;
+    extraPackages = with pkgs; [
+      intel-media-driver  # VAAPI driver for Intel iGPU (iHD)
+      intel-vaapi-driver  # Legacy VA-API driver (i965) for older Intel GPUs
+    ];
+  };
   services.xserver.videoDrivers = [
     "modesetting" # allows wayland to work properly
     "nvidia" # use nvidia proprietary driver
@@ -374,7 +380,7 @@ in
           monitor = "eDP-1"; # Your laptop's internal display
           wallpaperId = wallpaperIds.floppa-ps1;
           scaling = "fill"; # "stretch", "fit", "fill", or "default"
-          # fps = 25;
+          fps = 24;
           audio.silent = true; # only use this flag once for all monitors
           # extraOptions = [
           #   "--set-property spacemode=1"
@@ -384,12 +390,12 @@ in
         {
           # Ultrawide
           monitor = "DP-3";
-          wallpaperId = wallpaperIds.frieren-cold;
+          wallpaperId = wallpaperIds.hyper-cube-oled;
         }
         {
           # mini
           monitor = "DP-2";
-          wallpaperId = wallpaperIds.ricardo;
+          wallpaperId = wallpaperIds.frieren-cold;
         }
       ];
     };
@@ -398,6 +404,11 @@ in
       Service = {
         Restart = lib.mkForce "always";
         RestartSec = "3s";
+        # Enable Intel iGPU hardware acceleration via VAAPI
+        Environment = [
+          "LIBVA_DRIVER_NAME=iHD"  # Intel media driver for Core Ultra
+          "LIBVA_DRIVERS_PATH=${pkgs.intel-media-driver}/lib/dri"
+        ];
       };
     };
     programs.ssh = {
