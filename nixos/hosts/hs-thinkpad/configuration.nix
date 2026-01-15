@@ -185,6 +185,7 @@ in
         act
         discord
         firefoxpwa
+        flameshot
         git-lfs
         google-chrome
         kdePackages.okular
@@ -192,17 +193,19 @@ in
         slack
         spotify
         tidal-hifi
-      ]
-      ++ [
-        # Wrapper for rpi-imager to run with sudo and proper Wayland support
-        (pkgs.writeShellScriptBin "rpi-imager" ''
-          exec sudo -E env \
-            "WAYLAND_DISPLAY=$WAYLAND_DISPLAY" \
-            "XDG_RUNTIME_DIR=$XDG_RUNTIME_DIR" \
-            "QT_QPA_PLATFORM=wayland" \
-            ${pkgs.rpi-imager}/bin/rpi-imager "$@"
-        '')
+        vlc
+        xfce.ristretto
       ];
+      # ++ [
+      #   # Wrapper for rpi-imager to run with sudo and proper Wayland support
+      #   (pkgs.writeShellScriptBin "rpi-imager" ''
+      #     exec sudo -E env \
+      #       "WAYLAND_DISPLAY=$WAYLAND_DISPLAY" \
+      #       "XDG_RUNTIME_DIR=$XDG_RUNTIME_DIR" \
+      #       "QT_QPA_PLATFORM=wayland" \
+      #       ${pkgs.rpi-imager}/bin/rpi-imager "$@"
+      #   '')
+      # ];
     initialHashedPassword = "$y$j9T$YcR7aNLjwHuI5yMbcA8UB.$UbVZuOsp9AsovPS8ApWj4flsMZJUBStWA3e1E8SSBo1";
   };
 
@@ -361,56 +364,56 @@ in
   virtualisation.docker.enable = true;
   virtualisation.docker.daemon.settings.features.cdi = true;
 
-  # Udev rule to automatically start/stop wallpaper based on AC power
-  services.udev.extraRules = ''
-    # Monitor AC adapter state changes and toggle wallpaper service
-    SUBSYSTEM=="power_supply", ATTR{online}=="0", RUN+="${pkgs.systemd}/bin/systemctl --user --machine=${username}@.host stop linux-wallpaperengine.service"
-    SUBSYSTEM=="power_supply", ATTR{online}=="1", RUN+="${pkgs.systemd}/bin/systemctl --user --machine=${username}@.host start linux-wallpaperengine.service"
-  '';
+  # # Udev rule to automatically start/stop wallpaper based on AC power
+  # services.udev.extraRules = ''
+  #   # Monitor AC adapter state changes and toggle wallpaper service
+  #   SUBSYSTEM=="power_supply", ATTR{online}=="0", RUN+="${pkgs.systemd}/bin/systemctl --user --machine=${username}@.host stop linux-wallpaperengine.service"
+  #   SUBSYSTEM=="power_supply", ATTR{online}=="1", RUN+="${pkgs.systemd}/bin/systemctl --user --machine=${username}@.host start linux-wallpaperengine.service"
+  # '';
 
   # Home-manager configuration for this machine
   home-manager.users.${username} = {
-    services.linux-wallpaperengine = {
-      # https://github.com/nix-community/home-manager/blob/master/modules/services/linux-wallpaperengine.nix
-      enable = true;
-      assetsPath = "/home/cole/.local/share/Steam/steamapps/common/wallpaper_engine/assets";
-      wallpapers = [
-        {
-          # laptop display
-          monitor = "eDP-1"; # Your laptop's internal display
-          wallpaperId = wallpaperIds.floppa-ps1;
-          scaling = "fill"; # "stretch", "fit", "fill", or "default"
-          fps = 24;
-          audio.silent = true; # only use this flag once for all monitors
-          # extraOptions = [
-          #   "--set-property spacemode=1"
-          #   "--set-property backgroundcolor=0.0,0.0,0.0"
-          # ];
-        }
-        {
-          # Ultrawide
-          monitor = "DP-3";
-          wallpaperId = wallpaperIds.hyper-cube-oled;
-        }
-        {
-          # mini
-          monitor = "DP-2";
-          wallpaperId = wallpaperIds.frieren-cold;
-        }
-      ];
-    };
-    systemd.user.services.linux-wallpaperengine = {
-      Unit.ConditionACPower = true;
-      Service = {
-        Restart = lib.mkForce "always";
-        RestartSec = "3s";
-        # Enable Intel iGPU hardware acceleration via VAAPI
-        Environment = [
-          "LIBVA_DRIVER_NAME=iHD"  # Intel media driver for Core Ultra
-          "LIBVA_DRIVERS_PATH=${pkgs.intel-media-driver}/lib/dri"
-        ];
-      };
-    };
+    # services.linux-wallpaperengine = {
+    #   # https://github.com/nix-community/home-manager/blob/master/modules/services/linux-wallpaperengine.nix
+    #   enable = false;
+    #   assetsPath = "/home/cole/.local/share/Steam/steamapps/common/wallpaper_engine/assets";
+    #   wallpapers = [
+    #     {
+    #       # laptop display
+    #       monitor = "eDP-1"; # Your laptop's internal display
+    #       wallpaperId = wallpaperIds.floppa-ps1;
+    #       scaling = "fill"; # "stretch", "fit", "fill", or "default"
+    #       fps = 24;
+    #       audio.silent = true; # only use this flag once for all monitors
+    #       # extraOptions = [
+    #       #   "--set-property spacemode=1"
+    #       #   "--set-property backgroundcolor=0.0,0.0,0.0"
+    #       # ];
+    #     }
+    #     {
+    #       # Ultrawide
+    #       monitor = "DP-3";
+    #       wallpaperId = wallpaperIds.hyper-cube-oled;
+    #     }
+    #     {
+    #       # mini
+    #       monitor = "DP-2";
+    #       wallpaperId = wallpaperIds.frieren-cold;
+    #     }
+    #   ];
+    # };
+    # systemd.user.services.linux-wallpaperengine = {
+    #   Unit.ConditionACPower = true;
+    #   Service = {
+    #     Restart = lib.mkForce "always";
+    #     RestartSec = "3s";
+    #     # Enable Intel iGPU hardware acceleration via VAAPI
+    #     Environment = [
+    #       "LIBVA_DRIVER_NAME=iHD"  # Intel media driver for Core Ultra
+    #       "LIBVA_DRIVERS_PATH=${pkgs.intel-media-driver}/lib/dri"
+    #     ];
+    #   };
+    # };
     programs.ssh = {
       enable = true;
       package = pkgs.openssh.override { withKerberos = true; };

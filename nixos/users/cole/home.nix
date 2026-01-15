@@ -18,10 +18,11 @@
       language.base = "en_US.UTF-8";
       packages = with pkgs; [
         claude-code
+        grim       # Wayland screenshot tool (required by flameshot)
         inxi
         ncdu
-        xfce.ristretto
-        vlc
+        ripgrep
+        slurp      # Wayland region selector (required by flameshot)
       ];
     };
 
@@ -301,21 +302,8 @@
     home.file.".config/ncdu/config".source = "${dotFilesPackages.configs}/ncdu/config";
     home.file.".config/.clang-format".source = "${dotFilesPackages.configs}/clang-format/.clang-format";
     home.file.".config/starship.toml".source = "${dotFilesPackages.configs}/starship.toml";
-    # home.file.".ssh/config" = {
-    #   target = ".ssh/config_source";
-    #   force = true;
-    #   onChange = ''
-    #     touch ~/.ssh/config || true
-    #     chmod 666 ~/.ssh/config || true
-    #     cat ~/.ssh/config_source > ~/.ssh/config
-    #     chmod 400 ~/.ssh/config
-
-    #     mkdir -p /data/cole/.ssh/ || true
-    #     chmod 755 /data/cole/.ssh/ || true
-    #     cp -r ~/.ssh /data/cole/ || true
-    #   '';
-    # };
-    # "* ${builtins.readFile /home/${username}/.ssh/id_ed25519.pub}";
+    home.file.".config/flameshot/flameshot.ini".source = "${dotFilesPackages.configs}/flameshot/flameshot.ini";
+    home.file.".config/ranger/rc.conf".source = "${dotFilesPackages.configs}/ranger/rc.conf";
     services.gpg-agent = {
       enable = true;
       enableBashIntegration = true;
