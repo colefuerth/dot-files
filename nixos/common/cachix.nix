@@ -18,7 +18,7 @@ in
         type = lib.types.bool;
       };
       users = lib.mkOption {
-        description = ''List of all users who should be trusted to use Cachix'';
+        description = "List of all users who should be trusted to use Cachix";
         type = lib.types.listOf lib.types.str;
       };
     };
