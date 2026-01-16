@@ -17,6 +17,8 @@
     nix-vscode-extensions.inputs.nixpkgs.follows = "nixpkgs";
     nixos-wsl.url = "github:nix-community/NixOS-WSL";
     nixos-wsl.inputs.nixpkgs.follows = "nixpkgs";
+    flameshot.url = "github:flameshot-org/flameshot?ref=fix_cosmic";
+    flameshot.inputs.nixpkgs.follows = "nixpkgs";
     # heaviside-nixpkgs.url = "git+ssh://git@github.com/heaviside-industries/heaviside-nixpkgs.git?ref=refs/heads/master";
     # heaviside-nixpkgs.inputs.nixpkgs.follows = "nixpkgs";
   };

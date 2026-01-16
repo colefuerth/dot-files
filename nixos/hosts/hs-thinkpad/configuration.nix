@@ -179,33 +179,33 @@ in
       "video"
       "wheel"
     ];
-    packages =
-      with pkgs;
-      [
-        act
-        discord
-        firefoxpwa
-        flameshot
-        git-lfs
-        google-chrome
-        kdePackages.okular
-        signal-desktop
-        slack
-        spotify
-        tidal-hifi
-        vlc
-        xfce.ristretto
-      ];
-      # ++ [
-      #   # Wrapper for rpi-imager to run with sudo and proper Wayland support
-      #   (pkgs.writeShellScriptBin "rpi-imager" ''
-      #     exec sudo -E env \
-      #       "WAYLAND_DISPLAY=$WAYLAND_DISPLAY" \
-      #       "XDG_RUNTIME_DIR=$XDG_RUNTIME_DIR" \
-      #       "QT_QPA_PLATFORM=wayland" \
-      #       ${pkgs.rpi-imager}/bin/rpi-imager "$@"
-      #   '')
-      # ];
+    packages = with pkgs; [
+      act
+      discord
+      firefoxpwa
+      flameshot
+      git-lfs
+      google-chrome
+      grim # Wayland screenshot tool (required by flameshot)
+      kdePackages.okular
+      signal-desktop
+      slack
+      slurp # Wayland region selector (required by flameshot)
+      spotify
+      tidal-hifi
+      vlc
+      xfce.ristretto
+    ];
+    # ++ [
+    #   # Wrapper for rpi-imager to run with sudo and proper Wayland support
+    #   (pkgs.writeShellScriptBin "rpi-imager" ''
+    #     exec sudo -E env \
+    #       "WAYLAND_DISPLAY=$WAYLAND_DISPLAY" \
+    #       "XDG_RUNTIME_DIR=$XDG_RUNTIME_DIR" \
+    #       "QT_QPA_PLATFORM=wayland" \
+    #       ${pkgs.rpi-imager}/bin/rpi-imager "$@"
+    #   '')
+    # ];
     initialHashedPassword = "$y$j9T$YcR7aNLjwHuI5yMbcA8UB.$UbVZuOsp9AsovPS8ApWj4flsMZJUBStWA3e1E8SSBo1";
   };
 

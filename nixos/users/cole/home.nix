@@ -18,11 +18,9 @@
       language.base = "en_US.UTF-8";
       packages = with pkgs; [
         claude-code
-        grim       # Wayland screenshot tool (required by flameshot)
         inxi
         ncdu
         ripgrep
-        slurp      # Wayland region selector (required by flameshot)
       ];
     };
 
@@ -302,7 +300,8 @@
     home.file.".config/ncdu/config".source = "${dotFilesPackages.configs}/ncdu/config";
     home.file.".config/.clang-format".source = "${dotFilesPackages.configs}/clang-format/.clang-format";
     home.file.".config/starship.toml".source = "${dotFilesPackages.configs}/starship.toml";
-    home.file.".config/flameshot/flameshot.ini".source = "${dotFilesPackages.configs}/flameshot/flameshot.ini";
+    home.file.".config/flameshot/flameshot.ini".source =
+      "${dotFilesPackages.configs}/flameshot/flameshot.ini";
     home.file.".config/ranger/rc.conf".source = "${dotFilesPackages.configs}/ranger/rc.conf";
     services.gpg-agent = {
       enable = true;
