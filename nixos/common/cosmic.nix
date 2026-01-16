@@ -58,13 +58,12 @@ in
         gtk.enable = true;
         x11.enable = true;
       };
-
-      # Configure firefox for better COSMIC theming if needed
-      # programs.firefox = lib.mkIf config.programs.firefox.enable {
-      #   preferences = {
-      #     "widget.gtk.libadwaita-colors.enabled" = false;
-      #   };
-      # };
+    };
+    # Configure firefox for better COSMIC theming if needed
+    programs.firefox = lib.mkIf config.programs.firefox.enable {
+      preferences = {
+        "widget.gtk.libadwaita-colors.enabled" = false;
+      };
     };
 
     xdg.portal = {
