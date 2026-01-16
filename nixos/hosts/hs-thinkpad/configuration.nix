@@ -9,6 +9,7 @@
 }:
 let
   kernel-pkgs = config.boot.kernelPackages;
+  dotFilesPackages = import ../../../packages.nix { inherit pkgs; };
 
   wallpaperIds = {
     amogus = "2427281874";
@@ -195,6 +196,8 @@ in
       tidal-hifi
       vlc
       xfce.ristretto
+    ] ++ [
+      dotFilesPackages.bambu-studio
     ];
     # ++ [
     #   # Wrapper for rpi-imager to run with sudo and proper Wayland support
