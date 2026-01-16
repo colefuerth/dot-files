@@ -375,7 +375,7 @@ in
   home-manager.users.${username} = {
     services.linux-wallpaperengine = {
       # https://github.com/nix-community/home-manager/blob/master/modules/services/linux-wallpaperengine.nix
-      enable = false;
+      enable = true;
       assetsPath = "/home/cole/.local/share/Steam/steamapps/common/wallpaper_engine/assets";
       wallpapers = [
         {
