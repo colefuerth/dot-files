@@ -64,19 +64,17 @@ in
   };
 
   # Select the kernel version
-  # Reverting to latest kernel for display support - Falcon Sensor needs investigation
-  boot.kernelPackages = pkgs.linuxPackages;
+  boot.kernelPackages = pkgs.linuxPackages_latest;
   boot.binfmt.emulatedSystems = [ "aarch64-linux" ];
 
-  # Bootloader.
+  # Bootloader
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
   # Boot with systemd output visible
-  # boot.kernelParams = [
-  #   "nosplash"
-  #   "debug"
-  # ];
+  boot.kernelParams = [
+    "i915.force_probe=7d55" # ensure intel gpu is always used
+  ];
   boot.plymouth.enable = false;
   # boot.consoleLogLevel = 7;
 
@@ -155,7 +153,10 @@ in
   services.printing.enable = true;
 
   # Enable sound with pipewire.
-  boot.kernelModules = [ "snd_hda_intel" ]; # Load the sound driver for Intel/AMD audio chips
+  boot.kernelModules = [
+    "snd_hda_intel" # Load the sound driver for Intel/AMD audio chips
+    "xe" # this is an xe processor
+  ];
   services.pulseaudio.enable = false;
   security.rtkit.enable = true;
   services.pipewire = {
@@ -180,25 +181,28 @@ in
       "video"
       "wheel"
     ];
-    packages = with pkgs; [
-      act
-      discord
-      firefoxpwa
-      flameshot
-      git-lfs
-      google-chrome
-      grim # Wayland screenshot tool (required by flameshot)
-      kdePackages.okular
-      signal-desktop
-      slack
-      slurp # Wayland region selector (required by flameshot)
-      spotify
-      tidal-hifi
-      vlc
-      xfce.ristretto
-    ] ++ [
-      dotFilesPackages.bambu-studio
-    ];
+    packages =
+      with pkgs;
+      [
+        act
+        discord
+        firefoxpwa
+        flameshot
+        git-lfs
+        google-chrome
+        grim # Wayland screenshot tool (required by flameshot)
+        kdePackages.okular
+        signal-desktop
+        slack
+        slurp # Wayland region selector (required by flameshot)
+        spotify
+        tidal-hifi
+        vlc
+        xfce.ristretto
+      ]
+      ++ [
+        dotFilesPackages.bambu-studio
+      ];
     # ++ [
     #   # Wrapper for rpi-imager to run with sudo and proper Wayland support
     #   (pkgs.writeShellScriptBin "rpi-imager" ''
@@ -306,8 +310,8 @@ in
   hardware.graphics = {
     enable = true;
     extraPackages = with pkgs; [
-      intel-media-driver  # VAAPI driver for Intel iGPU (iHD)
-      intel-vaapi-driver  # Legacy VA-API driver (i965) for older Intel GPUs
+      vpl-gpu-rt
+      intel-media-driver
     ];
   };
   services.xserver.videoDrivers = [
