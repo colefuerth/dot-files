@@ -236,6 +236,9 @@ in
       ]
     ))
     solaar
+    wineWowPackages.staging
+    winetricks
+    wineWowPackages.waylandFull
     xfce.tumbler # thumbnail daemon for ristretto
   ];
 
