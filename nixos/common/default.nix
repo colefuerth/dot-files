@@ -74,6 +74,7 @@ in
     };
 
     environment.systemPackages = with pkgs; [
+      _7zz
       binutils # provides strings, objdump, nm, etc.
       btop
       curl
@@ -93,8 +94,11 @@ in
       openssh
       openssl
       ranger
+      rar
       rsync
       tmux
+      unrar
+      unzip
       usbutils
       vim
       wget
