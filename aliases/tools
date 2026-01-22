@@ -5,3 +5,12 @@ alias amv='/usr/local/bin/advmv -g'
 if command -v 7zz &> /dev/null; then
     alias 7z='/usr/local/bin/7zz'
 fi
+
+# TLP power management quick status
+if command -v tlp-stat &> /dev/null; then
+    alias tlps='sudo tlp-stat -s'      # TLP status summary
+    alias tlpb='sudo tlp-stat -b'      # Battery info & thresholds
+    alias tlpc='sudo tlp-stat -c'      # Current configuration
+    alias tlpp='sudo tlp-stat -p'      # CPU/processor info
+    alias tlpt='sudo tlp-stat -t'      # Temperatures
+fi

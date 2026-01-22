@@ -156,6 +156,7 @@ in
   boot.kernelModules = [
     "snd_hda_intel" # Load the sound driver for Intel/AMD audio chips
     "xe" # this is an xe processor
+    "acpi_call" # Required for ThinkPad battery charge thresholds
   ];
   services.pulseaudio.enable = false;
   security.rtkit.enable = true;
@@ -292,22 +293,46 @@ in
   services.tlp = {
     enable = true; # Enable TLP (better than gnomes internal power manager)
     settings = {
+      # CPU settings
       CPU_BOOST_ON_AC = 1;
-      CPU_BOOST_ON_BAT = 1;
+      CPU_BOOST_ON_BAT = 0; # Disable turbo on battery for better battery life
       CPU_HWP_DYN_BOOST_ON_AC = 1;
-      CPU_HWP_DYN_BOOST_ON_BAT = 1;
+      CPU_HWP_DYN_BOOST_ON_BAT = 0;
       CPU_SCALING_GOVERNOR_ON_AC = "performance";
       CPU_SCALING_GOVERNOR_ON_BAT = "powersave";
       CPU_ENERGY_PERF_POLICY_ON_AC = "performance";
-      CPU_ENERGY_PERF_POLICY_ON_BAT = "balance_power";
+      CPU_ENERGY_PERF_POLICY_ON_BAT = "power"; # More aggressive power saving
       PLATFORM_PROFILE_ON_AC = "performance";
-      PLATFORM_PROFILE_ON_BAT = "balanced";
-      START_CHARGE_THRESH_BAT0 = 75;
-      STOP_CHARGE_THRESH_BAT0 = 81;
+      PLATFORM_PROFILE_ON_BAT = "low-power";
+
+      # ThinkPad battery charge thresholds (preserves battery longevity)
+      START_CHARGE_THRESH_BAT0 = 85;
+      STOP_CHARGE_THRESH_BAT0 = 90;
+
+      # Runtime Power Management for PCIe devices
+      RUNTIME_PM_ON_AC = "auto";
+      RUNTIME_PM_ON_BAT = "auto";
+
+      # WiFi power saving
+      # WIFI_PWR_ON_AC = "off";
+      # WIFI_PWR_ON_BAT = "on";
+
+      # USB autosuspend
+      USB_AUTOSUSPEND = 1;
+
+      # Disk settings (NVMe)
+      DISK_DEVICES = "nvme0n1";
+      DISK_APM_LEVEL_ON_AC = "254";
+      DISK_APM_LEVEL_ON_BAT = "128";
+
+      # Audio power saving
+      SOUND_POWER_SAVE_ON_AC = 0;
+      SOUND_POWER_SAVE_ON_BAT = 1;
     };
   };
+
   services.thermald.enable = true; # Enable thermald, the temperature management daemon. (only necessary if on Intel CPUs)
-  services.power-profiles-daemon.enable = false; # Disable GNOMEs power management
+  services.power-profiles-daemon.enable = false; # Disable GNOME/COSMIC power management (conflicts with TLP)
 
   # Use simple graphics configuration like working /etc config
   hardware.graphics = {
@@ -346,6 +371,7 @@ in
   };
   boot = {
     extraModulePackages = with config.boot.kernelPackages; [
+      acpi_call # Required for ThinkPad battery charge thresholds
       xpadneo
     ];
     extraModprobeConfig = ''
