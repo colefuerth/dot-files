@@ -230,6 +230,7 @@ in
     nil
     nixfmt-tree
     platformio
+    powertop
     (python312.withPackages (
       ps: with ps; [
         pip
@@ -237,6 +238,7 @@ in
       ]
     ))
     solaar
+    tio
     wineWowPackages.staging
     winetricks
     wineWowPackages.waylandFull
