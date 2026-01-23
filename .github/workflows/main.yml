@@ -1,0 +1,107 @@
+name: Checks and Builds
+
+on:
+  push:
+    branches:
+      - master
+      - release/**/*
+  pull_request:
+    branches:
+      - master
+      - release/**/*
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/master' }}
+
+jobs:
+  format-checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: DeterminateSystems/nix-installer-action@v21
+      - run: nix fmt -- --ci
+
+  flake-checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: DeterminateSystems/nix-installer-action@v21
+      - name: Nix Flake Checks
+        run: nix flake check --verbose
+
+  build-packages:
+    name: ${{ matrix.package }} on ${{ matrix.system }}
+    strategy:
+      matrix:
+        package:
+          - aliases
+          - bambu-studio
+          - completions
+          - configs
+          - consolas-nf
+          - scripts
+          - shell
+        system:
+          - x86_64-linux
+      fail-fast: true
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: DeterminateSystems/nix-installer-action@v21
+      - name: Build ${{ matrix.package }} on ${{ matrix.system }}
+        id: build
+        run: |
+          RESULT_PATH=$(nix build \
+            --print-out-paths \
+            --print-build-logs \
+            --verbose \
+            .#packages.${{ matrix.system }}.${{ matrix.package }})
+
+  dry-build-system-toplevels:
+    name: ${{ matrix.package }} on ${{ matrix.system }}
+    strategy:
+      matrix:
+        package:
+          - cole-laptop
+          - cole-vm
+          - cole-wsl2
+          - hs-thinkpad
+        system:
+          - x86_64-linux
+      fail-fast: true
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: DeterminateSystems/nix-installer-action@v21
+      - name: Build ${{ matrix.package }} on ${{ matrix.system }}
+        id: build
+        run: |
+          RESULT_PATH=$(nix build \
+            --dry-run \
+            --print-out-paths \
+            --print-build-logs \
+            --verbose \
+            .#nixosConfigurations.${{ matrix.package }}.config.system.build.toplevel)
+
+  all-checks-pass:
+    runs-on: ubuntu-latest
+    needs: [flake-checks, format-checks, build-packages, dry-build-system-toplevels]
+    if: always()
+    steps:
+      - name: Fail if any dependency failed
+        run: |
+          echo "flake-checks conclusion: ${{ needs.flake-checks.result }}"
+          echo "format-checks conclusion: ${{ needs.format-checks.result }}"
+          echo "build-packages conclusion: ${{ needs.build-packages.result }}"
+          echo "dry-build-system-toplevels conclusion: ${{ needs.dry-build-system-toplevels.result }}"
+
+          if [ "${{ needs.flake-checks.result }}" != "success" ] || [ "${{ needs.format-checks.result }}" != "success" ] || [ "${{ needs.build-packages.result }}" != "success" ] || [ "${{ needs.dry-build-system-toplevels.result }}" != "success" ]; then
+            echo "One or more dependencies failed"
+            exit 1
+          fi
+
+      - name: All checks pass
+        run: echo "All checks pass"
