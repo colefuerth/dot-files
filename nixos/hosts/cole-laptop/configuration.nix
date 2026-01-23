@@ -1,5 +1,6 @@
 {
   config,
+  dotFilesPackages,
   host,
   inputs,
   lib,
@@ -103,7 +104,7 @@ in
       };
     };
     packages = with pkgs; [
-      consolas-nf
+      dotFilesPackages.consolas-nf
       vista-fonts
     ]; # todo: add
   };

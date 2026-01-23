@@ -1,5 +1,6 @@
 {
   config,
+  dotFilesPackages,
   inputs,
   lib,
   pkgs,
@@ -62,7 +63,7 @@ in
     environment.systemPackages = with pkgs; [
       cosmic-term # COSMIC terminal
       adwaita-icon-theme # Icon theme
-      consolas-nf
+      dotFilesPackages.consolas-nf
     ];
 
     home-manager.users.cole = {

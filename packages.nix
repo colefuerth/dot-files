@@ -1,5 +1,37 @@
 { pkgs }:
 {
+  # Consolas Nerd Font
+  consolas-nf = pkgs.stdenvNoCC.mkDerivation rec {
+    pname = "consolas-nf";
+    version = "unstable-2024-12-11";
+
+    src = pkgs.fetchFromGitHub {
+      owner = "ongyx";
+      repo = "consolas-nf";
+      rev = "dab203dc904c6d2f828ba1a3d8e2cd7e5a9f5dfc";
+      hash = "sha256-o8WoqUNyw4/xbDGlJQ0mLuHZ0fCMkJ5OA5xvTnL80oc=";
+    };
+
+    installPhase = ''
+      runHook preInstall
+
+      install -Dm644 *.ttf -t $out/share/fonts/truetype
+
+      runHook postInstall
+    '';
+
+    meta = with pkgs.lib; {
+      description = "Consolas font patched with Nerd Fonts glyphs";
+      homepage = "https://github.com/ongyx/consolas-nf";
+      license = with licenses; [
+        mit
+        ofl
+      ];
+      platforms = platforms.all;
+      maintainers = [ ];
+    };
+  };
+
   # Derivation containing all alias files
   aliases = pkgs.runCommand "dot-files-aliases" { } ''
     mkdir -p $out
@@ -38,31 +70,32 @@
       hash = "sha256-JrwH3MsE3y5GKx4Do3ZlCSAcRuJzEqFYRPb11/3x3r0=";
     };
 
-    extraPkgs = pkgs: with pkgs; [
-      # Graphics libraries
-      glew
-      glfw
-      gtk3
-      webkitgtk_4_1
+    extraPkgs =
+      pkgs: with pkgs; [
+        # Graphics libraries
+        glew
+        glfw
+        gtk3
+        webkitgtk_4_1
 
-      # GStreamer for media
-      gst_all_1.gstreamer
-      gst_all_1.gst-plugins-base
-      gst_all_1.gst-plugins-good
-      gst_all_1.gst-plugins-bad
+        # GStreamer for media
+        gst_all_1.gstreamer
+        gst_all_1.gst-plugins-base
+        gst_all_1.gst-plugins-good
+        gst_all_1.gst-plugins-bad
 
-      # System libraries
-      dbus
-      glib
-      glib-networking
-      xorg.libX11
+        # System libraries
+        dbus
+        glib
+        glib-networking
+        xorg.libX11
 
-      # Network/TLS libraries
-      cacert
-      curl
-      gnutls
-      openssl
-    ];
+        # Network/TLS libraries
+        cacert
+        curl
+        gnutls
+        openssl
+      ];
 
     extraBwrapArgs = [
       "--setenv SSL_CERT_FILE ${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt"

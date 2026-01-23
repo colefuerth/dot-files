@@ -1,5 +1,6 @@
 {
   config,
+  dotFilesPackages,
   inputs,
   lib,
   pkgs,
@@ -38,7 +39,7 @@ in
       systemPackages = [
         pkgs.kitty # required for the default Hyprland config
         pkgs.adwaita-icon-theme # GNOME cursor theme
-        pkgs.consolas-nf # Consolas Nerd Font
+        dotFilesPackages.consolas-nf # Consolas Nerd Font
       ];
       # Optional, hint Electron apps to use Wayland:
       sessionVariables.NIXOS_OZONE_WL = "1";

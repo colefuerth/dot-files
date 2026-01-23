@@ -98,6 +98,16 @@
           username,
           system,
         }:
+        let
+          pkgs = import nixpkgs {
+            inherit system;
+            overlays = [
+              nix-vscode-extensions.overlays.default
+              self.overlays.default
+            ];
+          };
+          dotFilesPackages = import ./packages.nix { inherit pkgs; };
+        in
         nixpkgs.lib.nixosSystem {
           inherit system;
           specialArgs = {
@@ -105,6 +115,7 @@
               inputs
               host
               username
+              dotFilesPackages
               ;
           };
           modules = mkConfigModules {
@@ -152,24 +163,29 @@
               pkg:
               builtins.elem (nixpkgs.lib.getName pkg) [
                 "claude-code"
-                "consolas-nf"
               ];
             overlays = [ self.overlays.default ];
           };
           dotFilesPackages = import ./packages.nix { inherit pkgs; };
         in
-        {
+        rec {
           # Interactive VMs for each configuration
           cole-laptop-vm = self.nixosConfigurations.cole-laptop.config.system.build.vm;
           hs-thinkpad-vm = self.nixosConfigurations.hs-thinkpad.config.system.build.vm;
           cole-vm-vm = self.nixosConfigurations.cole-vm.config.system.build.vm;
           # Note: cole-wsl2-vm is not included because WSL configurations cannot be built as VMs
-
-          # Custom packages
-          consolas-nf = pkgs.consolas-nf;
+          inherit (dotFilesPackages)
+            aliases
+            scripts
+            completions
+            configs
+            bambu-studio
+            consolas-nf
+            ;
 
           # Standalone shell environment
-          default = import ./shell.nix { inherit pkgs dotFilesPackages; };
+          shell = import ./shell.nix { inherit pkgs dotFilesPackages; };
+          default = shell;
         }
       );
 

@@ -1,5 +1,6 @@
 {
   config,
+  dotFilesPackages,
   host,
   inputs,
   lib,
@@ -9,7 +10,6 @@
 }:
 let
   kernel-pkgs = config.boot.kernelPackages;
-  dotFilesPackages = import ../../../packages.nix { inherit pkgs; };
 
   wallpaperIds = {
     amogus = "2427281874";
@@ -136,7 +136,7 @@ in
       };
     };
     packages = with pkgs; [
-      consolas-nf
+      dotFilesPackages.consolas-nf
       vista-fonts
     ];
   };
