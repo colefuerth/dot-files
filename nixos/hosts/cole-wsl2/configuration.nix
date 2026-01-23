@@ -78,6 +78,7 @@
 
   environment.systemPackages = with pkgs; [
     cachix
+    claude-code
     neofetch
     vscode-with-extensions
   ];

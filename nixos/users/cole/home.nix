@@ -17,7 +17,6 @@
       stateVersion = "25.11";
       language.base = "en_US.UTF-8";
       packages = with pkgs; [
-        claude-code
         inxi
         ncdu
         ripgrep

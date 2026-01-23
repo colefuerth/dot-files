@@ -225,6 +225,7 @@ in
   environment.systemPackages = with pkgs; [
     avrdude
     cachix
+    claude-code
     libclang
     neofetch
     nil

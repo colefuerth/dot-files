@@ -167,6 +167,7 @@ in
     # bmap-tools
     cachix
     chromium
+    claude-code
     discord
     # dfu-util
     e2fsprogs
