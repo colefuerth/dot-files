@@ -33,7 +33,6 @@ in
   imports = [
     ../../common
     ../../common/cachix.nix
-    ../../common/hyprland.nix
     ../../common/gnome.nix
     ../../common/cosmic.nix
     ../../common/nixbuild.nix
@@ -51,7 +50,6 @@ in
 
   # Desktop Environment Configuration
   # Enable only one at a time:
-  nixcfg.hyprland.enable = false;
   nixcfg.gnome.enable = false;
   nixcfg.cosmic.enable = true;
 
