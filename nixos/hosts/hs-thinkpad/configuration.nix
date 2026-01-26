@@ -81,12 +81,25 @@ in
   # Enable networking
   networking.hostName = host; # Define your hostname.
   networking.networkmanager.enable = true;
-  networking.nameservers = [
-    "1.1.1.1"
-    "8.8.8.8"
-  ];
-  networking.networkmanager.dns = "systemd-resolved";
+  # networking.nameservers = [
+  #   "1.1.1.1"
+  #   "8.8.8.8"
+  # ];
+  # networking.networkmanager.dns = "systemd-resolved";
 
+  # # Enable systemd-resolved with local DNS stub
+  # # This creates a local DNS resolver at 127.0.0.53 that works even if
+  # # GlobalProtect deletes /etc/resolv.conf
+  # services.resolved = {
+  #   enable = true;
+  #   # Use DNSStubListener to create local DNS resolver
+  #   dnssec = "allow-downgrade";
+  #   domains = [ "~." ]; # Route all domains through systemd-resolved
+  #   fallbackDns = [
+  #     "1.1.1.1"
+  #     "8.8.8.8"
+  #   ];
+  # };
 
   services.avahi = {
     enable = true;
