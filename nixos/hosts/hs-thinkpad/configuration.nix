@@ -2,15 +2,12 @@
   config,
   dotFilesPackages,
   host,
-  inputs,
   lib,
   pkgs,
   username,
   ...
 }:
 let
-  kernel-pkgs = config.boot.kernelPackages;
-
   wallpaperIds = {
     amogus = "2427281874";
     polish-cow-dandadan = "3346104040";
@@ -249,6 +246,7 @@ in
         pyserial
       ]
     ))
+    smartmontools
     solaar
     tio
     wineWowPackages.staging
