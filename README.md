@@ -1,6 +1,8 @@
 # My Dot-Files
 
-This project is for quick bringup and easy synchronization of shell environments between my machines, and has been modified to also support configuration and mods.
+Originally a central place to sync my home environment across machines using shell scripts, this repo now holds my nixos configs for all of my systems.
+
+The default package in this flake is a `zsh` session with my dev environment loaded through the nix daemon, which works on any distro with the nix daemon installed.
 
 ## Interactive Shell
 
@@ -8,7 +10,6 @@ Start by installing nix
 
 ```bash
 curl -fsSL https://install.determinate.systems/nix | sh -s -- install
-echo "experimental-features = nix-command flakes" | sudo tee --append /etc/nix/nix.conf
 nix run github:colefuerth/dot-files
 ```
 
@@ -19,14 +20,14 @@ nix run github:colefuerth/dot-files
 ```bash
 SYSTEM="cole-laptop"
 sudo echo "sudo acquired" # nom cuts off the sudo prompt, so preauthenticate
-sudo nixos-rebuild --flake github:colefuerth/dot-files#$SYSTEM --log-format internal-json -v switch |& nix run --extra-experimental-features "nix-command flakes" nixpkgs#nix-output-monitor -- --json
+sudo nixos-rebuild --flake github:colefuerth/dot-files#$SYSTEM --log-format internal-json -v switch |& nix run nixpkgs#nix-output-monitor -- --json
 ```
 
 ### cloning and switching locally
 
 ```bash
 SYSTEM="cole-laptop"
-nix run --extra-experimental-features "nix-command flakes" nixpkgs#git -- clone https://github.com/colefuerth/dot-files.git
+nix run nixpkgs#git -- clone https://github.com/colefuerth/dot-files.git
 cd dot-files
 sudo nixos-rebuild --flake .#$SYSTEM --log-format internal-json -v switch |& nom --json
 ```
@@ -37,7 +38,7 @@ sudo nixos-rebuild --flake .#$SYSTEM --log-format internal-json -v switch |& nom
 SYSTEM="cole-wsl2"
 nixos-rebuild --flake .#$SYSTEM --log-format internal-json -v build |& nom --json
 
-# OR
+# OR (build through the nix daemon on non-nixos systems)
 
 SYSTEM="cole-vm"
 nix build --log-format internal-json --verbose .#nixosConfigurations.$SYSTEM.config.system.build.toplevel |& nom --json
@@ -50,7 +51,7 @@ SYSTEM="cole-laptop"
 sudo nixos-rebuild --flake .#$SYSTEM test
 ```
 
-## Installation on Ubuntu/Pop
+## Installation on Ubuntu/Pop (DEPRECATED)
 
 First, we must clone the repo:
 
