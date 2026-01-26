@@ -426,8 +426,6 @@ in
       enable = true;
       finegrained = true;
     };
-    # dynamic boost is for smart shifting power between cpu and gpu on laptops
-    dynamicBoost.enable = true;
   };
 
   virtualisation.docker.enable = true;
