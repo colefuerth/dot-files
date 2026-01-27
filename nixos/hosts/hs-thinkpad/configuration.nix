@@ -68,7 +68,10 @@ in
 
   # Boot with systemd output visible
   boot.kernelParams = [
-    "i915.force_probe=7d55" # ensure intel gpu is always used
+    "i915.force_probe=7d55"
+    "i915.enable_psr=0"
+    "i915.enable_dc=0"
+    "i915.enable_fbc=0"
   ];
   boot.plymouth.enable = false;
   # boot.consoleLogLevel = 7;
@@ -161,7 +164,6 @@ in
   # Enable sound with pipewire.
   boot.kernelModules = [
     "snd_hda_intel" # Load the sound driver for Intel/AMD audio chips
-    "xe" # this is an xe processor
     "acpi_call" # Required for ThinkPad battery charge thresholds
   ];
   services.pulseaudio.enable = false;
@@ -233,9 +235,11 @@ in
     cachix
     claude-code
     libclang
+    libgcc
     neofetch
     nil
     nixfmt-tree
+    pciutils
     platformio
     powertop
     (python312.withPackages (
