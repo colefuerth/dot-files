@@ -563,4 +563,15 @@ in
     };
     zsh.enable = true;
   };
+
+  nix = {
+    settings = {
+      substituters = [
+        "https://heaviside-industries.cachix.org"
+      ];
+      trusted-public-keys = [
+        "heaviside-industries.cachix.org-1:DXGy3eI6sMfLS7/kC6naM3zqg5A7tcBUKKAaXveQh1M="
+      ];
+    };
+  };
 }
