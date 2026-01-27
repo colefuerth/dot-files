@@ -64,6 +64,7 @@ in
       cosmic-term # COSMIC terminal
       adwaita-icon-theme # Icon theme
       dotFilesPackages.consolas-nf
+      gnome-disk-utility
     ];
 
     home-manager.users.cole = {
