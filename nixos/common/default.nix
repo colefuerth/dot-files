@@ -110,6 +110,11 @@ in
     programs.vim.enable = true;
     programs.vim.defaultEditor = false;
     environment.variables.EDITOR = "nano";
+
+    programs.appimage = {
+      enable = true;
+      binfmt = true;
+    };
   };
 
 }
