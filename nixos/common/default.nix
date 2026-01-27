@@ -87,6 +87,8 @@ in
       inetutils
       iotop
       lsof
+      man-pages
+      man-pages-posix
       nano
       nix-index
       nix-output-monitor
