@@ -101,7 +101,7 @@ in
 
   services.avahi = {
     enable = true;
-    nssmdns = true;
+    nssmdns4 = true;
     openFirewall = true;
     publish = {
       enable = true;
@@ -207,7 +207,7 @@ in
         spotify
         tidal-hifi
         vlc
-        xfce.ristretto
+        ristretto
       ]
       ++ [
         dotFilesPackages.bambu-studio
@@ -254,7 +254,7 @@ in
     wineWowPackages.staging
     winetricks
     wineWowPackages.waylandFull
-    xfce.tumbler # thumbnail daemon for ristretto
+    tumbler # thumbnail daemon for ristretto
   ];
 
   # Removed CUDA/NVIDIA session variables
