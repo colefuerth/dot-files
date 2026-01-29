@@ -572,10 +572,10 @@ in
 
   nix = {
     settings = {
-      substituters = [
+      extra-substituters = [
         "https://heaviside-industries.cachix.org"
       ];
-      trusted-public-keys = [
+      extra-trusted-public-keys = [
         "heaviside-industries.cachix.org-1:DXGy3eI6sMfLS7/kC6naM3zqg5A7tcBUKKAaXveQh1M="
       ];
     };
