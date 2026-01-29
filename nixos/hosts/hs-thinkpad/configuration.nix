@@ -72,6 +72,7 @@ in
     "i915.enable_psr=0"
     "i915.enable_dc=0"
     "i915.enable_fbc=0"
+    "i915.enable_dsb=0"
   ];
   boot.plymouth.enable = false;
   # boot.consoleLogLevel = 7;
