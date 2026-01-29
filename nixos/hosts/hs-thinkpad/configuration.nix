@@ -245,8 +245,13 @@ in
     powertop
     (python312.withPackages (
       ps: with ps; [
+        matplotlib
+        numpy
+        pandas
         pip
         pyserial
+        scipy
+        tqdm
       ]
     ))
     smartmontools
