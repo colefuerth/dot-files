@@ -232,7 +232,7 @@ in
   };
 
   # Allow unfree packages
-  nixpkgs.config.allowUnfree = lib.mkDefault true;
+  nixpkgs.config.allowUnfree = lib.mkForce true;
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
