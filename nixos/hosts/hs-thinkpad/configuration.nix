@@ -195,6 +195,8 @@ in
       with pkgs;
       [
         act
+        binsider
+        codex
         discord
         firefoxpwa
         flameshot
@@ -202,13 +204,16 @@ in
         google-chrome
         grim # Wayland screenshot tool (required by flameshot)
         kdePackages.okular
+        micro
+        opencode
+        ristretto
         signal-desktop
         slack
         slurp # Wayland region selector (required by flameshot)
         spotify
         tidal-hifi
         vlc
-        ristretto
+        yazi
       ]
       ++ [
         dotFilesPackages.bambu-studio
