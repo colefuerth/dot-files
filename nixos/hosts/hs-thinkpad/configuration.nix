@@ -542,7 +542,7 @@ in
 
   services.fprintd.enable = true;
 
-  services.envfs.enable = true;
+  services.envfs.enable = false;
 
   programs = {
     _1password.enable = true;
