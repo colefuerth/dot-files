@@ -344,9 +344,7 @@ in
 
       # USB autosuspend
       USB_AUTOSUSPEND = 1;
-      USB_DENYLIST = "25a7:fa70"; # stop autosuspend on these uuids (keyboards/mice)
-
-      # Disk settings (NVMe)
+      USB_DENYLIST = "25a7:fa70 258a:0150 046d:c548"; # stop autosuspend on these uuids (keyboards/mice)
       DISK_DEVICES = "nvme0n1";
       DISK_APM_LEVEL_ON_AC = "254";
       DISK_APM_LEVEL_ON_BAT = "128";
