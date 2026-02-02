@@ -344,6 +344,7 @@ in
 
       # USB autosuspend
       USB_AUTOSUSPEND = 1;
+      USB_DENYLIST = "25a7:fa70"; # stop autosuspend on these uuids (keyboards/mice)
 
       # Disk settings (NVMe)
       DISK_DEVICES = "nvme0n1";
