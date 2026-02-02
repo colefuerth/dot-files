@@ -167,12 +167,12 @@ in
     "snd_hda_intel" # Load the sound driver for Intel/AMD audio chips
     "acpi_call" # Required for ThinkPad battery charge thresholds
   ];
-  services.pulseaudio.enable = false;
   security.rtkit.enable = true;
   services.pipewire = {
     enable = true;
     alsa.enable = true;
     alsa.support32Bit = true;
+    jack.enable = true;
     pulse.enable = true;
   };
 
