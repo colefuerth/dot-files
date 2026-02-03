@@ -15,6 +15,7 @@
     nixos-wsl.inputs.nixpkgs.follows = "nixpkgs";
     flameshot.url = "github:flameshot-org/flameshot?ref=fix_cosmic";
     flameshot.inputs.nixpkgs.follows = "nixpkgs";
+    vscode-server.url = "github:nix-community/nixos-vscode-server";
     # heaviside-nixpkgs.url = "git+ssh://git@github.com/heaviside-industries/heaviside-nixpkgs.git?ref=refs/heads/master";
     # heaviside-nixpkgs.inputs.nixpkgs.follows = "nixpkgs";
   };
@@ -133,6 +134,11 @@
           username = "cole";
           system = "x86_64-linux";
         };
+        cole-desktop = mkNixosConfiguration {
+          host = "cole-desktop";
+          username = "cole";
+          system = "x86_64-linux";
+        };
         cole-wsl2 = mkNixosConfiguration {
           host = "cole-wsl2";
           username = "cole";
@@ -167,8 +173,9 @@
         rec {
           # Interactive VMs for each configuration
           cole-laptop-vm = self.nixosConfigurations.cole-laptop.config.system.build.vm;
-          hs-thinkpad-vm = self.nixosConfigurations.hs-thinkpad.config.system.build.vm;
+          cole-desktop-vm = self.nixosConfigurations.cole-desktop.config.system.build.vm;
           cole-vm-vm = self.nixosConfigurations.cole-vm.config.system.build.vm;
+          hs-thinkpad-vm = self.nixosConfigurations.hs-thinkpad.config.system.build.vm;
           # Note: cole-wsl2-vm is not included because WSL configurations cannot be built as VMs
           inherit (dotFilesPackages)
             aliases
