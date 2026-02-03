@@ -65,6 +65,7 @@ jobs:
       matrix:
         package:
           - cole-laptop
+          - cole-desktop
           - cole-vm
           - cole-wsl2
           - hs-thinkpad
