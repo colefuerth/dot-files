@@ -349,10 +349,34 @@ in
         python3
       ];
     };
-    steam = {
-      enable = true;
-      protontricks.enable = true;
-    };
+    steam =
+      let
+        patchedBwrap = pkgs.bubblewrap.overrideAttrs (o: {
+          patches = (o.patches or [ ]) ++ [
+            ./bwrap.patch
+          ];
+        });
+      in
+      {
+        enable = true;
+        protontricks.enable = true;
+        package = pkgs.steam.override {
+          buildFHSEnv = (
+            args:
+            (
+              (pkgs.buildFHSEnv.override {
+                bubblewrap = patchedBwrap;
+              })
+              (
+                args
+                // {
+                  extraBwrapArgs = (args.extraBwrapArgs or [ ]) ++ [ "--cap-add ALL" ];
+                }
+              )
+            )
+          );
+        };
+      };
     vim = {
       enable = true;
       defaultEditor = false;

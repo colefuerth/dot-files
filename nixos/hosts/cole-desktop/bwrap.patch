@@ -1,0 +1,28 @@
+diff --git a/bubblewrap.c b/bubblewrap.c
+index 69d319b..02e117d 100644
+--- a/bubblewrap.c
++++ b/bubblewrap.c
+@@ -871,23 +871,16 @@ acquire_privs (void)
+         die ("Unable to set fsuid (was %d)", (int)new_fsuid);
+ 
+       /* We never need capabilities after execve(), so lets drop everything from the bounding set */
+       drop_cap_bounding_set (true);
+ 
+       /* Keep only the required capabilities for setup */
+       set_required_caps ();
+     }
+-  else if (real_uid != 0 && has_caps ())
+-    {
+-      /* We have some capabilities in the non-setuid case, which should not happen.
+-         Probably caused by the binary being setcap instead of setuid which we
+-         don't support anymore */
+-      die ("Unexpected capabilities but not setuid, old file caps config?");
+-    }
+   else if (real_uid == 0)
+     {
+       /* If our uid is 0, default to inheriting all caps; the caller
+        * can drop them via --cap-drop.  This is used by at least rpm-ostree.
+        * Note this needs to happen before the argument parsing of --cap-drop.
+        */
+       struct __user_cap_header_struct hdr = { _LINUX_CAPABILITY_VERSION_3, 0 };
+       struct __user_cap_data_struct data[2] = { { 0 } };
