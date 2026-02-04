@@ -11,6 +11,8 @@
     sops-nix.inputs.nixpkgs.follows = "nixpkgs";
     nix-vscode-extensions.url = "github:nix-community/nix-vscode-extensions";
     nix-vscode-extensions.inputs.nixpkgs.follows = "nixpkgs";
+    nixos-hardware.url = "github:nixos/nixos-hardware";
+    nixos-hardware.inputs.nixpkgs.follows = "nixpkgs";
     nixos-wsl.url = "github:nix-community/NixOS-WSL";
     nixos-wsl.inputs.nixpkgs.follows = "nixpkgs";
     flameshot.url = "github:flameshot-org/flameshot?ref=fix_cosmic";
@@ -192,8 +194,74 @@
         }
       );
 
-      # Checks disabled due to incompatibility with stricter nixpkgs read-only
-      # configuration in newer NixOS test infrastructure
-      checks = forAllSystems (system: { });
+      checks = forAllSystems (
+        system:
+        let
+          pkgs = nixpkgs.legacyPackages.${system};
+          # Define which configs to test and their metadata
+          configsToTest = {
+            cole-laptop = {
+              host = "cole-laptop";
+              username = "cole";
+            };
+            cole-desktop = {
+              host = "cole-desktop";
+              username = "cole";
+            };
+            cole-vm = {
+              host = "cole-vm";
+              username = "cole";
+            };
+            hs-thinkpad = {
+              host = "hs-thinkpad";
+              username = "cole";
+            };
+            # Note: cole-wsl2 excluded - WSL configurations cannot be tested as VMs
+          };
+          # Use the lower-level nixos-lib.runTest for proper specialArgs support
+          nixos-lib = import (nixpkgs + "/nixos/lib") { };
+          mkBootTest =
+            name:
+            { host, username }:
+            let
+              testPkgs = import nixpkgs {
+                inherit system;
+                overlays = [
+                  nix-vscode-extensions.overlays.default
+                  self.overlays.default
+                ];
+              };
+              dotFilesPackages = import ./packages.nix { pkgs = testPkgs; };
+            in
+            (nixos-lib.runTest {
+              hostPkgs = pkgs;
+              name = "${name}-boot-test";
+              # Provide the same args as mkNixosConfiguration's specialArgs
+              node.specialArgs = {
+                inherit
+                  inputs
+                  host
+                  username
+                  dotFilesPackages
+                  ;
+              };
+              nodes.machine =
+                { ... }:
+                {
+                  imports = mkConfigModules {
+                    inherit host username system;
+                  };
+                  # Override hardware-specific settings for VM testing
+                  virtualisation.graphics = false;
+                };
+              testScript = ''
+                machine.start()
+                machine.wait_for_unit("multi-user.target")
+                machine.succeed("systemctl is-system-running --wait || systemctl is-system-running | grep -E 'running|degraded'")
+              '';
+            }).config.result;
+        in
+        nixpkgs.lib.mapAttrs mkBootTest configsToTest
+      );
     };
 }

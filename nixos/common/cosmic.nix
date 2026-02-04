@@ -59,6 +59,10 @@ in
       # cosmic-edit  # Uncomment to exclude COSMIC text editor
     ];
 
+    services.xserver.videoDrivers = [
+      "modesetting" # allows wayland to work properly
+    ];
+
     # Install essential packages
     environment.systemPackages = with pkgs; [
       cosmic-term # COSMIC terminal

@@ -19,13 +19,12 @@
       packages = with pkgs; [
         inxi
         ncdu
-        ripgrep
+        neofetch
       ];
     };
 
-    # Allow certain unfree packages
     nixpkgs.config = {
-      allowUnfree = true; # Simplified for now - can restrict later if needed
+      allowUnfree = lib.mkForce true; # Simplified for now - can restrict later if needed
     };
 
     programs = {
@@ -59,6 +58,10 @@
       mcfly.enable = true;
       # nix-index.enable = true;  # Disabled temporarily - run `nix-index` manually when needed
       spotify-player.enable = true;
+      ssh = {
+        enable = lib.mkDefault true;
+        package = pkgs.openssh.override { withKerberos = true; };
+      };
       starship = {
         enable = true;
       };

@@ -3,6 +3,7 @@
   inputs,
   lib,
   pkgs,
+  host,
   ...
 }:
 let
@@ -30,6 +31,8 @@ in
   };
   config = lib.mkIf cfg.enable {
     nixpkgs.overlays = lib.optionals cfg.applyOverlay [ (import ../../overlays inputs) ];
+
+    boot.plymouth.enable = false;
 
     nix = {
       gc = {
@@ -87,6 +90,7 @@ in
       lsof
       man-pages
       man-pages-posix
+      micro
       nano
       nix-index
       nix-output-monitor
@@ -95,6 +99,7 @@ in
       openssl
       ranger
       rar
+      ripgrep
       rsync
       tmux
       unrar
@@ -105,13 +110,87 @@ in
       zip
     ];
 
-    programs.vim.enable = true;
-    programs.vim.defaultEditor = false;
-    environment.variables.EDITOR = "nano";
+    # Set your time zone.
+    time.timeZone = "America/Los_Angeles";
 
-    programs.appimage = {
-      enable = true;
-      binfmt = true;
+    # Select internationalisation properties.
+    i18n.defaultLocale = "en_US.UTF-8";
+
+    i18n.extraLocaleSettings = {
+      LC_ADDRESS = "en_US.UTF-8";
+      LC_IDENTIFICATION = "en_US.UTF-8";
+      LC_MEASUREMENT = "en_US.UTF-8";
+      LC_MONETARY = "en_US.UTF-8";
+      LC_NAME = "en_US.UTF-8";
+      LC_NUMERIC = "en_US.UTF-8";
+      LC_PAPER = "en_US.UTF-8";
+      LC_TELEPHONE = "en_US.UTF-8";
+      LC_TIME = "en_US.UTF-8";
+    };
+
+    environment.variables.EDITOR = "micro";
+    programs = {
+      appimage = {
+        enable = true;
+        binfmt = true;
+      };
+      gnupg.agent = {
+        enable = true;
+        enableSSHSupport = true;
+      };
+      java.enable = true;
+      nix-ld = {
+        enable = true;
+        libraries = with pkgs; [
+          stdenv.cc.cc.lib
+          openssl
+          curl
+          git
+          nodejs_20
+          python3
+        ];
+      };
+      vim.enable = true;
+      vim.defaultEditor = false;
+      zsh.enable = true;
+    };
+
+    networking.hostName = host; # Define your hostname.
+    networking.networkmanager.enable = true;
+    networking.firewall.enable = lib.mkDefault true;
+
+    services = {
+      avahi = {
+        enable = lib.mkDefault true;
+        nssmdns4 = true;
+        openFirewall = true;
+        publish = {
+          enable = true;
+          userServices = true;
+          addresses = true;
+        };
+      };
+      fwupd.enable = lib.mkDefault true;
+      openssh = {
+        enable = lib.mkDefault true;
+        settings.PasswordAuthentication = lib.mkDefault false;
+      };
+      xserver.xkb = {
+        layout = "us";
+        variant = "";
+      };
+    };
+    virtualisation = {
+      vmVariant = {
+        virtualisation = {
+          cores = lib.mkDefault 8;
+          memorySize = lib.mkDefault 8192;
+        };
+      };
+      docker = {
+        enable = lib.mkDefault true;
+        daemon.settings.features.cdi = true;
+      };
     };
   };
 

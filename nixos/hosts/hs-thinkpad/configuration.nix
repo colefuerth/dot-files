@@ -1,7 +1,6 @@
 {
-  config,
   dotFilesPackages,
-  host,
+  inputs,
   lib,
   pkgs,
   username,
@@ -13,14 +12,19 @@ in
 {
   imports = [
     ../../common
+    ../../common/audio.nix
+    ../../common/bluetooth.nix
     ../../common/cachix.nix
-    ../../common/gnome.nix
+    ../../common/cachix/heaviside-industries.nix
     ../../common/cosmic.nix
+    ../../common/gnome.nix
+    ../../common/laptop.nix
     ../../common/nixbuild.nix
     ../../common/xone.nix
     ./hardware-configuration.nix
     # ./globalprotect.nix
     # ./falcon-sensor.nix
+    inputs.nixos-hardware.nixosModules.lenovo-thinkpad-p1-gen3
   ];
 
   # Enable common NixOS configuration settings
@@ -57,59 +61,6 @@ in
     "i915.enable_dsb=0"
   ];
   boot.plymouth.enable = false;
-  # boot.consoleLogLevel = 7;
-
-  # Enable networking
-  networking.hostName = host; # Define your hostname.
-  networking.networkmanager.enable = true;
-  # networking.nameservers = [
-  #   "1.1.1.1"
-  #   "8.8.8.8"
-  # ];
-  # networking.networkmanager.dns = "systemd-resolved";
-
-  # # Enable systemd-resolved with local DNS stub
-  # # This creates a local DNS resolver at 127.0.0.53 that works even if
-  # # GlobalProtect deletes /etc/resolv.conf
-  # services.resolved = {
-  #   enable = true;
-  #   # Use DNSStubListener to create local DNS resolver
-  #   dnssec = "allow-downgrade";
-  #   domains = [ "~." ]; # Route all domains through systemd-resolved
-  #   fallbackDns = [
-  #     "1.1.1.1"
-  #     "8.8.8.8"
-  #   ];
-  # };
-
-  services.avahi = {
-    enable = true;
-    nssmdns4 = true;
-    openFirewall = true;
-    publish = {
-      enable = true;
-      userServices = true;
-      addresses = true;
-    };
-  };
-
-  # Set your time zone.
-  time.timeZone = "America/Los_Angeles";
-
-  # Select internationalisation properties.
-  i18n.defaultLocale = "en_US.UTF-8";
-
-  i18n.extraLocaleSettings = {
-    LC_ADDRESS = "en_US.UTF-8";
-    LC_IDENTIFICATION = "en_US.UTF-8";
-    LC_MEASUREMENT = "en_US.UTF-8";
-    LC_MONETARY = "en_US.UTF-8";
-    LC_NAME = "en_US.UTF-8";
-    LC_NUMERIC = "en_US.UTF-8";
-    LC_PAPER = "en_US.UTF-8";
-    LC_TELEPHONE = "en_US.UTF-8";
-    LC_TIME = "en_US.UTF-8";
-  };
 
   fonts = {
     enableDefaultPackages = true;
@@ -136,27 +87,11 @@ in
   # X11 is configured by the desktop environment modules
 
   # Configure keymap in X11
-  services.xserver.xkb = {
-    layout = "us";
-    variant = "";
-  };
-
-  # Enable CUPS to print documents.
-  services.printing.enable = true;
 
   # Enable sound with pipewire.
   boot.kernelModules = [
-    "snd_hda_intel" # Load the sound driver for Intel/AMD audio chips
     "acpi_call" # Required for ThinkPad battery charge thresholds
   ];
-  security.rtkit.enable = true;
-  services.pipewire = {
-    enable = true;
-    alsa.enable = true;
-    alsa.support32Bit = true;
-    jack.enable = true;
-    pulse.enable = true;
-  };
 
   # Enable touchpad support (enabled default in most desktopManager).
   # services.xserver.libinput.enable = true;
@@ -217,16 +152,13 @@ in
 
   environment.systemPackages = with pkgs; [
     avrdude
-    cachix
     claude-code
     libclang
     libgcc
-    neofetch
     nil
     nixfmt-tree
     pciutils
     platformio
-    powertop
     (python312.withPackages (
       ps: with ps; [
         matplotlib
@@ -247,71 +179,22 @@ in
     tumbler
   ];
 
-  programs.gnupg.agent = {
-    enable = true;
-    enableSSHSupport = true;
-  };
-
-  services.openssh = {
-    enable = true;
-    settings.PasswordAuthentication = false;
-  };
-
-  networking.firewall.enable = true;
   networking.firewall.allowedTCPPorts = [ 22 ];
   networking.firewall.allowedUDPPorts = [ 5353 ];
 
   # initial system state when machine was created, used for backwards compatibility
   system.stateVersion = "25.11";
 
-  virtualisation.vmVariant = {
-    virtualisation = {
-      cores = 8;
-      memorySize = 8192;
-    };
-  };
-
-  services.logind.settings = {
-    Login = {
-      HandlePowerKey = "suspend";
-      HandleLidSwitch = "suspend";
-      HandleLidSwitchExternalPower = "ignore";
-    };
-  };
-
   powerManagement = {
     enable = true;
     powertop.enable = true;
   };
-  services.tlp = {
-    enable = true; # Enable TLP (better than gnomes internal power manager)
-    settings = {
-      CPU_BOOST_ON_AC = 1;
-      CPU_BOOST_ON_BAT = 0;
-      CPU_HWP_DYN_BOOST_ON_AC = 1;
-      CPU_HWP_DYN_BOOST_ON_BAT = 0;
-      CPU_SCALING_GOVERNOR_ON_AC = "performance";
-      CPU_SCALING_GOVERNOR_ON_BAT = "powersave";
-      CPU_ENERGY_PERF_POLICY_ON_AC = "performance";
-      CPU_ENERGY_PERF_POLICY_ON_BAT = "power"; # More aggressive power saving
-      PLATFORM_PROFILE_ON_AC = "performance";
-      PLATFORM_PROFILE_ON_BAT = "low-power";
-      START_CHARGE_THRESH_BAT0 = 85;
-      STOP_CHARGE_THRESH_BAT0 = 90;
-      RUNTIME_PM_ON_AC = "auto";
-      RUNTIME_PM_ON_BAT = "auto";
-      USB_AUTOSUSPEND = 1;
-      USB_DENYLIST = "25a7:fa70 258a:0150 046d:c548"; # stop autosuspend on these uuids (keyboards/mice)
-      DISK_DEVICES = "nvme0n1";
-      DISK_APM_LEVEL_ON_AC = "254";
-      DISK_APM_LEVEL_ON_BAT = "128";
-      SOUND_POWER_SAVE_ON_AC = 0;
-      SOUND_POWER_SAVE_ON_BAT = 1;
-    };
+  services.tlp.settings = {
+    USB_DENYLIST = "25a7:fa70 258a:0150 046d:c548"; # stop autosuspend on these uuids (keyboards/mice)
+    DISK_DEVICES = "nvme0n1";
+    DISK_APM_LEVEL_ON_AC = "254";
+    DISK_APM_LEVEL_ON_BAT = "128";
   };
-
-  services.thermald.enable = true; # Enable thermald, the temperature management daemon. (only necessary if on Intel CPUs)
-  services.power-profiles-daemon.enable = false; # Disable GNOME/COSMIC power management (conflicts with TLP)
 
   hardware.graphics = {
     enable = true;
@@ -320,10 +203,6 @@ in
       intel-media-driver
     ];
   };
-  services.xserver.videoDrivers = [
-    "modesetting" # allows wayland to work properly
-    "nvidia" # use nvidia proprietary driver
-  ];
 
   # mx master 3s
   hardware.logitech.wireless.enable = true;
@@ -338,22 +217,6 @@ in
     };
   };
 
-  # enable bluetooth
-  hardware = {
-    bluetooth = {
-      enable = true;
-      # package = pkgs.bluez-experimental;
-      powerOnBoot = true;
-      settings.General = {
-        # experimental = true;
-        Privacy = "Device";
-        JustWorksRepairing = "always";
-        FastConnectable = true;
-      };
-      settings.Policy.AutoEnable = true;
-    };
-  };
-
   hardware.nvidia = {
     open = false;
     prime = {
@@ -362,8 +225,6 @@ in
       offload.enableOffloadCmd = false;
       sync.enable = false; # render everything on the dgpu; igpu used for display only
       reverseSync.enable = false; # use the dgpu for everything
-      intelBusId = "PCI:0:2:0";
-      nvidiaBusId = "PCI:1:0:0";
     };
     # fine grained power management for newer architectures
     powerManagement = {
@@ -371,9 +232,6 @@ in
       finegrained = true;
     };
   };
-
-  virtualisation.docker.enable = true;
-  virtualisation.docker.daemon.settings.features.cdi = true;
 
   # Udev rule to automatically start/stop wallpaper based on AC power
   services.udev.extraRules = ''
@@ -426,8 +284,6 @@ in
       };
     };
     programs.ssh = {
-      enable = true;
-      package = pkgs.openssh.override { withKerberos = true; };
       matchBlocks = {
         "eu.nixbuild.net" = {
           hostname = "eu.nixbuild.net";
@@ -471,10 +327,6 @@ in
     };
   };
 
-  services.fwupd.enable = true;
-
-  services.fprintd.enable = true;
-
   services.envfs.enable = false;
 
   programs = {
@@ -485,37 +337,9 @@ in
       # require enabling PolKit integration on some desktop environments (e.g. Plasma).
       polkitPolicyOwners = [ "${username}" ];
     };
-    java.enable = true;
-    nix-ld = {
-      enable = true;
-      libraries = with pkgs; [
-        stdenv.cc.cc.lib
-        openssl
-        curl
-        git
-        nodejs_20
-        python3
-      ];
-    };
     steam = {
       enable = true;
       protontricks.enable = true;
-    };
-    vim = {
-      enable = true;
-      defaultEditor = false;
-    };
-    zsh.enable = true;
-  };
-
-  nix = {
-    settings = {
-      extra-substituters = [
-        "https://heaviside-industries.cachix.org"
-      ];
-      extra-trusted-public-keys = [
-        "heaviside-industries.cachix.org-1:DXGy3eI6sMfLS7/kC6naM3zqg5A7tcBUKKAaXveQh1M="
-      ];
     };
   };
 }
