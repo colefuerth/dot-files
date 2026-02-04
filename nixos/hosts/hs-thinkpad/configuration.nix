@@ -202,12 +202,14 @@ in
     };
   };
 
+  services.xserver.videoDrivers = [ "nvidia" ];
+
   hardware.nvidia = {
     open = false;
     prime = {
       # [offload, sync, reverseSync] only one should be true
       offload.enable = true; # use igpu for everything except when using the offload cmd
-      offload.enableOffloadCmd = false;
+      offload.enableOffloadCmd = true;
       sync.enable = false; # render everything on the dgpu; igpu used for display only
       reverseSync.enable = false; # use the dgpu for everything
     };
