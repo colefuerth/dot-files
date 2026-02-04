@@ -169,7 +169,13 @@ in
     powertop.enable = true;
   };
   services.tlp.settings = {
-    USB_DENYLIST = "25a7:fa70 258a:0150 046d:c548"; # stop autosuspend on these uuids (keyboards/mice)
+    USB_DENYLIST = builtins.concatStringsSep " " [
+      # USB devices to disable autosuspend for (keyboards/mice)
+      "25a7:fa70" # gaming mouse at home
+      "258a:0150" # rk m75
+      "046d:c548" # Logitech MX Master 3S
+      "05e3:0610" # Generic USB Hub at work
+    ];
     DISK_DEVICES = "nvme0n1";
     DISK_APM_LEVEL_ON_AC = "254";
     DISK_APM_LEVEL_ON_BAT = "128";
