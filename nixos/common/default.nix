@@ -95,6 +95,7 @@ in
       nix-index
       nix-output-monitor
       nmap
+      nvd
       openssh
       openssl
       ranger

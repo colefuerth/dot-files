@@ -1,4 +1,4 @@
-{ dotFilesPackages, ... }:
+{ dotFilesPackages, pkgs, ... }:
 {
   fonts = {
     enableDefaultPackages = true;
@@ -18,9 +18,9 @@
     };
     packages = [
       dotFilesPackages.consolas-nf
+      pkgs.vista-fonts
     ];
   };
 
   services.printing.enable = true;
-  services.fprintd.enable = true;
 }

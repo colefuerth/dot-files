@@ -15,6 +15,7 @@ in
     ../../common/bluetooth.nix
     ../../common/cachix.nix
     ../../common/cosmic.nix
+    ../../common/graphical.nix
     ../../common/laptop.nix
     ./hardware-configuration.nix
     inputs.nixos-hardware.nixosModules.common-cpu-intel

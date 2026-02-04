@@ -18,6 +18,7 @@ in
     ../../common/cachix/heaviside-industries.nix
     ../../common/cosmic.nix
     ../../common/gnome.nix
+    ../../common/graphical.nix
     ../../common/laptop.nix
     ../../common/nixbuild.nix
     ../../common/xone.nix
@@ -62,27 +63,8 @@ in
   ];
   boot.plymouth.enable = false;
 
-  fonts = {
-    enableDefaultPackages = true;
-    enableGhostscriptFonts = true;
-    fontDir = {
-      enable = true;
-      decompressFonts = true;
-    };
-    fontconfig = {
-      enable = true;
-      antialias = true;
-      cache32Bit = true;
-      useEmbeddedBitmaps = true;
-      defaultFonts = {
-        monospace = [ "Consolas Nerd Font Mono" ];
-      };
-    };
-    packages = with pkgs; [
-      dotFilesPackages.consolas-nf
-      vista-fonts
-    ];
-  };
+  # `fprintd-enroll` to enroll fingerprints
+  services.fprintd.enable = true;
 
   # X11 is configured by the desktop environment modules
 
@@ -92,9 +74,6 @@ in
   boot.kernelModules = [
     "acpi_call" # Required for ThinkPad battery charge thresholds
   ];
-
-  # Enable touchpad support (enabled default in most desktopManager).
-  # services.xserver.libinput.enable = true;
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.${username} = {
