@@ -54,14 +54,8 @@ in
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
-  # Boot with systemd output visible
-  boot.kernelParams = [
-    "i915.force_probe=7d55"
-    "i915.enable_psr=0"
-    "i915.enable_dc=0"
-    "i915.enable_fbc=0"
-    "i915.enable_dsb=0"
-  ];
+  # boot.kernelParams = [
+  # ];
   boot.plymouth.enable = false;
 
   # `fprintd-enroll` to enroll fingerprints
