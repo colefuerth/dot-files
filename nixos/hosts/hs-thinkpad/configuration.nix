@@ -1,4 +1,5 @@
 {
+  config,
   dotFilesPackages,
   inputs,
   lib,
@@ -66,13 +67,13 @@ in
   # `fprintd-enroll` to enroll fingerprints
   services.fprintd.enable = true;
 
-  # X11 is configured by the desktop environment modules
-
-  # Configure keymap in X11
-
-  # Enable sound with pipewire.
+  # modules to load at boot time
   boot.kernelModules = [
     "acpi_call" # Required for ThinkPad battery charge thresholds
+  ];
+  # Packages containing kernel modules to load at boot time
+  boot.extraModulePackages = with config.boot.kernelPackages; [
+    acpi_call
   ];
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
