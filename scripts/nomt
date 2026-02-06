@@ -11,7 +11,7 @@ RESULT_PATH=$(
     $NIX build -L \
         --print-out-paths \
         --system x86_64-linux \
-        --max-jobs 20 \
+        --max-jobs 0 \
         --eval-store auto \
         --store ssh-ng://$REMOTE \
         --verbose \
