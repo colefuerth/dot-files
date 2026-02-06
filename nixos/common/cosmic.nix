@@ -56,7 +56,9 @@ in
 
     # Optional: Exclude some default COSMIC applications
     environment.cosmic.excludePackages = with pkgs; [
-      # cosmic-edit  # Uncomment to exclude COSMIC text editor
+      cosmic-edit # text editor, I use micro or vscode
+      cosmic-reader # pdf viewer, I use okular
+      cosmic-player # replaced with vlc
     ];
 
     services.xserver.videoDrivers = [
