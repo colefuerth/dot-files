@@ -6,8 +6,10 @@ let
     btop
     direnv
     eza
+    fresh-editor
     git
     mcfly
+    micro
     ncdu
     ranger
     starship

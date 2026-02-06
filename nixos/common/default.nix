@@ -83,6 +83,7 @@ in
       dig
       eza
       file
+      fresh-editor
       git
       gnupg
       gptfdisk
