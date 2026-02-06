@@ -42,11 +42,14 @@ in
       };
       settings = {
         auto-optimise-store = true;
+        cores = 0;
+        eval-cores = 0;
         experimental-features = [
           "nix-command"
           "flakes"
           "parallel-eval"
         ];
+        max-jobs = "auto";
         substituters = [
           "https://nix-community.cachix.org"
           "https://cuda-maintainers.cachix.org"
@@ -57,8 +60,6 @@ in
           "cuda-maintainers.cachix.org-1:0dq3bujKpuEPMCX6U4WylrUDZ9JyUG0VpVZa7CNfq5E="
           "cache.flakehub.com-3:hJuILl5sVK4iKm86JzgdXW12Y2Hwd5G07qKtHTOcDCM="
         ];
-        max-jobs = "auto";
-        cores = 0;
       };
       registry.nixpkgs = {
         flake = inputs.nixpkgs;
