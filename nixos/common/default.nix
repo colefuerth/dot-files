@@ -132,7 +132,8 @@ in
       LC_TIME = "en_US.UTF-8";
     };
 
-    environment.variables.EDITOR = "micro";
+    environment.variables.EDITOR = "fresh";
+    environment.variables.VISUAL = "code";
     programs = {
       appimage = {
         enable = true;
