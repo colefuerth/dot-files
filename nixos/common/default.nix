@@ -110,6 +110,7 @@ in
       usbutils
       vim
       wget
+      yazi
       zip
     ];
 

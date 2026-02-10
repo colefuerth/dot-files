@@ -80,7 +80,6 @@ in
         spotify
         tidal-hifi
         vlc
-        yazi
       ]
       ++ [
         dotFilesPackages.bambu-studio
