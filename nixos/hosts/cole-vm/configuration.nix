@@ -44,6 +44,7 @@ in
   boot.loader.grub.useOSProber = true;
 
   networking.hostName = host; # Define your hostname.
+  networking.wireless.enable = lib.mkForce false;
 
   # Enable the X11 windowing system.
   services.xserver.enable = false;

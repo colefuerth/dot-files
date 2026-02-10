@@ -20,7 +20,11 @@ nix run github:colefuerth/dot-files
 ```bash
 SYSTEM="cole-laptop"
 sudo echo "sudo acquired" # nom cuts off the sudo prompt, so preauthenticate
-sudo nixos-rebuild --flake github:colefuerth/dot-files#$SYSTEM --log-format internal-json -v switch |& nix run nixpkgs#nix-output-monitor -- --json
+sudo nixos-rebuild \
+    --option extra-substituters https://install.determinate.systems \
+    --option extra-trusted-public-keys cache.flakehub.com-3:hJuILl5sVK4iKm86JzgdXW12Y2Hwd5G07qKtHTOcDCM= \
+    --flake github:colefuerth/dot-files#$SYSTEM \
+    --log-format internal-json -v switch |& nix run nixpkgs#nix-output-monitor -- --json
 ```
 
 ### cloning and switching locally
