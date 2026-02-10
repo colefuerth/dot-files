@@ -257,11 +257,6 @@ in
       Service = {
         Restart = lib.mkForce "always";
         RestartSec = "3s";
-        # Enable Intel iGPU hardware acceleration via VAAPI
-        Environment = [
-          "LIBVA_DRIVER_NAME=iHD" # Intel media driver for Core Ultra
-          "LIBVA_DRIVERS_PATH=${pkgs.intel-media-driver}/lib/dri"
-        ];
       };
     };
     programs.ssh = {
