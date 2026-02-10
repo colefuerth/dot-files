@@ -34,6 +34,7 @@
   boot.kernelPackages = pkgs.linuxPackages;
 
   networking.hostName = host;
+  networking.wireless.enable = lib.mkForce false;
 
   time.timeZone = "America/Los_Angeles";
 
