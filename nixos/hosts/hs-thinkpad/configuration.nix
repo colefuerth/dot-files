@@ -303,6 +303,8 @@ in
     };
   };
 
+  services.hardware.bolt.enable = true;
+
   services.envfs.enable = false;
 
   programs = {
