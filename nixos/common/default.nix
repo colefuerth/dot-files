@@ -75,44 +75,48 @@ in
       };
     };
 
-    environment.systemPackages = with pkgs; [
-      _7zz
-      binutils # provides strings, objdump, nm, etc.
-      btop
-      curl
-      dig
-      eza
-      file
-      fresh-editor
-      git
-      gnupg
-      gptfdisk
-      inetutils
-      iotop
-      lsof
-      man-pages
-      man-pages-posix
-      micro
-      nano
-      nix-index
-      nix-output-monitor
-      nmap
-      nvd
-      openssh
-      openssl
-      ranger
-      rar
-      ripgrep
-      rsync
-      tmux
-      unrar
-      unzip
-      usbutils
-      vim
-      wget
-      yazi
-      zip
-    ];
+    environment.systemPackages =
+      with pkgs;
+      [
+        _7zz
+        binutils # provides strings, objdump, nm, etc.
+        btop
+        curl
+        dig
+        eza
+        file
+        fresh-editor
+        git
+        gnupg
+        gptfdisk
+        inetutils
+        iotop
+        lsof
+        man-pages
+        man-pages-posix
+        micro
+        nano
+        nix-index
+        nix-output-monitor
+        nmap
+        nvd
+        openssh
+        openssl
+        ranger
+        ripgrep
+        rsync
+        tmux
+        unrar
+        unzip
+        usbutils
+        vim
+        wget
+        yazi
+        zip
+      ]
+      ++ lib.optionals pkgs.stdenv.hostPlatform.isx86_64 [
+        rar # x86_64 only
+      ];
 
     # Set your time zone.
     time.timeZone = "America/Los_Angeles";

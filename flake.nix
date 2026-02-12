@@ -13,6 +13,8 @@
     nix-vscode-extensions.inputs.nixpkgs.follows = "nixpkgs";
     nixos-hardware.url = "github:nixos/nixos-hardware";
     nixos-hardware.inputs.nixpkgs.follows = "nixpkgs";
+    nixos-hardware-pi-5.url = "github:nixos/nixos-hardware?ref=raspberry-pi-5";
+    nixos-hardware-pi-5.inputs.nixpkgs.follows = "nixpkgs";
     nixos-wsl.url = "github:nix-community/NixOS-WSL";
     nixos-wsl.inputs.nixpkgs.follows = "nixpkgs";
     flameshot.url = "github:flameshot-org/flameshot?ref=fix_cosmic";
@@ -151,6 +153,11 @@
           username = "cole";
           system = "x86_64-linux";
         };
+        cole-pi = mkNixosConfiguration {
+          host = "cole-pi";
+          username = "cole";
+          system = "aarch64-linux";
+        };
         hs-thinkpad = mkNixosConfiguration {
           host = "hs-thinkpad";
           username = "cole";
@@ -177,6 +184,7 @@
           cole-laptop-vm = self.nixosConfigurations.cole-laptop.config.system.build.vm;
           cole-desktop-vm = self.nixosConfigurations.cole-desktop.config.system.build.vm;
           cole-vm-vm = self.nixosConfigurations.cole-vm.config.system.build.vm;
+          cole-pi-vm = self.nixosConfigurations.cole-pi.config.system.build.vm;
           hs-thinkpad-vm = self.nixosConfigurations.hs-thinkpad.config.system.build.vm;
           # Note: cole-wsl2-vm is not included because WSL configurations cannot be built as VMs
           inherit (dotFilesPackages)
@@ -214,6 +222,10 @@
             };
             hs-thinkpad = {
               host = "hs-thinkpad";
+              username = "cole";
+            };
+            cole-pi = {
+              host = "cole-pi";
               username = "cole";
             };
             # Note: cole-wsl2 excluded - WSL configurations cannot be tested as VMs

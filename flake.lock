@@ -290,6 +290,22 @@
         "type": "github"
       }
     },
+    "nixos-hardware-pi-5": {
+      "locked": {
+        "lastModified": 1714592534,
+        "narHash": "sha256-uQPDNDN6rup0VJgdPrBU4Z6njCbWWu3AeijrUv8fTuc=",
+        "owner": "nixos",
+        "repo": "nixos-hardware",
+        "rev": "b2f60c8bd00c9225d1e97dbe7ea9314379174399",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nixos",
+        "ref": "raspberry-pi-5",
+        "repo": "nixos-hardware",
+        "type": "github"
+      }
+    },
     "nixos-wsl": {
       "inputs": {
         "flake-compat": "flake-compat_3",
@@ -425,6 +441,7 @@
         "home-manager": "home-manager",
         "nix-vscode-extensions": "nix-vscode-extensions",
         "nixos-hardware": "nixos-hardware",
+        "nixos-hardware-pi-5": "nixos-hardware-pi-5",
         "nixos-wsl": "nixos-wsl",
         "nixpkgs": "nixpkgs_3",
         "sops-nix": "sops-nix",
