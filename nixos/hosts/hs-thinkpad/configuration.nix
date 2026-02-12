@@ -217,8 +217,11 @@ in
   # Udev rule to automatically start/stop wallpaper based on AC power
   services.udev.extraRules = ''
     # Monitor AC adapter state changes and toggle wallpaper service
-    SUBSYSTEM=="power_supply", ATTR{online}=="0", RUN+="${pkgs.systemd}/bin/systemctl --user --machine=${username}@.host stop linux-wallpaperengine.service"
-    SUBSYSTEM=="power_supply", ATTR{online}=="1", RUN+="${pkgs.systemd}/bin/systemctl --user --machine=${username}@.host start linux-wallpaperengine.service"
+    # ATTR{type}=="Mains" ensures only the AC adapter triggers these rules,
+    # not USB-C power supply devices which enumerate with online=0 at boot.
+    SUBSYSTEM=="power_supply", ATTR{type}=="Mains", ATTR{online}=="0", RUN+="${pkgs.systemd}/bin/systemctl --user --machine=${username}@.host stop linux-wallpaperengine.service"
+    SUBSYSTEM=="power_supply", ATTR{type}=="Mains", ATTR{online}=="1", RUN+="${pkgs.systemd}/bin/systemctl --user --machine=${username}@.host reset-failed linux-wallpaperengine.service"
+    SUBSYSTEM=="power_supply", ATTR{type}=="Mains", ATTR{online}=="1", RUN+="${pkgs.systemd}/bin/systemctl --user --machine=${username}@.host start linux-wallpaperengine.service"
   '';
 
   # Home-manager configuration for this machine
@@ -232,7 +235,7 @@ in
           # laptop display
           monitor = "eDP-1"; # Your laptop's internal display
           wallpaperId = wallpaperIds.floppa-ps1;
-          scaling = "fill"; # "stretch", "fit", "fill", or "default"
+          scaling = "fit"; # "stretch", "fit", "fill", or "default"
           fps = 24;
           audio.silent = true; # only use this flag once for all monitors
           # extraOptions = [
@@ -258,6 +261,24 @@ in
         Restart = lib.mkForce "always";
         RestartSec = "3s";
       };
+    };
+    systemd.user.services.linux-wallpaperengine-watchdog = {
+      Unit = {
+        Description = "Recover linux-wallpaperengine if failed on AC power";
+        ConditionACPower = true;
+      };
+      Service = {
+        Type = "oneshot";
+        ExecStart = "${pkgs.bash}/bin/bash -c '${pkgs.systemd}/bin/systemctl --user reset-failed linux-wallpaperengine.service 2>/dev/null; ${pkgs.systemd}/bin/systemctl --user start linux-wallpaperengine.service'";
+      };
+    };
+    systemd.user.timers.linux-wallpaperengine-watchdog = {
+      Unit.Description = "Periodically recover linux-wallpaperengine";
+      Timer = {
+        OnBootSec = "30s";
+        OnUnitActiveSec = "5min";
+      };
+      Install.WantedBy = [ "timers.target" ];
     };
     programs.ssh = {
       matchBlocks = {

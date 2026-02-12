@@ -12,10 +12,12 @@
   hyper-cube-oled = "3437148262";
   ricardo = "2620623306";
   misato-clock = "2156652467";
+  my-dress-up-darling-s2-outro = "3541119443";
   evangelion-beer = "1756162891";
   tblz = "1542633413";
   minecraft-redstone-clock = "1731760875";
   stick-bugged = "2190879698";
   firewatch-clock = "1922177752";
   witcher-clock = "1945071673";
+  windows-xp = "1386983814";
 }
