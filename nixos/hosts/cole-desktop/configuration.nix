@@ -119,9 +119,9 @@ in
     smartmontools
     solaar
     tio
-    wineWowPackages.staging
+    wineWow64Packages.staging
     winetricks
-    wineWowPackages.waylandFull
+    wineWow64Packages.waylandFull
     tumbler
   ];
 
