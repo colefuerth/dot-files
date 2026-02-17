@@ -22,5 +22,24 @@
     ];
   };
 
+  # users.users.${username} = {
+  #   packages = 
+  #     with pkgs;
+  #     [
+  #     ];
+  # };
+
+  programs = {
+    firefox = with pkgs; {
+      enable = true;
+      package = firefox;
+      # nativeMessagingHosts = [ firefoxpwa ];
+    };
+    vscode = {
+      enable = true;
+      package = pkgs.vscode;
+    };
+  };
+
   services.printing.enable = true;
 }
