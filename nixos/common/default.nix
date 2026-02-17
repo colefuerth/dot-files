@@ -102,6 +102,7 @@ in
         nvd
         openssh
         openssl
+        pv
         ranger
         ripgrep
         rsync
@@ -111,7 +112,6 @@ in
         usbutils
         vim
         wget
-        yazi
         zip
       ]
       ++ lib.optionals pkgs.stdenv.hostPlatform.isx86_64 [
