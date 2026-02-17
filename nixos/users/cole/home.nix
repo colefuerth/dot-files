@@ -284,6 +284,13 @@
               bindkey "^[[3~" delete-char       # Delete key
               bindkey "^[[H" beginning-of-line  # Home key
               bindkey "^[[F" end-of-line        # End key
+
+              # Ctrl+Backspace to delete word backward
+              bindkey "^H" backward-kill-word
+              bindkey "^?" backward-delete-char
+
+              # Ctrl+Enter to accept line (insert newline in multi-line mode)
+              bindkey "^M" accept-line
             '';
           in
           lib.mkMerge [
