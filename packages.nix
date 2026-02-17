@@ -88,7 +88,7 @@
         dbus
         glib
         glib-networking
-        xorg.libX11
+        libx11
 
         # Network/TLS libraries
         cacert
