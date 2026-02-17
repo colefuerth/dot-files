@@ -158,11 +158,13 @@ in
   # initial system state when machine was created, used for backwards compatibility
   system.stateVersion = "25.11";
 
-  powerManagement = {
-    enable = true;
-    powertop.enable = true;
-  };
+  powerManagement.enable = true;
+  services.thermald.enable = lib.mkForce false; # Unsupported on Meteor Lake with thinkpad_acpi dytc_lapmode
   services.tlp.settings = {
+    # Explicit max frequencies to fix AC restore on hybrid Meteor Lake CPUs.
+    # Kernel clamps per-core to each core type's actual max.
+    CPU_SCALING_MAX_FREQ_ON_AC = 5100000;
+    CPU_SCALING_MAX_FREQ_ON_BAT = 2300000;
     USB_DENYLIST = builtins.concatStringsSep " " [
       # USB devices to disable autosuspend for (keyboards/mice)
       "25a7:fa70" # gaming mouse at home
