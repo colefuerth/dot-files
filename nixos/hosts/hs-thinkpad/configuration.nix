@@ -330,6 +330,11 @@ in
 
   services.envfs.enable = false;
 
+  services.tailscale = {
+    enable = true;
+    useRoutingFeatures = "client";
+  };
+
   programs = {
     _1password.enable = true;
     _1password-gui = {
