@@ -342,5 +342,6 @@ in
       enable = true;
       protontricks.enable = true;
     };
+    qgroundcontrol.enable = true;
   };
 }
