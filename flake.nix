@@ -12,9 +12,7 @@
     nix-vscode-extensions.url = "github:nix-community/nix-vscode-extensions";
     nix-vscode-extensions.inputs.nixpkgs.follows = "nixpkgs";
     nixos-hardware.url = "github:nixos/nixos-hardware";
-    nixos-hardware.inputs.nixpkgs.follows = "nixpkgs";
     nixos-hardware-pi-5.url = "github:nixos/nixos-hardware?ref=raspberry-pi-5";
-    nixos-hardware-pi-5.inputs.nixpkgs.follows = "nixpkgs";
     nixos-wsl.url = "github:nix-community/NixOS-WSL";
     nixos-wsl.inputs.nixpkgs.follows = "nixpkgs";
     flameshot.url = "github:flameshot-org/flameshot?ref=fix_cosmic";
