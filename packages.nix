@@ -123,4 +123,17 @@
       platforms = [ "x86_64-linux" ];
     };
   };
+
+  remote-switch = pkgs.writeShellApplication {
+    name = "remote-switch";
+    runtimeInputs = with pkgs; [
+      bash
+      coreutils
+      nix
+      nix-output-monitor
+      openssh
+      sshpass
+    ];
+    text = builtins.readFile ./scripts/remote-switch;
+  };
 }

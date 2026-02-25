@@ -192,6 +192,7 @@
             configs
             bambu-studio
             consolas-nf
+            remote-switch
             ;
 
           # Standalone shell environment

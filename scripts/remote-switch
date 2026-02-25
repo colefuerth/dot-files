@@ -1,0 +1,206 @@
+#!/usr/bin/env bash
+set -euo pipefail
+IFS=$'\n\t'
+
+usage() {
+  echo "Usage: $0"
+  echo "  -f, --flake       Path to the flake (default: '$(pwd)')"
+  echo "  -s, --system      The system architecture for remote builds (i.e. aarch64-linux)"
+  echo "  -c, --closure     Must be a .toplevel closure for a nixos config"
+  echo "  -i, --ip-address  IP address of the remote machine"
+  echo "  -p, --password    Password for sudo access on the remote machine (optional)"
+  echo "  -a, --action      Action to perform (switch, build, boot, test; default: test)"
+  echo "  -r, --remote      Remote builder to use (default: none)"
+  echo "  -h, --help        Display this help message"
+}
+
+flake="$(pwd)"
+system=""
+closure=""
+ip_address=""
+password=""
+action="test"
+remote_builder=""
+while [[ $# -gt 0 ]]; do
+  case $1 in
+  "-f" | "--flake")
+    shift
+    flake="$1"
+    shift
+    ;;
+  "-s" | "--system")
+    shift
+    system="$1"
+    shift
+    ;;
+  "-c" | "--closure")
+    shift
+    closure="$1"
+    shift
+    ;;
+  "-i" | "--ip-address")
+    shift
+    ip_address="$1"
+    shift
+    ;;
+  "-p" | "--password")
+    shift
+    password="$1"
+    shift
+    ;;
+  "-a" | "--action")
+    shift
+    action="$1"
+    shift
+    ;;
+  "-r" | "--remote")
+    shift
+    remote_builder="$1"
+    shift
+    ;;
+  "-h" | "--help")
+    usage
+    exit 0
+    ;;
+  *)
+    echo "ERROR: Unrecognized option: $1"
+    usage
+    exit 1
+    ;;
+  esac
+done
+
+if [[ "${flake}" == "" ]]; then
+  echo "ERROR: The flake must be specified with -f FLAKE"
+  usage
+  exit 1
+fi
+
+if [[ -n "${remote_builder}" ]]; then
+  if [[ -z "${system}" ]]; then
+    echo "ERROR: --system must be specified when using --remote for remote builds"
+    usage
+    exit 1
+  fi
+  if [[ "${system}" != "aarch64-linux" ]] && [[ "${system}" != "x86_64-linux" ]]; then
+    echo "ERROR: system must be one of <aarch64-linux|x86_64-linux>, received: \"${system}\""
+    usage
+    exit 1
+  fi
+fi
+
+if [ "${closure}" == "" ]; then
+  echo "ERROR: closure must be specified with -c CLOSURE"
+  usage
+  exit 1
+fi
+
+if [ "${ip_address}" == "" ]; then
+  echo "ERROR: ip_address must be specified with -i IP_ADDRESS"
+  usage
+  exit 1
+fi
+
+if [ "${action}" != "switch" ] && [ "${action}" != "build" ] && [ "${action}" != "boot" ] && [ "${action}" != "test" ]; then
+  echo "ERROR: action must be one of <switch|build|boot|test>, received: \"${action}\""
+  usage
+  exit 1
+fi
+
+closureToplevel="${flake}#${closure}"
+echo "executing \"rebuild ${action}\" on ${ip_address} with closure \"${closureToplevel}\""
+
+if [ "${remote_builder}" == "" ]; then
+  closurePath=$(
+    nom build \
+      --print-build-logs \
+      --print-out-paths \
+      "${closureToplevel}"
+  )
+else 
+    closurePath=$(
+    nom build \
+      --print-build-logs \
+      --print-out-paths \
+      --max-jobs 0 \
+      --system "${system}" \
+      --eval-store auto \
+      --store "ssh-ng://${remote_builder}" \
+      "${closureToplevel}"
+  )
+  nix copy --no-check-sigs --from "ssh://${remote_builder}" "${closurePath}"
+fi
+
+echo "built ${closurePath} for ${closureToplevel}"
+
+# Resolve hostname to ensure mDNS is ready before nix copy
+# Extract hostname from ip_address (might be user@hostname format)
+hostname_part="${ip_address##*@}"
+echo "Resolving hostname: ${hostname_part}"
+resolved_ip=$(getent hosts "${hostname_part}" | awk '{ print $1 }' | head -n1)
+if [ -z "${resolved_ip}" ]; then
+  echo "WARNING: Could not resolve ${hostname_part}, using original address"
+  target_address="${ip_address}"
+else
+  echo "Resolved ${hostname_part} to ${resolved_ip}"
+  # Reconstruct with resolved IP if there was a user@ part
+  if [[ "${ip_address}" == *"@"* ]]; then
+    user_part="${ip_address%%@*}"
+    target_address="${user_part}@${resolved_ip}"
+  else
+    target_address="${resolved_ip}"
+  fi
+fi
+
+# Ping the remote host before any further communication  
+echo "Pinging remote host: ${target_address}"  
+# Extract the host part for ping (strip user@ if present)  
+ping_host="${target_address##*@}"  
+if ! ping -c 2 -W 2 "${ping_host}" >/dev/null 2>&1; then  
+  echo "ERROR: Remote host ${ping_host} is unreachable (ping failed). Aborting."  
+  exit 1  
+fi  
+
+if [ "${password}" == "" ]; then
+  NIX_SSHOPTS="-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" \
+    nix copy --no-check-sigs --to "ssh://${target_address}?compress=true" "${closurePath}"
+else
+  NIX_SSHOPTS="-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" \
+    sshpass -p "${password}" nix copy --no-check-sigs --to "ssh://${target_address}?compress=true" "${closurePath}"
+fi
+
+echo "copied ${closurePath} to ${ip_address}"
+
+if [ "${password}" == "" ]; then
+  SET_CLOSURE_CMD="sudo nix-env -p /nix/var/nix/profiles/system --set ${closurePath}"
+  ACTION_CMD="sudo ${closurePath}/bin/switch-to-configuration ${action}"
+  REBOOT_CMD="sudo reboot"
+
+  echo "No password was given. Attempting to rebuild without password."
+  # shellcheck disable=SC2029 # We want to expand the commands on the client side
+  ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "${target_address}" "${SET_CLOSURE_CMD}; ${ACTION_CMD}"
+  echo "executed ${action} on asset ${ip_address} with ${closurePath}"
+
+  if [ "${action}" == "boot" ]; then
+    echo "rebooting asset ${ip_address}"
+    ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "${target_address}" "${REBOOT_CMD}"
+    echo "rebooted asset ${ip_address}"
+  fi
+else
+  # Use sudo -S to read password from stdin
+  SET_CLOSURE_CMD="echo '${password}' | sudo -S -p '' nix-env -p /nix/var/nix/profiles/system --set ${closurePath}"
+  ACTION_CMD="echo '${password}' | sudo -S -p '' ${closurePath}/bin/switch-to-configuration ${action}"
+  REBOOT_CMD="echo '${password}' | sudo -S -p '' reboot"
+
+  echo "Password was given. Attempting to rebuild using password."
+  # shellcheck disable=SC2029 # We want to expand the commands on the client side
+  sshpass -p "${password}" ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "${target_address}" "${SET_CLOSURE_CMD}"
+  sshpass -p "${password}" ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "${target_address}" "${ACTION_CMD}"
+  echo "executed ${action} on asset ${ip_address} with ${closurePath}"
+
+  if [ "${action}" == "boot" ]; then
+    echo "rebooting asset ${ip_address}"
+    sshpass -p "${password}" ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "${target_address}" "${REBOOT_CMD}"
+    echo "rebooted asset ${ip_address}"
+  fi
+fi
