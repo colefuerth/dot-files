@@ -56,6 +56,7 @@ in
       discord
       firefoxpwa
       flameshot
+      google-chrome
       grim
       kdePackages.okular
       micro

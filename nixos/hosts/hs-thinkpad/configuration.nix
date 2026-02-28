@@ -322,6 +322,10 @@ in
           hostname = "10.100.20.28";
           serverAliveInterval = 60;
         };
+        "narwhal" = {
+          user = "heaviside";
+          hostname = "narwhal-Pi4.local";
+        };
       };
     };
   };
@@ -349,4 +353,8 @@ in
     };
     qgroundcontrol.enable = true;
   };
+
+  nix.settings.secret-key-files = [
+    "/etc/nix/signing-key.sec"
+  ];
 }

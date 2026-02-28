@@ -30,6 +30,9 @@
     disableThisSystem = false;
   };
 
+  # Cross-compile from x86_64 instead of emulating aarch64 via QEMU
+  nixpkgs.buildPlatform = "x86_64-linux";
+
   # Bootloader - Pi 5 uses its own firmware bootloader
   # The nixos-hardware-pi-5 module handles kernel and boot configuration
   boot.loader.systemd-boot.enable = lib.mkForce false;
@@ -49,11 +52,8 @@
       "wheel"
     ];
     packages = with pkgs; [
-      act
       binsider
       codex
-      git-lfs
-      micro
     ];
     # ++ [
     #   # Wrapper for rpi-imager to run with sudo and proper Wayland support
@@ -77,7 +77,6 @@
     libgcc
     nil
     nixfmt-tree
-    pciutils
     platformio
     (python312.withPackages (
       ps: with ps; [
@@ -90,7 +89,6 @@
         tqdm
       ]
     ))
-    smartmontools
     tio
   ];
 
@@ -101,6 +99,7 @@
   system.stateVersion = "26.05";
 
   powerManagement.enable = true;
+  services.fwupd.enable = lib.mkForce false;
 
   # hardware.graphics = {
   #   enable = true;
@@ -108,6 +107,7 @@
 
   # Home-manager configuration for this machine
   home-manager.users.${username} = {
+    programs.gh.enable = lib.mkForce false;
     programs.ssh = {
       matchBlocks = {
         "eu.nixbuild.net" = {
