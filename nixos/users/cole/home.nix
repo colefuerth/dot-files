@@ -13,7 +13,7 @@
     home = rec {
       # Set the base home-manager options
       inherit username;
-      homeDirectory = "/home/${username}";
+      homeDirectory = if pkgs.stdenv.isDarwin then "/Users/${username}" else "/home/${username}";
       stateVersion = lib.mkDefault "25.11";
       language.base = "en_US.UTF-8";
       packages = with pkgs; [
@@ -30,11 +30,12 @@
     programs = {
       btop.enable = true;
       direnv.enable = true;
-      firefox = with pkgs; {
-        enable = true;
-        package = firefox;
-        nativeMessagingHosts = [ firefoxpwa ];
-      };
+      firefox = with pkgs;
+        lib.mkIf (!pkgs.stdenv.isDarwin) {
+          enable = true;
+          package = firefox;
+          nativeMessagingHosts = [ firefoxpwa ];
+        };
       gh.enable = true;
       git = {
         enable = true;
@@ -42,12 +43,12 @@
           user = {
             name = "Cole Fuerth";
             email = "colefuerth@gmail.com";
-            signingkey = "/home/cole/.ssh/id_ed25519.pub";
+            signingkey = "${config.home.homeDirectory}/.ssh/id_ed25519.pub";
           };
           commit.gpgsign = true;
           gpg = {
             format = "ssh";
-            ssh.allowedSignersFile = "/home/cole/.ssh/allowed_signers";
+            ssh.allowedSignersFile = "${config.home.homeDirectory}/.ssh/allowed_signers";
           };
         };
       };

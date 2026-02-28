@@ -18,6 +18,8 @@
     flameshot.url = "github:flameshot-org/flameshot?ref=fix_cosmic";
     flameshot.inputs.nixpkgs.follows = "nixpkgs";
     vscode-server.url = "github:nix-community/nixos-vscode-server";
+    nix-darwin.url = "github:LnL7/nix-darwin";
+    nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
     # heaviside-nixpkgs.url = "git+ssh://git@github.com/heaviside-industries/heaviside-nixpkgs.git?ref=refs/heads/master";
     # heaviside-nixpkgs.inputs.nixpkgs.follows = "nixpkgs";
   };
@@ -31,12 +33,14 @@
       sops-nix,
       nixos-wsl,
       nix-vscode-extensions,
+      nix-darwin,
       ...
     }@inputs:
     let
       systems = [
         "x86_64-linux"
         "aarch64-linux"
+        "aarch64-darwin"
       ];
       forAllSystems =
         f:
@@ -125,6 +129,55 @@
               ;
           };
         };
+
+      mkDarwinConfiguration =
+        {
+          host,
+          username,
+          system,
+        }:
+        let
+          pkgs = import nixpkgs {
+            inherit system;
+            overlays = [
+              nix-vscode-extensions.overlays.default
+              self.overlays.default
+            ];
+          };
+          dotFilesPackages = import ./packages.nix { inherit pkgs; };
+        in
+        nix-darwin.lib.darwinSystem {
+          inherit system;
+          specialArgs = {
+            inherit
+              inputs
+              host
+              username
+              dotFilesPackages
+              ;
+          };
+          modules = [
+            ./nixos/hosts/${host}/configuration.nix
+            home-manager.darwinModules.home-manager
+            {
+              home-manager.extraSpecialArgs = {
+                inherit
+                  inputs
+                  host
+                  username
+                  dotFilesPackages
+                  ;
+              };
+              home-manager.useGlobalPkgs = true;
+              home-manager.useUserPackages = true;
+              home-manager.backupFileExtension = "bak.home-manager-${
+                self.shortRev or self.dirtyShortRev or self.lastModified or "unknown"
+              }";
+              home-manager.users.${username} = import ./nixos/users/${username}/home.nix;
+            }
+            sops-nix.darwinModules.sops
+          ];
+        };
     in
     {
       formatter = forAllSystems (system: nixpkgs.legacyPackages.${system}.nixfmt-tree);
@@ -160,6 +213,14 @@
           host = "hs-thinkpad";
           username = "cole";
           system = "x86_64-linux";
+        };
+      };
+
+      darwinConfigurations = {
+        cole-darwin = mkDarwinConfiguration {
+          host = "cole-darwin";
+          username = "cole";
+          system = "aarch64-darwin";
         };
       };
 

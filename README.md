@@ -55,6 +55,40 @@ SYSTEM="cole-laptop"
 sudo nixos-rebuild --flake .#$SYSTEM test
 ```
 
+## Installation on macOS (nix-darwin)
+
+### Initial setup
+
+1. **Install Nix with flakes** (if not already installed):
+   ```bash
+   curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install
+   ```
+
+2. **Clone the repository**:
+   ```bash
+   git clone https://github.com/colefuerth/dot-files.git ~/dot-files
+   cd ~/dot-files
+   ```
+
+3. **Build the configuration**:
+   ```bash
+   SYSTEM="cole-darwin"
+   nix build .#darwinConfigurations.$SYSTEM.system
+   ```
+
+4. **Apply the configuration** (first time):
+   ```bash
+   ./result/sw/bin/darwin-rebuild switch --flake .#cole-darwin
+   ```
+
+### Update configuration
+
+After the initial setup, you can update your system with:
+
+```bash
+darwin-rebuild switch --flake .#cole-darwin
+```
+
 ## Installation on Ubuntu/Pop (DEPRECATED)
 
 First, we must clone the repo:
