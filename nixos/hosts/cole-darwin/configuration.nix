@@ -110,17 +110,7 @@
       # "visual-studio-code"
     ];
     brews = [
-      # Hardware tools that may not be in nixpkgs for darwin
-      "avrdude"
-      "platformio"
-      # Serial communication
-      "tio"
     ];
-  };
-
-  # Services
-  services.tailscale = {
-    enable = true;
   };
 
   # Programs
@@ -132,45 +122,6 @@
   home-manager.users.${username} = {
     programs.ssh = {
       matchBlocks = {
-        "eu.nixbuild.net" = {
-          hostname = "eu.nixbuild.net";
-          serverAliveInterval = 60;
-          identityFile = "/Users/cole/.ssh/nixbuild/heaviside-shared";
-        };
-        "t" = {
-          user = "heaviside_ai";
-          hostname = "10.100.20.38";
-          identityFile = "/Users/cole/.ssh/id_ed25519";
-        };
-        "mothpi" = {
-          user = "moth";
-          hostname = "moth.local";
-          identityFile = "/Users/cole/.ssh/id_rsa";
-          forwardX11 = true;
-          forwardX11Trusted = true;
-        };
-        "bms_test" = {
-          user = "heaviside";
-          hostname = "moth-production-tester.local";
-          identityFile = "/Users/cole/.ssh/id_rsa";
-        };
-        "pi" = {
-          user = "cole";
-          hostname = "colepi.local";
-          serverAliveInterval = 60;
-          identityFile = "/Users/cole/.ssh/id_rsa";
-          forwardX11 = true;
-          forwardX11Trusted = true;
-        };
-        "s" = {
-          user = "cole";
-          hostname = "10.100.20.28";
-          serverAliveInterval = 60;
-        };
-        "narwhal" = {
-          user = "heaviside";
-          hostname = "narwhal-Pi4.local";
-        };
       };
     };
   };
