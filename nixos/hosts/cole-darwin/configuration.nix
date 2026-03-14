@@ -8,8 +8,9 @@
   ...
 }:
 {
-  # Enable experimental features
-  nix.settings.experimental-features = "nix-command flakes";
+  imports = [
+    ../../common
+  ];
 
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
@@ -99,15 +100,13 @@
     };
     # macOS-specific apps that aren't available in nixpkgs or work better via Homebrew
     casks = [
-      # Apps from hs-thinkpad that work better via Homebrew on macOS:
       "discord"
+      "google-chrome"
+      "signal"
       "slack"
       "spotify"
+      "steam"
       "vlc"
-      # Additional recommendations:
-      # "google-chrome"
-      # "signal"
-      # "visual-studio-code"
     ];
     brews = [
     ];

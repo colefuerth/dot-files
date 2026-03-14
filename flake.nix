@@ -57,6 +57,7 @@
           host,
           username,
           system,
+          isDarwin ? false,
           backupSuffix ? "bak.home-manager-${
             self.shortRev or self.dirtyShortRev or self.lastModified or "unknown"
           }",
@@ -110,6 +111,7 @@
             ];
           };
           dotFilesPackages = import ./packages.nix { inherit pkgs; };
+          isDarwin = false;
         in
         nixpkgs.lib.nixosSystem {
           inherit system;
@@ -119,6 +121,7 @@
               host
               username
               dotFilesPackages
+              isDarwin
               ;
           };
           modules = mkConfigModules {
@@ -145,6 +148,7 @@
             ];
           };
           dotFilesPackages = import ./packages.nix { inherit pkgs; };
+          isDarwin = true;
         in
         nix-darwin.lib.darwinSystem {
           inherit system;
@@ -154,6 +158,7 @@
               host
               username
               dotFilesPackages
+              isDarwin
               ;
           };
           modules = [
