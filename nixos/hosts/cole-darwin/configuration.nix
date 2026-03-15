@@ -71,7 +71,7 @@
       AppleShowAllExtensions = true;
       InitialKeyRepeat = 14;
       KeyRepeat = 1;
-      "com.apple.swipescrolldirection" = false; # Disable natural scrolling
+      "com.apple.swipescrolldirection" = true; # Enable natural scrolling
     };
     trackpad = {
       Clicking = true; # Enable tap to click
