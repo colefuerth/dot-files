@@ -126,7 +126,7 @@ To install, then run:
 
 | Tools Config      | Description                                                                                                                        |
 | ----------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
-| SETUP_WELCOME_MSG | run `neofetch` on new terminal sessions                                                                                            |
+| SETUP_WELCOME_MSG | run `fastfetch` on new terminal sessions                                                                                            |
 | INSTALL_TOOLS     | If this is false, nothing under the SUBTOOLS_CONFIG is installed. Recommended to leave this as `true` and just config the subtools |
 | SETUP_SSH         | Install openssh-server, open the ssh port, generate an rsa key if none are already generated at the default path                   |
 | SETUP_DIALOUT     | add the current user to the `dialout` group, needed to access serial consoles                                                      |

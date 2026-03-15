@@ -100,7 +100,7 @@ in
   nixpkgs.config.allowUnfree = lib.mkForce true;
 
   environment.systemPackages = with pkgs; [
-    neofetch
+    fastfetch
     nil
     nixfmt-tree
     pciutils

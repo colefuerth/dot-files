@@ -165,21 +165,21 @@
       text = ''
         #!/usr/bin/env sh
 
-        /opt/homebrew/bin//opt/homebrew/bin/yabai -m config layout                 bsp
-        /opt/homebrew/bin//opt/homebrew/bin/yabai -m config window_placement       second_child
-        /opt/homebrew/bin//opt/homebrew/bin/yabai -m config top_padding            8
-        /opt/homebrew/bin//opt/homebrew/bin/yabai -m config bottom_padding         8
-        /opt/homebrew/bin//opt/homebrew/bin/yabai -m config left_padding           8
-        /opt/homebrew/bin//opt/homebrew/bin/yabai -m config right_padding          8
-        /opt/homebrew/bin//opt/homebrew/bin/yabai -m config window_gap             8
-        /opt/homebrew/bin//opt/homebrew/bin/yabai -m config mouse_follows_focus    off
-        /opt/homebrew/bin//opt/homebrew/bin/yabai -m config focus_follows_mouse    off
-        /opt/homebrew/bin//opt/homebrew/bin/yabai -m config mouse_modifier         alt
-        /opt/homebrew/bin//opt/homebrew/bin/yabai -m config mouse_action1          move
-        /opt/homebrew/bin//opt/homebrew/bin/yabai -m config mouse_action2          resize
-        /opt/homebrew/bin//opt/homebrew/bin/yabai -m config window_shadow          float
-        /opt/homebrew/bin//opt/homebrew/bin/yabai -m config split_ratio            0.5
-        /opt/homebrew/bin//opt/homebrew/bin/yabai -m config auto_balance           off
+        /opt/homebrew/bin/yabai -m config layout                 bsp
+        /opt/homebrew/bin/yabai -m config window_placement       second_child
+        /opt/homebrew/bin/yabai -m config top_padding            8
+        /opt/homebrew/bin/yabai -m config bottom_padding         8
+        /opt/homebrew/bin/yabai -m config left_padding           8
+        /opt/homebrew/bin/yabai -m config right_padding          8
+        /opt/homebrew/bin/yabai -m config window_gap             8
+        /opt/homebrew/bin/yabai -m config mouse_follows_focus    off
+        /opt/homebrew/bin/yabai -m config focus_follows_mouse    off
+        /opt/homebrew/bin/yabai -m config mouse_modifier         alt
+        /opt/homebrew/bin/yabai -m config mouse_action1          move
+        /opt/homebrew/bin/yabai -m config mouse_action2          resize
+        /opt/homebrew/bin/yabai -m config window_shadow          float
+        /opt/homebrew/bin/yabai -m config split_ratio            0.5
+        /opt/homebrew/bin/yabai -m config auto_balance           off
       '';
     };
 

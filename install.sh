@@ -263,7 +263,7 @@ fi
 
 if $SETUP_WELCOME_MSG; then
     # welcome messages
-    sudo apt install -y inxi neofetch
+    sudo apt install -y inxi fastfetch
     sudo chmod -x /etc/update-motd.d/*
     sudo curl -fsSL https://raw.githubusercontent.com/colefuerth/dot-files/master/10-welcome \
         -o /etc/update-motd.d/01-welcome

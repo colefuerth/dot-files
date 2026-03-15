@@ -19,7 +19,7 @@
       packages = with pkgs; [
         inxi
         ncdu
-        neofetch
+        fastfetch
       ];
     };
 
