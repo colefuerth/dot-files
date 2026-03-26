@@ -102,6 +102,7 @@
     casks = [
       "discord"
       "google-chrome"
+      "orbstack"
       "signal"
       "slack"
       "spotify"
@@ -114,6 +115,7 @@
     brews = [
       "koekeishiya/formulae/yabai"
       "koekeishiya/formulae/skhd"
+      "postgresql@17"
     ];
   };
 
@@ -125,12 +127,29 @@
   # Home-manager configuration for this machine
   home-manager.users.${username} = {
     programs.ssh = {
+      addKeysToAgent = "yes";
       matchBlocks = {
       };
     };
 
+    programs.git = {
+      enable = true;
+      extraConfig = {
+        url."git@github.com:".insteadOf = "https://github.com/";
+        # user.email = "cole@anzenna.ai";
+      };
+    };
+
+    home.sessionVariables = {
+      GOPRIVATE = "github.com/anzenna-ai";
+    };
+
     programs.zsh.initExtra = ''
       eval "$(/opt/homebrew/bin/brew shellenv)"
+      [ -f "$HOME/.work-env" ] && . "$HOME/.work-env"
+      export GOPATH=$HOME/go
+      export GOPRIVATE=github.com/anzenna-ai
+      export PATH="/opt/homebrew/opt/postgresql@17/bin:$PATH"
     '';
 
     programs.zsh.shellAliases = {
