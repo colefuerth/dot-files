@@ -41,8 +41,8 @@
         enable = true;
         settings = {
           user = {
-            name = "Cole Fuerth";
-            email = "colefuerth@gmail.com";
+            name = lib.mkDefault "Cole Fuerth";
+            email = lib.mkDefault "colefuerth@gmail.com";
             signingkey = "${config.home.homeDirectory}/.ssh/id_ed25519.pub";
           };
           commit.gpgsign = true;
