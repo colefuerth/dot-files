@@ -205,21 +205,21 @@
     # skhd hotkey daemon config
     home.file.".skhdrc".text = ''
       # focus window
-      alt - h : /opt/homebrew/bin/yabai -m window --focus west
-      alt - j : /opt/homebrew/bin/yabai -m window --focus south
-      alt - k : /opt/homebrew/bin/yabai -m window --focus north
+      alt - j : /opt/homebrew/bin/yabai -m window --focus west
+      alt - k : /opt/homebrew/bin/yabai -m window --focus south
+      alt - i : /opt/homebrew/bin/yabai -m window --focus north
       alt - l : /opt/homebrew/bin/yabai -m window --focus east
 
       # swap window
-      shift + alt - h : /opt/homebrew/bin/yabai -m window --swap west
-      shift + alt - j : /opt/homebrew/bin/yabai -m window --swap south
-      shift + alt - k : /opt/homebrew/bin/yabai -m window --swap north
+      shift + alt - j : /opt/homebrew/bin/yabai -m window --swap west
+      shift + alt - k : /opt/homebrew/bin/yabai -m window --swap south
+      shift + alt - i : /opt/homebrew/bin/yabai -m window --swap north
       shift + alt - l : /opt/homebrew/bin/yabai -m window --swap east
 
       # move window
-      ctrl + alt - h : /opt/homebrew/bin/yabai -m window --warp west
-      ctrl + alt - j : /opt/homebrew/bin/yabai -m window --warp south
-      ctrl + alt - k : /opt/homebrew/bin/yabai -m window --warp north
+      ctrl + alt - j : /opt/homebrew/bin/yabai -m window --warp west
+      ctrl + alt - k : /opt/homebrew/bin/yabai -m window --warp south
+      ctrl + alt - i : /opt/homebrew/bin/yabai -m window --warp north
       ctrl + alt - l : /opt/homebrew/bin/yabai -m window --warp east
 
       # toggle float and center
