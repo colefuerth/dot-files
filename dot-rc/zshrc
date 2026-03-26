@@ -1,4 +1,4 @@
-#!/usr/bin/zsh
+#!/usr/bin/env zsh
 
 # for those wondering: your old zshrc file is under "~/.zsh_aliases/.zshrc"
 

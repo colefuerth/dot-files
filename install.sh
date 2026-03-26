@@ -150,7 +150,7 @@ if $INSTALL_TOOLS; then
 
     if $PYTHON; then
         sudo apt install -y python3 python3-pip
-        /usr/bin/python3 -m pip install --user --upgrade pip
+        /usr/bin/env python3 -m pip install --user --upgrade pip
         if $PYTHON_EXT; then
             sudo apt install -y python3-venv python3-virtualenv python3-numpy
         fi

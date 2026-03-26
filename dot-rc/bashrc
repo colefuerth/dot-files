@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/usr/bin/env bash
 
 # for those wondering: your old bashrc file is under "~/.bash_aliases/.bashrc"
 
