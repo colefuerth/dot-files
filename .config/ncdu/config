@@ -2,6 +2,5 @@
 --color dark
 --show-mtime
 --fast-ui-updates
---exclude-kernfs
 --threads 12
 -2
