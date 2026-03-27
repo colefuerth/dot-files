@@ -31,11 +31,17 @@
     # Development tools
     act
     claude-code
+    docker
+    gh
     git-lfs
+    go
+    google-cloud-sdk
+    ko
     libclang
     micro
     nil
     nixfmt-tree
+    nodejs
     (python312.withPackages (
       ps: with ps; [
         matplotlib
@@ -47,9 +53,7 @@
         tqdm
       ]
     ))
-
-    # User packages (macOS-compatible from hs-thinkpad)
-    # Note: Some packages like discord, slack, spotify are better installed via Homebrew on macOS
+    uv
   ];
 
   # System settings
