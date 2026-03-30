@@ -42,6 +42,7 @@
     nil
     nixfmt-tree
     nodejs
+    protobuf
     (python312.withPackages (
       ps: with ps; [
         matplotlib
@@ -106,17 +107,22 @@
     casks = [
       "discord"
       "google-chrome"
+      "hot"
+      "linear-linear"
       "orbstack"
+      "private-internet-access"
       "signal"
       "slack"
       "spotify"
       "steam"
+      "tailscale"
       "vlc"
     ];
     taps = [
       "koekeishiya/formulae"
     ];
     brews = [
+      "golangci-lint"
       "koekeishiya/formulae/yabai"
       "koekeishiya/formulae/skhd"
       "postgresql@17"
@@ -150,10 +156,13 @@
 
     programs.zsh.initExtra = ''
       eval "$(/opt/homebrew/bin/brew shellenv)"
-      [ -f "$HOME/.work-env" ] && . "$HOME/.work-env"
       export GOPATH=$HOME/go
       export GOPRIVATE=github.com/anzenna-ai
       export PATH="/opt/homebrew/opt/postgresql@17/bin:$PATH"
+      export ANZENNA_LIBRARY="/Users/cole/anzenna/anzenna-library"
+      export SWAGPATH="/Users/cole/anzenna/misc/openapi-generator"
+
+      [ -f "$HOME/.work-env" ] && . "$HOME/.work-env"
     '';
 
     programs.zsh.shellAliases = {
