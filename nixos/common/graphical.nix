@@ -23,7 +23,7 @@
   };
 
   # users.users.${username} = {
-  #   packages = 
+  #   packages =
   #     with pkgs;
   #     [
   #     ];

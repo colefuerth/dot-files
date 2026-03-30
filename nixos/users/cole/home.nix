@@ -30,7 +30,8 @@
     programs = {
       btop.enable = true;
       direnv.enable = true;
-      firefox = with pkgs;
+      firefox =
+        with pkgs;
         lib.mkIf (!pkgs.stdenv.isDarwin) {
           enable = true;
           package = firefox;
