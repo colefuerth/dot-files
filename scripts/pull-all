@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+dir="${1:-.}"
+
+for repo in "$dir"/*/; do
+  [ -d "$repo/.git" ] || continue
+  echo "Pulling $repo"
+  git -C "$repo" pull
+done
