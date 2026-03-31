@@ -157,7 +157,7 @@
       "slack"
       "spotify"
       "steam"
-      "tailscale"
+      "tailscale-app"
       "vlc"
     ];
     taps = [
