@@ -15,6 +15,45 @@
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
 
+  # Pin protobuf to 34.1
+  nixpkgs.overlays = [
+    (final: prev: {
+      protobuf = prev.protobuf.overrideAttrs (old: rec {
+        version = "34.1";
+        src = prev.fetchFromGitHub {
+          owner = "protocolbuffers";
+          repo = "protobuf";
+          tag = "v${version}";
+          hash = "sha256-PaIVJ8NtgnrqowbKLkX+uprsQjuxDch9AUxX4YBBNh4=";
+        };
+      });
+      pythonPackagesExtensions = prev.pythonPackagesExtensions ++ [
+        (python-final: python-prev: {
+          protobuf = python-prev.protobuf.overrideAttrs (old: rec {
+            version = "7.34.1";
+            src = prev.fetchPypi {
+              pname = "protobuf";
+              inherit version;
+              hash = "sha256-nOQiRecEzFAnvnl8HbHrkxhNRNHN1xgR+y2bJa1UEoA=";
+            };
+          });
+        })
+      ];
+    })
+    (final: prev: {
+      golangci-lint = prev.golangci-lint.overrideAttrs (old: {
+        version = "2.10.1";
+        src = prev.fetchFromGitHub {
+          owner = "golangci";
+          repo = "golangci-lint";
+          tag = "v2.10.1";
+          hash = "sha256-rHttQ+QJ9JrFvgfoX68Y0lD6BUv/aoOpRRFvZ1BIGIs=";
+        };
+        vendorHash = "sha256-yREpROQJ300+mii7R2oiyDjOGcYXBpv3o/park0TJYE=";
+      });
+    })
+  ];
+
   # Set primary user for system defaults
   system.primaryUser = username;
 
@@ -35,6 +74,7 @@
     gh
     git-lfs
     go
+    golangci-lint
     google-cloud-sdk
     ko
     libclang
@@ -122,7 +162,6 @@
       "koekeishiya/formulae"
     ];
     brews = [
-      "golangci-lint"
       "koekeishiya/formulae/yabai"
       "koekeishiya/formulae/skhd"
       "postgresql@17"
