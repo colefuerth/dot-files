@@ -134,6 +134,7 @@
 
   # Enable TouchID for sudo
   security.pam.services.sudo_local.touchIdAuth = true;
+  security.pam.services.sudo_local.reattach = true;
 
   # Homebrew integration
   homebrew = {
@@ -146,6 +147,7 @@
     # macOS-specific apps that aren't available in nixpkgs or work better via Homebrew
     casks = [
       "discord"
+      "ghostty"
       "google-chrome"
       "hot"
       "linear-linear"
@@ -296,6 +298,13 @@
       shift + alt - 3 : /opt/homebrew/bin/yabai -m window --space 3
       shift + alt - 4 : /opt/homebrew/bin/yabai -m window --space 4
       shift + alt - 5 : /opt/homebrew/bin/yabai -m window --space 5
+    '';
+
+    # Ghostty terminal config
+    home.file.".config/ghostty/config".text = ''
+      font-family = "Consolas Nerd Font Mono"
+      macos-titlebar-style = hidden
+      theme = "Atom One Dark"
     '';
   };
 }
