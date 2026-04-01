@@ -66,36 +66,47 @@
   };
 
   # System packages (macOS-compatible tools from hs-thinkpad)
-  environment.systemPackages = with pkgs; [
-    # Development tools
-    act
-    claude-code
-    docker
-    gh
-    git-lfs
-    go
-    golangci-lint
-    google-cloud-sdk
-    ko
-    libclang
-    micro
-    nil
-    nixfmt-tree
-    nodejs
-    protobuf
-    (python312.withPackages (
-      ps: with ps; [
-        matplotlib
-        numpy
-        pandas
-        pip
-        pyserial
-        scipy
-        tqdm
-      ]
-    ))
-    uv
-  ];
+  environment.systemPackages =
+    (with pkgs; [
+      brave
+      claude-code
+      docker
+      gh
+      git-lfs
+      libclang
+      micro
+      nil
+      nixfmt-tree
+      (python312.withPackages (
+        ps: with ps; [
+          matplotlib
+          numpy
+          pandas
+          pip
+          pyserial
+          scipy
+          tqdm
+        ]
+      ))
+    ])
+    ++ (with pkgs; [
+      # anz deps
+      go
+      golangci-lint
+      gomodifytags
+      google-cloud-sdk
+      gopls
+      gotest
+      ko
+      nodejs
+      protobuf
+      protoc-gen-go
+      uv
+    ])
+    ++ [
+      dotFilesPackages.f5
+      dotFilesPackages.tour
+    ];
 
   # System settings
   system.defaults = {
