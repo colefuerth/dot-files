@@ -188,6 +188,46 @@
 
   # Home-manager configuration for this machine
   home-manager.users.${username} = {
+    imports = [
+      "${inputs.dschana-system-config}/dev-shared/neovim.nix"
+    ];
+
+    programs.tmux = {
+      enable = true;
+      mouse = true;
+      # keyMode = "vi";
+      plugins = with pkgs.tmuxPlugins; [
+        sensible
+        resurrect
+      ];
+      extraConfig = ''
+        # Style status bar
+        set -g status-style fg=white,bg=black
+        set -g window-status-current-style fg=green,bg=black
+        set -g pane-active-border-style fg=green,bg=black
+        set -g window-status-format " #I:#W#F "
+        set -g window-status-current-format " #I:#W#F "
+        set -g window-status-current-style bg=green,fg=black
+        set -g window-status-activity-style bg=black,fg=yellow
+        set -g window-status-separator ""
+        set -g status-justify centre
+
+        # Mouse scrolling
+        bind -n WheelUpPane if-shell -F -t = "#{mouse_any_flag}" "send-keys -M" "if -Ft= '#{pane_in_mode}' 'send-keys -M' 'select-pane -t=; copy-mode -e; send-keys -M'"
+        bind -n WheelDownPane select-pane -t= \; send-keys -M
+        bind -n C-WheelUpPane select-pane -t= \; copy-mode -e \; send-keys -M
+        bind -T copy-mode-vi    C-WheelUpPane   send-keys -X halfpage-up
+        bind -T copy-mode-vi    C-WheelDownPane send-keys -X halfpage-down
+        bind -T copy-mode-emacs C-WheelUpPane   send-keys -X halfpage-up
+        bind -T copy-mode-emacs C-WheelDownPane send-keys -X halfpage-down
+
+        # macOS clipboard
+        unbind -T copy-mode-vi Enter
+        bind-key -T copy-mode-vi Enter send-keys -X copy-pipe-and-cancel "pbcopy"
+        bind-key -T copy-mode-vi MouseDragEnd1Pane send-keys -X copy-pipe-and-cancel "pbcopy"
+      '';
+    };
+
     programs.ssh = {
       addKeysToAgent = "yes";
       matchBlocks = {

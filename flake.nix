@@ -15,11 +15,19 @@
     nixos-hardware-pi-5.url = "github:nixos/nixos-hardware?ref=raspberry-pi-5";
     nixos-wsl.url = "github:nix-community/NixOS-WSL";
     nixos-wsl.inputs.nixpkgs.follows = "nixpkgs";
-    flameshot.url = "github:flameshot-org/flameshot?ref=fix_cosmic";
+    flameshot.url = "github:flameshot-org/flameshot?ref=master";
     flameshot.inputs.nixpkgs.follows = "nixpkgs";
     vscode-server.url = "github:nix-community/nixos-vscode-server";
     nix-darwin.url = "github:LnL7/nix-darwin";
     nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
+    dschana-system-config.url = "github:DSchana/system-config?ref=master";
+    dschana-system-config.inputs = {
+      nixpkgs.follows = "nixpkgs";
+      nixpkgs-cosmic-pinned.follows = "nixpkgs";
+      determinate.follows = "determinate";
+      home-manager.follows = "home-manager";
+      nix-darwin.follows = "nix-darwin";
+    };
     # heaviside-nixpkgs.url = "git+ssh://git@github.com/heaviside-industries/heaviside-nixpkgs.git?ref=refs/heads/master";
     # heaviside-nixpkgs.inputs.nixpkgs.follows = "nixpkgs";
   };
