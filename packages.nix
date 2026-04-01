@@ -58,6 +58,10 @@
     cp -r ${./.config}/* $out/
   '';
 
+  # Go packages
+  tour = import ./packages/tour.nix { inherit pkgs; };
+  f5 = import ./packages/f5.nix { inherit pkgs; };
+
   # Convenience derivation that includes the welcome script
   welcome = "${./10-welcome}";
 
