@@ -95,12 +95,16 @@
       golangci-lint
       gomodifytags
       google-cloud-sdk
+      google-cloud-sql-proxy
       gopls
       gotest
       ko
       nodejs
+      pgcli
+      postgresql_18
       protobuf
       protoc-gen-go
+      typescript
       uv
     ])
     ++ [
@@ -177,7 +181,6 @@
     brews = [
       "koekeishiya/formulae/yabai"
       "koekeishiya/formulae/skhd"
-      "postgresql@17"
     ];
   };
 
@@ -250,7 +253,6 @@
       eval "$(/opt/homebrew/bin/brew shellenv)"
       export GOPATH=$HOME/go
       export GOPRIVATE=github.com/anzenna-ai
-      export PATH="/opt/homebrew/opt/postgresql@17/bin:$PATH"
       export ANZENNA_LIBRARY="/Users/cole/anzenna/anzenna-library"
       export SWAGPATH="/Users/cole/anzenna/misc/openapi-generator"
 
@@ -350,6 +352,9 @@
       shift + alt - 4 : /opt/homebrew/bin/yabai -m window --space 4
       shift + alt - 5 : /opt/homebrew/bin/yabai -m window --space 5
     '';
+
+    home.file."go/bin/f5".source = "${dotFilesPackages.f5}/bin/f5";
+    home.file."go/bin/protoc-gen-go".source = "${pkgs.protoc-gen-go}/bin/protoc-gen-go";
 
     # Ghostty terminal config
     home.file.".config/ghostty/config".text = ''
