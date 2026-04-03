@@ -3,16 +3,16 @@ name: Checks and Builds
 on:
   push:
     branches:
-      - master
+      - main
       - release/**/*
   pull_request:
     branches:
-      - master
+      - main
       - release/**/*
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: ${{ github.ref != 'refs/heads/master' }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
 jobs:
   format-checks:
