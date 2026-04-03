@@ -1,10 +1,23 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+reset=false
+while getopts "r" opt; do
+  case $opt in
+    r) reset=true ;;
+    *) echo "Usage: pull-all [-r] [dir]" >&2; exit 1 ;;
+  esac
+done
+shift $((OPTIND - 1))
+
 dir="${1:-.}"
 
 for repo in "$dir"/*/; do
   [ -d "$repo/.git" ] || continue
   echo "Pulling $repo"
+  if $reset; then
+    git -C "$repo" checkout main
+    git -C "$repo" reset --hard origin/main
+  fi
   git -C "$repo" pull
 done
