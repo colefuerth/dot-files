@@ -32,10 +32,6 @@ completions/           # Shell completion files
 packages/              # Extra nix package definitions (tour.nix, f5.nix)
 ```
 
-## Legacy files (outdated, pending cleanup)
-
-`install.sh`, `update.sh`, `uninstall.sh` -- old shell-script approach for Ubuntu. Not actively used.
-
 ## Key commands
 
 ```bash
