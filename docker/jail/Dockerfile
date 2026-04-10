@@ -1,5 +1,5 @@
 # Start from a base image, for example Ubuntu
-FROM ubuntu:22.04
+FROM ubuntu:24.04
 
 # Set environment variables to avoid interactive prompts during installation
 ENV DEBIAN_FRONTEND=noninteractive

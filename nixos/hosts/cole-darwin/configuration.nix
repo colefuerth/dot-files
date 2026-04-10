@@ -68,6 +68,7 @@
   # System packages (macOS-compatible tools from hs-thinkpad)
   environment.systemPackages =
     (with pkgs; [
+      act
       brave
       claude-code
       docker
