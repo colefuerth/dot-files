@@ -28,6 +28,8 @@
       home-manager.follows = "home-manager";
       nix-darwin.follows = "nix-darwin";
     };
+    spank.url = "github:taigrr/spank";
+    spank.inputs.nixpkgs.follows = "nixpkgs";
     # heaviside-nixpkgs.url = "git+ssh://git@github.com/heaviside-industries/heaviside-nixpkgs.git?ref=refs/heads/master";
     # heaviside-nixpkgs.inputs.nixpkgs.follows = "nixpkgs";
   };

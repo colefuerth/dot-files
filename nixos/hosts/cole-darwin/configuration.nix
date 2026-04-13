@@ -89,6 +89,7 @@
           tqdm
         ]
       ))
+      spank
     ])
     ++ (with pkgs; [
       # anz deps
@@ -190,6 +191,20 @@
     zsh.enable = true;
   };
 
+  launchd.daemons.spank = {
+    serviceConfig = {
+      ProgramArguments = [
+        "${pkgs.spank}/bin/spank"
+        "--min-amplitude"
+        "0.5"
+        "--sexy"
+      ];
+      RunAtLoad = true;
+      StandardOutPath = "/tmp/spank.out.log";
+      StandardErrorPath = "/tmp/spank.err.log";
+    };
+  };
+
   # Home-manager configuration for this machine
   home-manager.users.${username} = {
     imports = [
@@ -265,24 +280,26 @@
     };
 
     # Yabai and skhd launchd services
-    launchd.agents.yabai = {
-      enable = true;
-      config = {
-        ProgramArguments = [ "/opt/homebrew/bin/yabai" ];
-        KeepAlive = true;
-        RunAtLoad = true;
-        StandardOutPath = "/tmp/yabai.out.log";
-        StandardErrorPath = "/tmp/yabai.err.log";
+    launchd.agents = {
+      skhd = {
+        enable = true;
+        config = {
+          ProgramArguments = [ "/opt/homebrew/bin/skhd" ];
+          KeepAlive = true;
+          RunAtLoad = true;
+          StandardOutPath = "/tmp/skhd.out.log";
+          StandardErrorPath = "/tmp/skhd.err.log";
+        };
       };
-    };
-    launchd.agents.skhd = {
-      enable = true;
-      config = {
-        ProgramArguments = [ "/opt/homebrew/bin/skhd" ];
-        KeepAlive = true;
-        RunAtLoad = true;
-        StandardOutPath = "/tmp/skhd.out.log";
-        StandardErrorPath = "/tmp/skhd.err.log";
+      yabai = {
+        enable = true;
+        config = {
+          ProgramArguments = [ "/opt/homebrew/bin/yabai" ];
+          KeepAlive = true;
+          RunAtLoad = true;
+          StandardOutPath = "/tmp/yabai.out.log";
+          StandardErrorPath = "/tmp/yabai.err.log";
+        };
       };
     };
 
