@@ -170,6 +170,7 @@
       "linear-linear"
       "orbstack"
       "private-internet-access"
+      "unnaturalscrollwheels"
       "signal"
       "slack"
       "spotify"
