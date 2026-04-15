@@ -70,7 +70,12 @@ git clone "$FLAKE_REPO" "$MOUNT/home/cole/dot-files"
 
 # Install NixOS
 echo ">>> Installing NixOS..."
-nixos-install --flake "$MOUNT/home/cole/dot-files#cole-desktop" --no-root-passwd --log-format internal-json -v \
+nixos-install \
+  --flake "$MOUNT/home/cole/dot-files#cole-desktop" \
+  --no-root-passwd \
+  --option extra-substituters https://install.determinate.systems \
+  --option extra-trusted-public-keys "cache.flakehub.com-3:hJuILl5sVK4iKm86JzgdXW12Y2Hwd5G07qKtHTOcDCM=" \
+  --log-format internal-json -v \
   |& nix run nixpkgs#nix-output-monitor -- --json
 
 echo ""
