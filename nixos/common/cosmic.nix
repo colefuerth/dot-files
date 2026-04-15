@@ -61,8 +61,8 @@ in
       cosmic-player # replaced with vlc
     ];
 
-    services.xserver.videoDrivers = [
-      "modesetting" # allows wayland to work properly
+    services.xserver.videoDrivers = lib.mkDefault [
+      "modesetting"
     ];
 
     # Install essential packages

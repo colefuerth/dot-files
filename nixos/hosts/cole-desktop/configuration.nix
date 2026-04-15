@@ -63,7 +63,6 @@ in
         act
         binsider
         claude-code
-        codex
         discord
         firefoxpwa
         flameshot
@@ -78,11 +77,10 @@ in
         slack
         slurp
         spotify
-        tidal-hifi
         vlc
       ]
       ++ [
-        dotFilesPackages.bambu-studio
+        #        dotFilesPackages.bambu-studio
       ];
     # ++ [
     #   # Wrapper for rpi-imager to run with sudo and proper Wayland support
@@ -105,17 +103,17 @@ in
     nixfmt-tree
     pciutils
     powertop
-    (python312.withPackages (
-      ps: with ps; [
-        matplotlib
-        numpy
-        pandas
-        pip
-        pyserial
-        scipy
-        tqdm
-      ]
-    ))
+    # (python312.withPackages (
+    #   ps: with ps; [
+    #     matplotlib
+    #     numpy
+    #     pandas
+    #     pip
+    #     pyserial
+    #     scipy
+    #     tqdm
+    #   ]
+    # ))
     smartmontools
     solaar
     tio
@@ -130,12 +128,7 @@ in
 
   # initial system state when machine was created, used for backwards compatibility
   # DO NOT CHANGE AFTER THE INITIAL INSTALLATION
-  system.stateVersion = "26.05";
-
-  powerManagement = {
-    enable = true;
-    powertop.enable = true;
-  };
+  system.stateVersion = "25.11";
 
   systemd.user.services.solaar = {
     description = "Solaar - Logitech Device Manager";
@@ -148,10 +141,7 @@ in
   };
 
   hardware.nvidia = {
-    open = false;
-    powerManagement = {
-      enable = true;
-    };
+    open = true;
   };
 
   # Home-manager configuration for this machine
@@ -202,24 +192,24 @@ in
     };
   };
 
-  services.wivrn = {
-    enable = true;
-    openFirewall = true;
+  # services.wivrn = {
+  #   enable = true;
+  #   openFirewall = true;
 
-    # Write information to /etc/xdg/openxr/1/active_runtime.json, VR applications
-    # will automatically read this and work with WiVRn (Note: This does not currently
-    # apply for games run in Valve's Proton)
-    defaultRuntime = true;
+  # Write information to /etc/xdg/openxr/1/active_runtime.json, VR applications
+  # will automatically read this and work with WiVRn (Note: This does not currently
+  # apply for games run in Valve's Proton)
+  #   defaultRuntime = true;
 
-    # Run WiVRn as a systemd service on startup
-    autoStart = true;
+  # Run WiVRn as a systemd service on startup
+  #   autoStart = true;
 
-    # If you're running this with an nVidia GPU and want to use GPU Encoding (and don't otherwise have CUDA enabled system wide), you need to override the cudaSupport variable.
-    package = (pkgs.wivrn.override { cudaSupport = true; });
+  # If you're running this with an nVidia GPU and want to use GPU Encoding (and don't otherwise have CUDA enabled system wide), you need to override the cudaSupport variable.
+  #   package = (pkgs.wivrn.override { cudaSupport = true; });
 
-    # You should use the default configuration (which is no configuration), as that works the best out of the box.
-    # However, if you need to configure something see https://github.com/WiVRn/WiVRn/blob/master/docs/configuration.md for configuration options and https://mynixos.com/nixpkgs/option/services.wivrn.config.json for an example configuration.
-  };
+  # You should use the default configuration (which is no configuration), as that works the best out of the box.
+  # However, if you need to configure something see https://github.com/WiVRn/WiVRn/blob/master/docs/configuration.md for configuration options and https://mynixos.com/nixpkgs/option/services.wivrn.config.json for an example configuration.
+  # };
 
   programs = {
     steam =
