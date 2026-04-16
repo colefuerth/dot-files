@@ -62,9 +62,9 @@ in
       [
         act
         binsider
+        brave
         claude-code
         discord
-        firefoxpwa
         flameshot
         git-lfs
         google-chrome
@@ -123,6 +123,11 @@ in
     tumbler
   ];
 
+  fileSystems."/mnt/balls" = {
+    device = "/dev/disk/by-uuid/0e8cb026-25ce-4d4c-a2f7-5b936d89b607";
+    fsType = "ext4";
+  };
+
   networking.firewall.allowedTCPPorts = [ 22 ];
   networking.firewall.allowedUDPPorts = [ 5353 ];
 
@@ -142,6 +147,7 @@ in
 
   hardware.nvidia = {
     open = true;
+    powerManagement.enable = true;
   };
 
   # Home-manager configuration for this machine
@@ -212,33 +218,9 @@ in
   # };
 
   programs = {
-    steam =
-      let
-        patchedBwrap = pkgs.bubblewrap.overrideAttrs (o: {
-          patches = (o.patches or [ ]) ++ [
-            ./bwrap.patch
-          ];
-        });
-      in
-      {
-        enable = true;
-        protontricks.enable = true;
-        package = pkgs.steam.override {
-          buildFHSEnv = (
-            args:
-            (
-              (pkgs.buildFHSEnv.override {
-                bubblewrap = patchedBwrap;
-              })
-              (
-                args
-                // {
-                  extraBwrapArgs = (args.extraBwrapArgs or [ ]) ++ [ "--cap-add ALL" ];
-                }
-              )
-            )
-          );
-        };
-      };
+    steam = {
+      enable = true;
+      protontricks.enable = true;
+    };
   };
 }
