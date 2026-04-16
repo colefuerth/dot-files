@@ -128,7 +128,7 @@ in
 
   # initial system state when machine was created, used for backwards compatibility
   # DO NOT CHANGE AFTER THE INITIAL INSTALLATION
-  system.stateVersion = "25.11";
+  system.stateVersion = "26.05";
 
   systemd.user.services.solaar = {
     description = "Solaar - Logitech Device Manager";
