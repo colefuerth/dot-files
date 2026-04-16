@@ -93,6 +93,7 @@
     ])
     ++ (with pkgs; [
       # anz deps
+      patchutils
       go
       golangci-lint
       gomodifytags
@@ -200,7 +201,7 @@
         "0.5"
         "--sexy"
       ];
-      RunAtLoad = true;
+      RunAtLoad = false;
       StandardOutPath = "/tmp/spank.out.log";
       StandardErrorPath = "/tmp/spank.err.log";
     };
