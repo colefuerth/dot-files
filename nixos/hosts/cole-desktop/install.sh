@@ -24,6 +24,16 @@ if [[ "$confirm" != "yes" ]]; then
   exit 1
 fi
 
+# Clean up any leftover state from a previous run
+echo ">>> Cleaning up any previous mounts/mappings..."
+if mountpoint -q "$MOUNT"; then
+  umount -R "$MOUNT" || true
+fi
+if [[ -e /dev/mapper/cryptroot ]]; then
+  cryptsetup luksClose cryptroot || true
+fi
+swapoff -a || true
+
 # Partition: 512M ESP + rest for LUKS
 echo ">>> Partitioning $DISK..."
 sgdisk --zap-all "$DISK"
@@ -34,8 +44,19 @@ sleep 1
 
 # LUKS encryption
 echo ">>> Setting up LUKS encryption..."
-cryptsetup luksFormat /dev/disk/by-partlabel/nixos
-cryptsetup luksOpen /dev/disk/by-partlabel/nixos cryptroot
+while :; do
+  read -rsp "Enter LUKS passphrase: " LUKS_PASS
+  echo
+  read -rsp "Verify LUKS passphrase: " LUKS_PASS2
+  echo
+  if [[ "$LUKS_PASS" == "$LUKS_PASS2" && -n "$LUKS_PASS" ]]; then
+    break
+  fi
+  echo "Passphrases did not match (or were empty). Try again."
+done
+printf '%s' "$LUKS_PASS" | cryptsetup luksFormat --batch-mode --key-file=- /dev/disk/by-partlabel/nixos
+printf '%s' "$LUKS_PASS" | cryptsetup luksOpen --key-file=- /dev/disk/by-partlabel/nixos cryptroot
+unset LUKS_PASS LUKS_PASS2
 
 # Filesystems
 echo ">>> Creating filesystems..."
@@ -68,15 +89,14 @@ echo ">>> Cloning dot-files..."
 mkdir -p "$MOUNT/home/cole"
 git clone "$FLAKE_REPO" "$MOUNT/home/cole/dot-files"
 
-# Install NixOS
+# Install NixOS (nixos-install builds into the target store at /mnt itself,
+# so we don't need a separate build step)
 echo ">>> Installing NixOS..."
 nixos-install \
   --flake "$MOUNT/home/cole/dot-files#cole-desktop" \
   --no-root-passwd \
   --option extra-substituters https://install.determinate.systems \
-  --option extra-trusted-public-keys "cache.flakehub.com-3:hJuILl5sVK4iKm86JzgdXW12Y2Hwd5G07qKtHTOcDCM=" \
-  --log-format internal-json -v \
-  |& nix run nixpkgs#nix-output-monitor -- --json
+  --option extra-trusted-public-keys "cache.flakehub.com-3:hJuILl5sVK4iKm86JzgdXW12Y2Hwd5G07qKtHTOcDCM="
 
 echo ""
 echo "=== Installation complete! ==="
