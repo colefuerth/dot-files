@@ -127,9 +127,19 @@ in
     tumbler
   ];
 
-  fileSystems."/mnt/balls" = {
+  fileSystems = {
+    "/mnt/balls" = {
     device = "/dev/disk/by-uuid/0e8cb026-25ce-4d4c-a2f7-5b936d89b607";
     fsType = "ext4";
+    };
+    "/mnt/big-boy" = {
+      device = "/dev/disk/by-uuid/67de21fa-0e49-4dfd-ae68-81acb80a3b6d";
+      fsType = "ext4";
+    };
+    "/mnt/hdd" = {
+      device = "/dev/disk/by-uuid/82b3fa85-c97f-41e5-9520-a0b681bc8671";
+      fsType = "ext4";
+    };
   };
 
   networking.firewall.allowedTCPPorts = [ 22 ];
