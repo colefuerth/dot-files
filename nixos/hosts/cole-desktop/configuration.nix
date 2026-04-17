@@ -182,17 +182,16 @@ in
           # ultrawide
           monitor = "DP-1"; # Your laptop's internal display
           wallpaperId = wallpaperIds.hyper-cube-oled;
-          scaling = "fill"; # "stretch", "fit", "fill", or "default"
+          scaling = "default"; # "stretch", "fit", "fill", or "default"
           fps = 24;
-          audio.silent = true; # only use this flag once for all monitors
-          # extraOptions = [
+          audio.silent = false; # only use this flag once for all monitors
+          extraOptions = [
           #   "--set-property spacemode=1"
-          #   "--set-property backgroundcolor=0.0,0.0,0.0"
-          # ];
+            "--set-property backgroundcolor=0.0,0.0,0.0"
+          ];
         }
         {
-          # mini
-          monitor = "DP-2";
+          monitor = "HDMI-A-1";
           wallpaperId = wallpaperIds.frieren-cold;
         }
       ];
