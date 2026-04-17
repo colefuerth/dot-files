@@ -41,6 +41,10 @@ in
   boot.kernelPackages = pkgs.linuxPackages_latest;
   boot.binfmt.emulatedSystems = [ "aarch64-linux" ];
 
+  # Force s2idle instead of S3 deep sleep — the NVIDIA 595.x driver fails to
+  # reinitialize the RTX 5070 Ti on S3 resume (Xid 13 shader exceptions)
+  boot.kernelParams = [ "mem_sleep_default=s2idle" ];
+
   # Bootloader
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
