@@ -129,8 +129,8 @@ in
 
   fileSystems = {
     "/mnt/balls" = {
-    device = "/dev/disk/by-uuid/0e8cb026-25ce-4d4c-a2f7-5b936d89b607";
-    fsType = "ext4";
+      device = "/dev/disk/by-uuid/0e8cb026-25ce-4d4c-a2f7-5b936d89b607";
+      fsType = "ext4";
     };
     "/mnt/big-boy" = {
       device = "/dev/disk/by-uuid/67de21fa-0e49-4dfd-ae68-81acb80a3b6d";
@@ -156,6 +156,18 @@ in
     serviceConfig = {
       ExecStart = "${pkgs.solaar}/bin/solaar --window=hide";
       Restart = "on-failure";
+    };
+  };
+
+  # TV aux-in loopback: routes line-in (ALC1220) to default audio output
+  # Not started by default — toggle with: systemctl --user start/stop tv-loopback
+  systemd.user.services.tv-loopback = {
+    description = "TV Aux-In Audio Loopback";
+    after = [ "pipewire.service" ];
+    serviceConfig = {
+      ExecStart = "${pkgs.pipewire}/bin/pw-loopback --capture-props='media.class=Audio/Source node.target=alsa_input.pci-0000_2f_00.4.analog-stereo' --playback-props='media.class=Audio/Sink'";
+      Restart = "on-failure";
+      RestartSec = "2s";
     };
   };
 
@@ -196,7 +208,7 @@ in
           fps = 24;
           audio.silent = false; # only use this flag once for all monitors
           extraOptions = [
-          #   "--set-property spacemode=1"
+            #   "--set-property spacemode=1"
             "--set-property backgroundcolor=0.0,0.0,0.0"
           ];
         }
