@@ -241,6 +241,13 @@ in
     steam = {
       enable = true;
       protontricks.enable = true;
+      package = pkgs.steam.override {
+        extraProfile = ''
+          # Lower CPU and I/O priority so updates/transfers don't starve the system
+          ${pkgs.util-linux}/bin/renice -n 0 $$ > /dev/null 2>&1
+          ${pkgs.util-linux}/bin/ionice -c 3 -p $$ > /dev/null 2>&1
+        '';
+      };
     };
   };
 }
