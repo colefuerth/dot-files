@@ -67,7 +67,6 @@ in
             [
               _7zz
               binutils # provides strings, objdump, nm, etc.
-              btop
               curl
               dig
               eza

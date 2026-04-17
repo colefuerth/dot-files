@@ -150,6 +150,22 @@ in
     powerManagement.enable = true;
   };
 
+  # Allow non-root users to read CPU power consumption (RAPL energy counters)
+  systemd.services.powercap-permissions = {
+    description = "Make RAPL energy counters readable without root";
+    wantedBy = [ "multi-user.target" ];
+    serviceConfig = {
+      Type = "oneshot";
+      ExecStart = toString (
+        pkgs.writeShellScript "powercap-perms" ''
+          chmod a+r /sys/devices/virtual/powercap/intel-rapl/*/energy_uj \
+                    /sys/devices/virtual/powercap/intel-rapl/*/*/energy_uj \
+                    2>/dev/null || true
+        ''
+      );
+    };
+  };
+
   # Home-manager configuration for this machine
   home-manager.users.${username} = {
     home.stateVersion = "26.05";

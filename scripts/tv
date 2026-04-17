@@ -1,0 +1,12 @@
+#!/bin/env bash
+
+# Toggle TV aux-in audio loopback
+SERVICE="tv-loopback.service"
+
+if systemctl --user is-active --quiet "$SERVICE"; then
+    systemctl --user stop "$SERVICE"
+    echo "TV audio OFF"
+else
+    systemctl --user start "$SERVICE"
+    echo "TV audio ON"
+fi

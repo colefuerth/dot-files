@@ -28,12 +28,21 @@
     };
 
     programs = {
-      btop.enable = true;
+      btop = {
+        enable = true;
+        package = pkgs.btop.override {
+          cudaSupport = builtins.elem host [
+            "cole-desktop"
+            "cole-laptop"
+            "hs-thinkpad"
+          ];
+        };
+      };
       direnv.enable = true;
       firefox =
         with pkgs;
         lib.mkIf (!pkgs.stdenv.isDarwin) {
-          enable = true;
+          enable = lib.mkDefault true;
           package = firefox;
           nativeMessagingHosts = [ firefoxpwa ];
         };
