@@ -1,4 +1,4 @@
-{ dotFilesPackages, pkgs, ... }:
+{ dotFilesPackages, pkgs, lib, ... }:
 {
   fonts = {
     enableDefaultPackages = true;
@@ -31,13 +31,13 @@
 
   programs = {
     firefox = with pkgs; {
-      enable = true;
-      package = firefox;
+      enable = lib.mkDefault true;
+      package = pkgs.mkDefault firefox;
       # nativeMessagingHosts = [ firefoxpwa ];
     };
     vscode = {
-      enable = true;
-      package = pkgs.vscode;
+      enable = lib.mkDefault true;
+      package = lib.mkDefault pkgs.vscode;
     };
   };
 

@@ -77,9 +77,9 @@
         enable = true;
       };
       vscode = {
-        enable = true;
+        enable = lib.mkDefault true;
         # package = pkgs.vscodium;
-        package = pkgs.vscode;
+        package = lib.mkDefault pkgs.vscode;
         # userSettings = {
         #   "editor.fontFamily" = "'Consolas Nerd Font Mono'";
         #   "nix.enableLanguageServer" = true;

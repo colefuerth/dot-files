@@ -69,8 +69,6 @@
   environment.systemPackages =
     (with pkgs; [
       act
-      brave
-      claude-code
       docker
       gh
       git-lfs
@@ -164,6 +162,8 @@
     };
     # macOS-specific apps that aren't available in nixpkgs or work better via Homebrew
     casks = [
+      "brave-browser"
+      "claude-code@latest"
       "discord"
       "ghostty"
       "google-chrome"
@@ -177,6 +177,7 @@
       "spotify"
       "steam"
       "tailscale-app"
+      "visual-studio-code"
       "vlc"
     ];
     taps = [
@@ -262,6 +263,8 @@
         # user.email = "cole@anzenna.ai";
       };
     };
+
+    programs.vscode.enable = false;
 
     home.sessionVariables = {
       GOPRIVATE = "github.com/anzenna-ai";
