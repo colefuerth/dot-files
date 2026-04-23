@@ -17,8 +17,10 @@ in
     ../../common/audio.nix
     ../../common/bluetooth.nix
     ../../common/cachix.nix
+    ../../common/cinnamon.nix
     ../../common/cosmic.nix
     ../../common/graphical.nix
+    ../../common/plasma.nix
     ../../common/xone.nix
     ./hardware-configuration.nix
     "${inputs.nixos-hardware}/common/gpu/nvidia/blackwell/default.nix"
@@ -35,7 +37,9 @@ in
     users = [ username ];
   };
 
+  nixcfg.cinnamon.enable = false;
   nixcfg.cosmic.enable = true;
+  nixcfg.plasma.enable = false;
 
   # Select the kernel version
   boot.kernelPackages = pkgs.linuxPackages_latest;

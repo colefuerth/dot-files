@@ -32,7 +32,7 @@
   programs = {
     firefox = with pkgs; {
       enable = lib.mkDefault true;
-      package = pkgs.mkDefault firefox;
+      package = lib.mkDefault firefox;
       # nativeMessagingHosts = [ firefoxpwa ];
     };
     vscode = {
