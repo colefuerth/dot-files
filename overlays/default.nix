@@ -5,6 +5,7 @@ in
 (lib.composeManyExtensions [
   (import ./chromium)
   (import ./flameshot inputs)
+  # (import ./freetype-qdoled)
   (import ./spank inputs)
   # (import ./fresh-editor)
   # (import ./gh)
