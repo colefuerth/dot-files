@@ -24,6 +24,7 @@ in
     ../../common/xone.nix
     ./hardware-configuration.nix
     "${inputs.nixos-hardware}/common/gpu/nvidia/blackwell/default.nix"
+    inputs.lanzaboote.nixosModules.lanzaboote
     inputs.nixos-hardware.nixosModules.common-cpu-amd
     inputs.nixos-hardware.nixosModules.common-cpu-amd-zenpower
     inputs.nixos-hardware.nixosModules.common-cpu-amd-pstate
@@ -49,9 +50,24 @@ in
   # reinitialize the RTX 5070 Ti on S3 resume (Xid 13 shader exceptions)
   boot.kernelParams = [ "mem_sleep_default=s2idle" ];
 
-  # Bootloader
-  boot.loader.systemd-boot.enable = true;
+  # Bootloader — lanzaboote (signed stub) replaces systemd-boot for Secure Boot.
+  # Keep systemd-boot disabled via mkForce so nothing re-enables it.
+  boot.loader.systemd-boot.enable = lib.mkForce false;
   boot.loader.efi.canTouchEfiVariables = true;
+  boot.lanzaboote = {
+    enable = true;
+    pkiBundle = "/var/lib/sbctl";
+  };
+
+  # Needed for TPM2-based LUKS unlock via crypttab options.
+  boot.initrd.systemd.enable = true;
+  boot.initrd.luks.devices."cryptroot".crypttabExtraOpts = [ "tpm2-device=auto" ];
+
+  security.tpm2 = {
+    enable = true;
+    pkcs11.enable = true;
+    tctiEnvironment.enable = true;
+  };
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.${username} = {
@@ -114,6 +130,8 @@ in
     nixfmt-tree
     pciutils
     powertop
+    sbctl
+    tpm2-tools
     (python313.withPackages (
       ps: with ps; [
         matplotlib
