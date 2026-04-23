@@ -74,10 +74,12 @@ in
         claude-code
         discord
         flameshot
+        ghostty
         git-lfs
         google-chrome
         grim
         kdePackages.okular
+        libreoffice
         micro
         opencode
         ristretto
@@ -85,6 +87,7 @@ in
         slack
         slurp
         spotify
+        tailscale-systray
         vlc
       ]
       ++ [
@@ -107,21 +110,22 @@ in
 
   environment.systemPackages = with pkgs; [
     fastfetch
+    gamescope
     nil
     nixfmt-tree
     pciutils
     powertop
-    # (python312.withPackages (
-    #   ps: with ps; [
-    #     matplotlib
-    #     numpy
-    #     pandas
-    #     pip
-    #     pyserial
-    #     scipy
-    #     tqdm
-    #   ]
-    # ))
+    (python313.withPackages (
+      ps: with ps; [
+        matplotlib
+        numpy
+        pandas
+        pip
+        pyserial
+        scipy
+        tqdm
+      ]
+    ))
     smartmontools
     solaar
     tio
