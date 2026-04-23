@@ -1,4 +1,9 @@
-{ dotFilesPackages, pkgs, lib, ... }:
+{
+  dotFilesPackages,
+  pkgs,
+  lib,
+  ...
+}:
 {
   fonts = {
     enableDefaultPackages = true;
