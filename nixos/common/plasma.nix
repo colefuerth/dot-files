@@ -43,6 +43,7 @@ in
       adwaita-icon-theme
       dotFilesPackages.consolas-nf
       gnome-disk-utility
+      vulkan-hdr-layer-kwin6
     ];
 
     home-manager.users.cole = {
@@ -58,7 +59,7 @@ in
     xdg.portal = {
       enable = true;
       extraPortals = with pkgs; [
-        xdg-desktop-portal-kde
+        kdePackages.xdg-desktop-portal-kde
       ];
     };
   };
