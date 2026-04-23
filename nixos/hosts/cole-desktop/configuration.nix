@@ -185,7 +185,11 @@ in
     description = "TV Aux-In Audio Loopback";
     after = [ "pipewire.service" ];
     serviceConfig = {
-      ExecStart = "${pkgs.pipewire}/bin/pw-loopback --capture-props='media.class=Audio/Source node.target=alsa_input.pci-0000_2f_00.4.analog-stereo' --playback-props='media.class=Audio/Sink'";
+      ExecStartPre = [
+        "${pkgs.alsa-utils}/bin/amixer -c 1 set 'Line Boost' 0%"
+        "${pkgs.alsa-utils}/bin/amixer -c 1 set 'Capture' 50%"
+      ];
+      ExecStart = "${pkgs.pipewire}/bin/pw-loopback --capture-props='node.target=alsa_input.pci-0000_2f_00.4.analog-stereo' --playback-props='node.target=alsa_output.usb-Logitech_G733_Gaming_Headset_0000000000000000-00.analog-stereo'";
       Restart = "on-failure";
       RestartSec = "2s";
     };
