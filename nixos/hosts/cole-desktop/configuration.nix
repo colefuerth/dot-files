@@ -166,6 +166,19 @@ in
     };
   };
 
+  # Autostart noisetorch noise suppression on G733 headset mic
+  systemd.user.services.noisetorch = {
+    description = "NoiseTorch Noise Suppression";
+    wantedBy = [ "graphical-session.target" ];
+    after = [ "pipewire.service" ];
+    serviceConfig = {
+      Type = "oneshot";
+      RemainAfterExit = true;
+      ExecStart = "/run/wrappers/bin/noisetorch -i -s alsa_input.usb-Logitech_G733_Gaming_Headset_0000000000000000-00.mono-fallback";
+      ExecStop = "/run/wrappers/bin/noisetorch -u";
+    };
+  };
+
   # TV aux-in loopback: routes line-in (ALC1220) to default audio output
   # Not started by default — toggle with: systemctl --user start/stop tv-loopback
   systemd.user.services.tv-loopback = {
