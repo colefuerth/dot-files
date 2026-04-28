@@ -1,4 +1,4 @@
-{ pkgs }:
+{ pkgs, inputs }:
 {
   # Consolas Nerd Font
   consolas-nf = pkgs.stdenvNoCC.mkDerivation rec {
@@ -61,6 +61,12 @@
   # Go packages
   tour = import ./packages/tour.nix { inherit pkgs; };
   f5 = import ./packages/f5.nix { inherit pkgs; };
+
+  # The Witcher 3 Mod Manager (uses the tw3mm flake input as source)
+  tw3mm = import ./packages/tw3mm.nix {
+    inherit pkgs;
+    tw3mm = inputs.tw3mm;
+  };
 
   # Convenience derivation that includes the welcome script
   welcome = "${./10-welcome}";

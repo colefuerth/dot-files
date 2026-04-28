@@ -82,8 +82,7 @@ in
       "wheel"
     ];
     packages =
-      with pkgs;
-      [
+      (with pkgs; [
         act
         binsider
         brave
@@ -104,10 +103,10 @@ in
         slurp
         spotify
         vlc
-      ]
-      ++ [
-        #        dotFilesPackages.bambu-studio
-      ];
+      ])
+      ++ (with dotFilesPackages; [
+        tw3mm
+      ]);
     # ++ [
     #   # Wrapper for rpi-imager to run with sudo and proper Wayland support
     #   (pkgs.writeShellScriptBin "rpi-imager" ''
