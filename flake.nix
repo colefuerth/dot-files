@@ -32,6 +32,8 @@
     };
     spank.url = "github:taigrr/spank";
     spank.inputs.nixpkgs.follows = "nixpkgs";
+    tw3mm.url = "github:Systemcluster/The-Witcher-3-Mod-manager";
+    tw3mm.flake = false;
     # heaviside-nixpkgs.url = "git+ssh://git@github.com/heaviside-industries/heaviside-nixpkgs.git?ref=refs/heads/master";
     # heaviside-nixpkgs.inputs.nixpkgs.follows = "nixpkgs";
   };
@@ -82,7 +84,7 @@
               self.overlays.default
             ];
           };
-          dotFilesPackages = import ./packages.nix { inherit pkgs; };
+          dotFilesPackages = import ./packages.nix { inherit pkgs inputs; };
         in
         [
           ./nixos/hosts/${host}/configuration.nix
@@ -122,7 +124,7 @@
               self.overlays.default
             ];
           };
-          dotFilesPackages = import ./packages.nix { inherit pkgs; };
+          dotFilesPackages = import ./packages.nix { inherit pkgs inputs; };
           isDarwin = false;
         in
         nixpkgs.lib.nixosSystem {
@@ -159,7 +161,7 @@
               self.overlays.default
             ];
           };
-          dotFilesPackages = import ./packages.nix { inherit pkgs; };
+          dotFilesPackages = import ./packages.nix { inherit pkgs inputs; };
           isDarwin = true;
         in
         nix-darwin.lib.darwinSystem {
@@ -253,7 +255,7 @@
               ];
             overlays = [ self.overlays.default ];
           };
-          dotFilesPackages = import ./packages.nix { inherit pkgs; };
+          dotFilesPackages = import ./packages.nix { inherit pkgs inputs; };
         in
         rec {
           # Interactive VMs for each configuration
@@ -320,7 +322,10 @@
                   self.overlays.default
                 ];
               };
-              dotFilesPackages = import ./packages.nix { pkgs = testPkgs; };
+              dotFilesPackages = import ./packages.nix {
+                pkgs = testPkgs;
+                inherit inputs;
+              };
             in
             (nixos-lib.runTest {
               hostPkgs = pkgs;
