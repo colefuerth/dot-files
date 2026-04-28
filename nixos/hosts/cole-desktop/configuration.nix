@@ -300,6 +300,13 @@ in
         };
       };
     };
+    home.file.".config/ghostty/config".text = ''
+      font-family = "Consolas Nerd Font Mono"
+      theme = "Atom One Dark"
+      window-decoration = false
+      gtk-titlebar = false
+      keybind = ctrl+shift+enter=toggle_fullscreen
+    '';
   };
 
   # services.wivrn = {
