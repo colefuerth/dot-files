@@ -184,18 +184,39 @@ in
     };
   };
 
-  # Autostart noisetorch noise suppression on G733 headset mic
-  systemd.user.services.noisetorch = {
-    description = "NoiseTorch Noise Suppression";
-    wantedBy = [ "graphical-session.target" ];
-    after = [ "pipewire.service" ];
-    serviceConfig = {
-      Type = "oneshot";
-      RemainAfterExit = true;
-      ExecStart = "/run/wrappers/bin/noisetorch -i -s alsa_input.usb-Logitech_G733_Gaming_Headset_0000000000000000-00.mono-fallback";
-      ExecStop = "/run/wrappers/bin/noisetorch -u";
+  # Autostart noisetorch noise suppression on G733 headset mic.
+  # Waits for the USB source to register with PipeWire — wireplumber creates
+  # the node asynchronously after pipewire.service is active, and the USB
+  # headset may enumerate even later.
+  systemd.user.services.noisetorch =
+    let
+      source = "alsa_input.usb-Logitech_G733_Gaming_Headset_0000000000000000-00.mono-fallback";
+      startScript = pkgs.writeShellScript "noisetorch-start" ''
+        for _ in $(seq 1 60); do
+          if ${pkgs.pulseaudio}/bin/pactl list sources short | ${pkgs.gnugrep}/bin/grep -q "${source}"; then
+            exec /run/wrappers/bin/noisetorch -i -s "${source}"
+          fi
+          sleep 1
+        done
+        echo "noisetorch: source ${source} not found after 60s" >&2
+        exit 1
+      '';
+    in
+    {
+      description = "NoiseTorch Noise Suppression";
+      wantedBy = [ "graphical-session.target" ];
+      after = [
+        "pipewire.service"
+        "wireplumber.service"
+      ];
+      requires = [ "pipewire.service" ];
+      serviceConfig = {
+        Type = "oneshot";
+        RemainAfterExit = true;
+        ExecStart = "${startScript}";
+        ExecStop = "/run/wrappers/bin/noisetorch -u";
+      };
     };
-  };
 
   # TV aux-in loopback: routes line-in (ALC1220) to default audio output
   # Not started by default — toggle with: systemctl --user start/stop tv-loopback
