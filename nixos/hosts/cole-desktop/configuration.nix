@@ -77,6 +77,7 @@ in
     extraGroups = [
       "dialout"
       "docker"
+      "libvirtd"
       "networkmanager"
       "video"
       "wheel"
@@ -306,7 +307,10 @@ in
     useRoutingFeatures = "client";
   };
 
+  virtualisation.libvirtd.enable = true;
+
   programs = {
+    virt-manager.enable = true;
     steam = {
       enable = true;
       protontricks.enable = true;
