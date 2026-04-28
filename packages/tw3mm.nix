@@ -22,6 +22,22 @@ pkgs.stdenv.mkDerivation {
   nativeBuildInputs = [
     pkgs.makeWrapper
     pkgs.qt6.wrapQtAppsHook
+    pkgs.icoutils
+    pkgs.copyDesktopItems
+  ];
+
+  desktopItems = [
+    (pkgs.makeDesktopItem {
+      name = "tw3mm";
+      desktopName = "The Witcher 3 Mod Manager";
+      comment = "Mod Manager for The Witcher 3";
+      exec = "tw3mm";
+      icon = "tw3mm";
+      categories = [
+        "Game"
+        "Utility"
+      ];
+    })
   ];
 
   buildInputs = [
@@ -42,6 +58,13 @@ pkgs.stdenv.mkDerivation {
       --add-flags "$out/share/tw3mm/main.py" \
       --prefix PATH : ${pkgs.lib.makeBinPath [ pkgs.patchelf ]} \
       "''${qtWrapperArgs[@]}"
+
+    mkdir -p icons
+    icotool -x -o icons res/w3a.ico
+    for png in icons/*.png; do
+      size=$(${pkgs.imagemagick}/bin/identify -format '%w' "$png")
+      install -Dm644 "$png" "$out/share/icons/hicolor/''${size}x''${size}/apps/tw3mm.png"
+    done
 
     runHook postInstall
   '';
