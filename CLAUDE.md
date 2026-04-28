@@ -36,10 +36,10 @@ packages/              # Extra nix package definitions (tour.nix, f5.nix)
 
 ```bash
 # Apply current host config (macOS)
-darwin-rebuild switch --flake .#cole-darwin
+nom build .\#darwinConfigurations.cole-darwin.config.system.build.toplevel && sudo ./result/switch
 
 # Apply config on NixOS (uses nom for output)
-sudo ./scripts/switch <hostname>
+sudo nixos-rebuild --log-format internal-json -v --flake /home/cole/dot-files\#<hostname> switch |& nom --json
 
 # Format all nix files (required by CI)
 nix fmt
