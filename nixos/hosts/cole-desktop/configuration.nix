@@ -10,6 +10,81 @@
 }:
 let
   wallpaperIds = import ../../common/wallpaper-engine-ids.nix { };
+
+  # Switch the onboard ALC1220 to a duplex profile and select the line-in
+  # port before starting the loopback. Without this, the analog input source
+  # doesn't exist and pw-loopback silently falls back to the default source
+  # (the G733 mic), so `tv on` ends up looping the headset mic instead.
+  tvLoopbackPrepare = pkgs.writeShellApplication {
+    name = "tv-loopback-prepare";
+    runtimeInputs = with pkgs; [
+      alsa-utils
+      pipewire
+      python3
+      wireplumber
+    ];
+    text = ''
+      export DEVICE_NAME="alsa_card.pci-0000_2f_00.4"
+      export PROFILE_NAME="output:analog-surround-51+input:analog-stereo"
+      export ROUTE_NAME="analog-input-linein"
+      SOURCE_NAME="alsa_input.pci-0000_2f_00.4.analog-stereo"
+
+      mapfile -t result < <(pw-dump | python3 -c '
+      import json, os, sys
+      data = json.load(sys.stdin)
+      target_dev = os.environ["DEVICE_NAME"]
+      target_profile = os.environ["PROFILE_NAME"]
+      target_route = os.environ["ROUTE_NAME"]
+      dev_id = ""
+      profile_idx = ""
+      route_idx = ""
+      for obj in data:
+          info = obj.get("info") or {}
+          props = info.get("props") or {}
+          if props.get("device.name") != target_dev:
+              continue
+          dev_id = obj["id"]
+          params = info.get("params") or {}
+          for p in params.get("EnumProfile", []):
+              if p.get("name") == target_profile:
+                  profile_idx = p.get("index")
+                  break
+          for r in params.get("EnumRoute", []):
+              if r.get("name") == target_route:
+                  route_idx = r.get("index")
+                  break
+          break
+      print(dev_id)
+      print(profile_idx)
+      print(route_idx)
+      ')
+
+      DEV_ID="''${result[0]:-}"
+      PROFILE_IDX="''${result[1]:-}"
+      ROUTE_IDX="''${result[2]:-}"
+
+      if [[ -z "$DEV_ID" || -z "$PROFILE_IDX" ]]; then
+          echo "tv-loopback: could not locate device $DEVICE_NAME or profile $PROFILE_NAME" >&2
+          exit 1
+      fi
+
+      wpctl set-profile "$DEV_ID" "$PROFILE_IDX"
+
+      for _ in $(seq 1 30); do
+          if pw-cli ls Node 2>/dev/null | grep -q "node.name = \"$SOURCE_NAME\""; then
+              break
+          fi
+          sleep 0.1
+      done
+
+      if [[ -n "$ROUTE_IDX" ]]; then
+          pw-cli set-param "$DEV_ID" Route "{ index: $ROUTE_IDX, direction: Input, save: true }" >/dev/null || true
+      fi
+
+      amixer -c 1 set 'Line Boost' 0% >/dev/null 2>&1 || true
+      amixer -c 1 set 'Capture' 50% >/dev/null 2>&1 || true
+    '';
+  };
 in
 {
   imports = [
@@ -191,51 +266,60 @@ in
     };
   };
 
-  # Autostart noisetorch noise suppression on G733 headset mic.
-  # Waits for the USB source to register with PipeWire — wireplumber creates
-  # the node asynchronously after pipewire.service is active, and the USB
-  # headset may enumerate even later.
-  systemd.user.services.noisetorch =
-    let
-      source = "alsa_input.usb-Logitech_G733_Gaming_Headset_0000000000000000-00.mono-fallback";
-      startScript = pkgs.writeShellScript "noisetorch-start" ''
-        for _ in $(seq 1 60); do
-          if ${pkgs.pulseaudio}/bin/pactl list sources short | ${pkgs.gnugrep}/bin/grep -q "${source}"; then
-            exec /run/wrappers/bin/noisetorch -i -s "${source}"
-          fi
-          sleep 1
-        done
-        echo "noisetorch: source ${source} not found after 60s" >&2
-        exit 1
-      '';
-    in
-    {
-      description = "NoiseTorch Noise Suppression";
-      wantedBy = [ "graphical-session.target" ];
-      after = [
-        "pipewire.service"
-        "wireplumber.service"
-      ];
-      requires = [ "pipewire.service" ];
-      serviceConfig = {
-        Type = "oneshot";
-        RemainAfterExit = true;
-        ExecStart = "${startScript}";
-        ExecStop = "/run/wrappers/bin/noisetorch -u";
-      };
-    };
+  # RNNoise denoising for the G733 mic via a native PipeWire filter-chain.
+  # Replaces NoiseTorch — pipewire-pulse does not implement module-ladspa-source,
+  # so noisetorch's PA-emulated module load fails with "No such entity". The
+  # filter-chain creates a virtual source "rnnoise_source" that auto-links to
+  # the G733 when present, with priority.session=2000 so wireplumber promotes
+  # it to the default input.
+  services.pipewire.extraLadspaPackages = [ pkgs.rnnoise-plugin ];
+  services.pipewire.extraConfig.pipewire."99-rnnoise-g733" = {
+    "context.modules" = [
+      {
+        name = "libpipewire-module-filter-chain";
+        args = {
+          "node.description" = "G733 (RNNoise)";
+          "media.name" = "G733 (RNNoise)";
+          "filter.graph" = {
+            nodes = [
+              {
+                type = "ladspa";
+                name = "rnnoise";
+                plugin = "librnnoise_ladspa";
+                label = "noise_suppressor_mono";
+                control = {
+                  "VAD Threshold (%)" = 50.0;
+                };
+              }
+            ];
+          };
+          "capture.props" = {
+            "node.name" = "capture.rnnoise_g733";
+            "node.passive" = true;
+            "audio.rate" = 48000;
+            "target.object" = "alsa_input.usb-Logitech_G733_Gaming_Headset_0000000000000000-00.mono-fallback";
+          };
+          "playback.props" = {
+            "node.name" = "rnnoise_source";
+            "node.description" = "G733 Noise-Suppressed Microphone";
+            "media.class" = "Audio/Source";
+            "audio.rate" = 48000;
+            "priority.session" = 2000;
+            "priority.driver" = 2000;
+          };
+        };
+      }
+    ];
+  };
 
-  # TV aux-in loopback: routes line-in (ALC1220) to default audio output
+  # TV aux-in loopback: routes line-in (ALC1220) to G733 headset.
   # Not started by default — toggle with: systemctl --user start/stop tv-loopback
   systemd.user.services.tv-loopback = {
     description = "TV Aux-In Audio Loopback";
     after = [ "pipewire.service" ];
     serviceConfig = {
-      ExecStartPre = [
-        "${pkgs.alsa-utils}/bin/amixer -c 1 set 'Line Boost' 0%"
-        "${pkgs.alsa-utils}/bin/amixer -c 1 set 'Capture' 50%"
-      ];
-      ExecStart = "${pkgs.pipewire}/bin/pw-loopback --capture-props='node.target=alsa_input.pci-0000_2f_00.4.analog-stereo' --playback-props='node.target=alsa_output.usb-Logitech_G733_Gaming_Headset_0000000000000000-00.analog-stereo'";
+      ExecStartPre = "${tvLoopbackPrepare}/bin/tv-loopback-prepare";
+      ExecStart = "${pkgs.pipewire}/bin/pw-loopback --capture-props='target.object=alsa_input.pci-0000_2f_00.4.analog-stereo' --playback-props='target.object=alsa_output.usb-Logitech_G733_Gaming_Headset_0000000000000000-00.analog-stereo'";
       Restart = "on-failure";
       RestartSec = "2s";
     };

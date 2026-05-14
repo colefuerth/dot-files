@@ -13,5 +13,4 @@
     pulse.enable = true;
   };
   services.pulseaudio.enable = false; # Disable PulseAudio to avoid conflicts with PipeWire
-  programs.noisetorch.enable = true; # noise cancellation for discord
 }
