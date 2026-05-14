@@ -30,13 +30,14 @@
     programs = {
       btop = {
         enable = true;
-        package = pkgs.btop.override {
-          cudaSupport = builtins.elem host [
-            "cole-desktop"
-            "cole-laptop"
-            "hs-thinkpad"
-          ];
-        };
+        # --- btop cuda support override is not necessary anymore, since I just enable cuda support globally
+        # package = pkgs.btop.override {
+        #   cudaSupport = builtins.elem host [
+        #     "cole-desktop"
+        #     "cole-laptop"
+        #     "hs-thinkpad"
+        #   ];
+        # };
       };
       direnv.enable = true;
       firefox =

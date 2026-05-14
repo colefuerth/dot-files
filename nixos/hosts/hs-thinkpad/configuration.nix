@@ -122,6 +122,7 @@ in
   };
 
   nixpkgs.config.allowUnfree = lib.mkForce true;
+  nixpkgs.config.cudaSupport = true;
 
   environment.systemPackages = with pkgs; [
     avrdude

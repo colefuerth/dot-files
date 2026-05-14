@@ -39,8 +39,8 @@ in
   };
 
   nixcfg.cinnamon.enable = false;
-  nixcfg.cosmic.enable = true;
-  nixcfg.plasma.enable = false;
+  nixcfg.cosmic.enable = false;
+  nixcfg.plasma.enable = true;
 
   # Select the kernel version
   boot.kernelPackages = pkgs.linuxPackages_latest;
@@ -49,6 +49,10 @@ in
   # Force s2idle instead of S3 deep sleep — the NVIDIA 595.x driver fails to
   # reinitialize the RTX 5070 Ti on S3 resume (Xid 13 shader exceptions)
   boot.kernelParams = [ "mem_sleep_default=s2idle" ];
+
+  # NT synchronization primitives driver — lets Proton/Wine use real Windows
+  # sync semantics instead of the fsync/esync userland fallbacks.
+  boot.kernelModules = [ "ntsync" ];
 
   # Bootloader — lanzaboote (signed stub) replaces systemd-boot for Secure Boot.
   # Keep systemd-boot disabled via mkForce so nothing re-enables it.
@@ -98,6 +102,7 @@ in
         libreoffice
         micro
         opencode
+        r2modman
         ristretto
         signal-desktop
         slack
@@ -122,10 +127,12 @@ in
   };
 
   nixpkgs.config.allowUnfree = lib.mkForce true;
+  nixpkgs.config.cudaSupport = true;
 
   environment.systemPackages = with pkgs; [
     fastfetch
     gamescope
+    mangohud
     nil
     nixfmt-tree
     pciutils
@@ -309,24 +316,24 @@ in
     '';
   };
 
-  # services.wivrn = {
-  #   enable = true;
-  #   openFirewall = true;
+  services.wivrn = {
+    enable = true;
+    openFirewall = true;
 
-  # Write information to /etc/xdg/openxr/1/active_runtime.json, VR applications
-  # will automatically read this and work with WiVRn (Note: This does not currently
-  # apply for games run in Valve's Proton)
-  #   defaultRuntime = true;
+    # Write information to /etc/xdg/openxr/1/active_runtime.json, VR applications
+    # will automatically read this and work with WiVRn (Note: This does not currently
+    # apply for games run in Valve's Proton)
+    # defaultRuntime = true;
 
-  # Run WiVRn as a systemd service on startup
-  #   autoStart = true;
+    # Run WiVRn as a systemd service on startup
+    autoStart = true;
 
-  # If you're running this with an nVidia GPU and want to use GPU Encoding (and don't otherwise have CUDA enabled system wide), you need to override the cudaSupport variable.
-  #   package = (pkgs.wivrn.override { cudaSupport = true; });
+    # If you're running this with an nVidia GPU and want to use GPU Encoding (and don't otherwise have CUDA enabled system wide), you need to override the cudaSupport variable.
+    # package = (pkgs.wivrn.override { cudaSupport = true; }); # unnecessary when nixpkgs.config.cudaSupport is true
 
-  # You should use the default configuration (which is no configuration), as that works the best out of the box.
-  # However, if you need to configure something see https://github.com/WiVRn/WiVRn/blob/master/docs/configuration.md for configuration options and https://mynixos.com/nixpkgs/option/services.wivrn.config.json for an example configuration.
-  # };
+    # You should use the default configuration (which is no configuration), as that works the best out of the box.
+    # However, if you need to configure something see https://github.com/WiVRn/WiVRn/blob/master/docs/configuration.md for configuration options and https://mynixos.com/nixpkgs/option/services.wivrn.config.json for an example configuration.
+  };
 
   # services.openssh.settings.PasswordAuthentication = true;
 
@@ -338,10 +345,11 @@ in
   virtualisation.libvirtd.enable = true;
 
   programs = {
-    virt-manager.enable = true;
+    firefox.enable = false;
     steam = {
       enable = true;
       protontricks.enable = true;
+      extraCompatPackages = [ pkgs.proton-ge-bin ];
       package = pkgs.steam.override {
         # ${pkgs.util-linux}/bin/renice -n 0 $$ > /dev/null 2>&1
         extraProfile = ''
@@ -350,5 +358,13 @@ in
         '';
       };
     };
+    # Wraps games in an isolated micro-compositor so they see one virtual
+    # display at a chosen resolution. Workaround for engines that crash on
+    # multi-monitor / ultrawide / Wayland setups.
+    # capSysNice is intentionally off — when set, gamescope tries to inherit
+    # cap_sys_nice into children, but Steam's pressure-vessel bwrap sandbox
+    # drops the cap, and gamescope bails with "failed to inherit capabilities".
+    gamescope.enable = true;
+    virt-manager.enable = true;
   };
 }
