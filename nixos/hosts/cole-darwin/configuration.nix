@@ -163,12 +163,12 @@
     # macOS-specific apps that aren't available in nixpkgs or work better via Homebrew
     casks = [
       "brave-browser"
-      "claude-code@latest"
+      "claude-code"
       "discord"
       "ghostty"
       "google-chrome"
       "hot"
-      "linear-linear"
+      "linear"
       "orbstack"
       "private-internet-access"
       "unnaturalscrollwheels"
@@ -177,6 +177,7 @@
       "spotify"
       "steam"
       "tailscale-app"
+      "utm"
       "visual-studio-code"
       "vlc"
     ];
@@ -253,6 +254,21 @@
     programs.ssh = {
       addKeysToAgent = "yes";
       matchBlocks = {
+        rd = {
+          user = "cole";
+          hostname = "100.100.194.119"; # tailscale
+          serverAliveInterval = 60;
+        };
+        d = {
+          user = "cole";
+          hostname = "cole-desktop.local";
+          serverAliveInterval = 60;
+        };
+        rs = {
+          user = "cole";
+          hostname = "100.86.198.50"; # tailscale
+          serverAliveInterval = 60;
+        };
       };
     };
 
