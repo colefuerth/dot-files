@@ -458,4 +458,54 @@ in
     gamescope.enable = true;
     virt-manager.enable = true;
   };
+
+  nixpkgs.overlays = [
+    (
+      final: prev:
+      let
+        src = prev.fetchFromGitHub {
+          owner = "thefossguy";
+          repo = "nixpkgs";
+          rev = "e872b0d136394b0e8cf560d08a2a894f74a8e05a";
+          hash = "sha256-nwtoV0C028BZLtS0hPlZjUybPb3kuRCFjLu6HyKZmhI=";
+        };
+
+        byName = name: "${src}/pkgs/by-name/${builtins.substring 0 2 name}/${name}/package.nix";
+
+        pkgNames = [
+          "cosmic-applets"
+          "cosmic-applibrary"
+          "cosmic-bg"
+          "cosmic-comp"
+          "cosmic-edit"
+          "cosmic-files"
+          "cosmic-greeter"
+          "cosmic-icons"
+          "cosmic-idle"
+          "cosmic-initial-setup"
+          "cosmic-launcher"
+          "cosmic-notifications"
+          "cosmic-osd"
+          "cosmic-panel"
+          "cosmic-player"
+          "cosmic-randr"
+          "cosmic-screenshot"
+          "cosmic-session"
+          "cosmic-settings"
+          "cosmic-settings-daemon"
+          "cosmic-store"
+          "cosmic-term"
+          "cosmic-wallpapers"
+          "cosmic-workspaces-epoch"
+          "xdg-desktop-portal-cosmic"
+        ];
+      in
+      prev.lib.genAttrs pkgNames (
+        name:
+        (final.callPackage (byName name) { }).overrideAttrs (_: {
+          doCheck = false;
+        })
+      )
+    )
+  ];
 }
