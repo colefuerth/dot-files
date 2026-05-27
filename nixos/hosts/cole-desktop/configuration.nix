@@ -180,6 +180,7 @@ in
         r2modman
         ristretto
         signal-desktop
+        simple-scan
         slack
         slurp
         spotify
@@ -207,6 +208,7 @@ in
   environment.systemPackages = with pkgs; [
     fastfetch
     gamescope
+    hplipWithPlugin
     mangohud
     nil
     nixfmt-tree
