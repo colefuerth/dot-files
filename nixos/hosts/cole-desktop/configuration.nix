@@ -113,6 +113,13 @@ in
     users = [ username ];
   };
 
+  # Sign every store path added on this host so other machines (e.g. cole-darwin
+  # pulling closures via `nomt`) can trust them by adding the matching public
+  # key to trusted-public-keys. Generate the keypair once with:
+  #   sudo nix-store --generate-binary-cache-key cole-desktop-1 \
+  #     /var/lib/nix-signing-key.sec /var/lib/nix-signing-key.pub
+  nix.settings.secret-key-files = "/var/lib/nix-signing-key.sec";
+
   nixcfg.cinnamon.enable = false;
   nixcfg.cosmic.enable = false;
   nixcfg.plasma.enable = true;
