@@ -396,6 +396,21 @@ in
           hostname = "192.168.69.5";
           serverAliveInterval = 60;
         };
+        "rs" = {
+          user = "cole";
+          hostname = "100.86.198.50"; # tailscale
+          serverAliveInterval = 60;
+        };
+        "l" = {
+          user = "cole";
+          hostname = "192.168.69.142"; # tailscale
+          serverAliveInterval = 60;
+        };
+        "rl" = {
+          user = "cole";
+          hostname = "100.125.46.32"; # tailscale
+          serverAliveInterval = 60;
+        };
       };
     };
     home.file.".config/ghostty/config".text = ''
