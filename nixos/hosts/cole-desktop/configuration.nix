@@ -450,6 +450,65 @@ in
     useRoutingFeatures = "client";
   };
 
+  # TEMPORARY (trip): keep the desktop awake so I can SSH in over Tailscale
+  # while I'm away. Remove this block when I'm back home.
+  services.logind.lidSwitch = "ignore";
+  systemd.targets.sleep.enable = false;
+  systemd.targets.suspend.enable = false;
+  systemd.targets.hibernate.enable = false;
+  systemd.targets.hybrid-sleep.enable = false;
+
+  systemd.services.tailscale-autoconnect = {
+    description = "Bring Tailscale up at boot";
+    after = [
+      "network-online.target"
+      "tailscaled.service"
+    ];
+    wants = [
+      "network-online.target"
+      "tailscaled.service"
+    ];
+    wantedBy = [ "multi-user.target" ];
+    serviceConfig.Type = "oneshot";
+    script = ''
+      status="$(${pkgs.tailscale}/bin/tailscale status --json | ${pkgs.jq}/bin/jq -r .BackendState)"
+      if [ "$status" = "Running" ]; then
+        exit 0
+      fi
+      ${pkgs.tailscale}/bin/tailscale up
+    '';
+  };
+
+  # Declarative NM profile for the "stinky" wifi, pinned to a static IP.
+  # PSK is substituted from /etc/nm-secrets.env at activation time so the
+  # password never lands in the world-readable Nix store. Create it once:
+  #   sudo install -m600 /dev/stdin /etc/nm-secrets.env <<<'PSK=<password>'
+  networking.networkmanager.ensureProfiles = {
+    environmentFiles = [ "/etc/nm-secrets.env" ];
+    profiles.stinky = {
+      connection = {
+        id = "stinky";
+        type = "wifi";
+        interface-name = "wlp41s0";
+        autoconnect = true;
+      };
+      wifi = {
+        ssid = "stinky";
+        mode = "infrastructure";
+      };
+      wifi-security = {
+        key-mgmt = "wpa-psk";
+        psk = "$PSK";
+      };
+      ipv4 = {
+        method = "manual";
+        address1 = "192.168.69.4/24,192.168.69.1";
+        dns = "192.168.69.1;";
+      };
+      ipv6.method = "auto";
+    };
+  };
+
   virtualisation.libvirtd.enable = true;
 
   programs = {
@@ -484,7 +543,7 @@ in
           owner = "thefossguy";
           repo = "nixpkgs";
           rev = "e872b0d136394b0e8cf560d08a2a894f74a8e05a";
-          hash = "sha256-nwtoV0C028BZLtS0hPlZjUybPb3kuRCFjLu6HyKZmhI=";
+          hash = "sha256-nwtoV0C028BZLtS0hPlZjUybPb3kuRCFjLu6HyKZmwlp41s0hI=";
         };
 
         byName = name: "${src}/pkgs/by-name/${builtins.substring 0 2 name}/${name}/package.nix";
