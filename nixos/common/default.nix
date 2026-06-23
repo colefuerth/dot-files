@@ -107,7 +107,7 @@ in
             ];
 
           # Set your time zone.
-          time.timeZone = "America/Los_Angeles";
+          time.timeZone = lib.mkDefault "America/Los_Angeles";
 
           environment.variables.EDITOR = lib.mkForce "fresh";
           environment.variables.VISUAL = lib.mkForce "code";

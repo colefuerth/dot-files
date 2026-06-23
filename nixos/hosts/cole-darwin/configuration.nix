@@ -12,6 +12,8 @@
     ../../common
   ];
 
+  # time.timeZone = "America/Toronto";
+
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
 
