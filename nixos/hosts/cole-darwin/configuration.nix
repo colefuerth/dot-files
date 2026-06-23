@@ -177,6 +177,17 @@
       cleanup = "zap";
       autoUpdate = true;
       upgrade = true;
+      # Homebrew 4.7+ requires explicit confirmation for `brew bundle --cleanup`;
+      # pass --force so activation can proceed non-interactively.
+      extraFlags = [ "--force" ];
+      # Homebrew 4.7+ enforces HOMEBREW_REQUIRE_TAP_TRUST and refuses to load
+      # formulae from untrusted third-party taps. Disable that check for the
+      # `brew bundle` invocation here so taps like koekeishiya/formulae and
+      # bnomei/tmux-mcp load without manual `brew trust` runs. Interactive shell
+      # brew still respects the default trust prompt.
+      extraEnv = {
+        HOMEBREW_NO_REQUIRE_TAP_TRUST = "1";
+      };
     };
     # macOS-specific apps that aren't available in nixpkgs or work better via Homebrew
     casks = [
