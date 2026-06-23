@@ -88,6 +88,8 @@
     (with pkgs; [
       act
       docker
+      ffmpeg-full
+      ffpb
       gh
       git-lfs
       libclang
