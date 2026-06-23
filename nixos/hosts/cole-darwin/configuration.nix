@@ -192,12 +192,13 @@
     # macOS-specific apps that aren't available in nixpkgs or work better via Homebrew
     casks = [
       "brave-browser"
-      "claude-code"
+      "claude-code@latest"
       "discord"
       "ghostty"
       "google-chrome"
       "hot"
       "linear"
+      "localsend"
       "orbstack"
       "private-internet-access"
       "unnaturalscrollwheels"
@@ -212,10 +213,13 @@
     ];
     taps = [
       "koekeishiya/formulae"
+      "bnomei/tmux-mcp"
     ];
     brews = [
+      "afsctool"
       "koekeishiya/formulae/yabai"
       "koekeishiya/formulae/skhd"
+      "bnomei/tmux-mcp/tmux-mcp-rs"
     ];
   };
 
@@ -253,6 +257,14 @@
         resurrect
       ];
       extraConfig = ''
+        # Forward modified keys (Ctrl+Arrow, Ctrl+Backspace, etc.) to inner programs
+        set -g xterm-keys on
+
+        # Truecolor + 256-color so starship/Nerd Fonts render correctly inside tmux
+        set -g default-terminal "tmux-256color"
+        set -as terminal-features ",xterm-256color:RGB"
+        set -as terminal-features ",ghostty:RGB"
+
         # Style status bar
         set -g status-style fg=white,bg=black
         set -g window-status-current-style fg=green,bg=black
@@ -342,14 +354,14 @@
         };
       };
       yabai = {
-        enable = true;
-        config = {
-          ProgramArguments = [ "/opt/homebrew/bin/yabai" ];
-          KeepAlive = true;
-          RunAtLoad = true;
-          StandardOutPath = "/tmp/yabai.out.log";
-          StandardErrorPath = "/tmp/yabai.err.log";
-        };
+        enable = false;
+        # config = {
+        #   ProgramArguments = [ "/opt/homebrew/bin/yabai" ];
+        #   KeepAlive = true;
+        #   RunAtLoad = true;
+        #   StandardOutPath = "/tmp/yabai.out.log";
+        #   StandardErrorPath = "/tmp/yabai.err.log";
+        # };
       };
     };
 

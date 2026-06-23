@@ -234,8 +234,9 @@
         history.ignoreDups = true;
 
         loginExtra = ''
-          # Run the welcome screen on shell startup (only in interactive shells)
-          if [[ -o interactive ]] && [[ -f "${dotFilesPackages.welcome}" ]]; then
+          # Run the welcome screen on shell startup (only in interactive shells,
+          # and skip inside tmux panes so it doesn't fire on every new pane)
+          if [[ -o interactive ]] && [[ -z "$TMUX" ]] && [[ -f "${dotFilesPackages.welcome}" ]]; then
             bash "${dotFilesPackages.welcome}"
           fi
         '';
