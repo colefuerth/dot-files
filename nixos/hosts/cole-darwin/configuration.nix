@@ -27,22 +27,32 @@
   nixpkgs.overlays = [
     (final: prev: {
       protobuf = prev.protobuf.overrideAttrs (old: rec {
-        version = "34.1";
+        version = "35.0";
         src = prev.fetchFromGitHub {
           owner = "protocolbuffers";
           repo = "protobuf";
           tag = "v${version}";
-          hash = "sha256-PaIVJ8NtgnrqowbKLkX+uprsQjuxDch9AUxX4YBBNh4=";
+          hash = "sha256-J0NA19W44CzgSjKv3A+1An6vDRTDjaWMhDzQGEOtrCk=";
         };
+        # Drop patches that were upstreamed into v35.0 (nixpkgs still applies
+        # them for any version >= 30 / >= 33).
+        patches = builtins.filter (
+          p:
+          let
+            s = toString p;
+          in
+          !(lib.hasSuffix "211f52431b9ec30d4d4a1c76aafd64bd78d93c43.patch" s)
+          && !(lib.hasSuffix "8282f0f8ecf8b847e5964a308e041ba3b049811c.patch" s)
+        ) (old.patches or [ ]);
       });
       pythonPackagesExtensions = prev.pythonPackagesExtensions ++ [
         (python-final: python-prev: {
           protobuf = python-prev.protobuf.overrideAttrs (old: rec {
-            version = "7.34.1";
+            version = "7.35.0";
             src = prev.fetchPypi {
               pname = "protobuf";
               inherit version;
-              hash = "sha256-nOQiRecEzFAnvnl8HbHrkxhNRNHN1xgR+y2bJa1UEoA=";
+              hash = "sha256-ou/YRgX0HlWfGIGwkStECZ0KKsm/RrNHSCPxD7OTsOY=";
             };
           });
         })
