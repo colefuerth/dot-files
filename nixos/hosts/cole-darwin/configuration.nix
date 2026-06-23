@@ -17,7 +17,13 @@
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
 
-  # Pin protobuf to 34.1
+  # Trust the binary cache key from cole-desktop (rd) so signed closures
+  # pulled by `nomt` are accepted by the local nix daemon.
+  nix.settings.trusted-public-keys = [
+    "cole-desktop-1:Gy9dhiisebzFg8c6mmsCyihQ+9LivAM1BWiWYx4iZPU="
+  ];
+
+  # Pin protobuf to 35.0
   nixpkgs.overlays = [
     (final: prev: {
       protobuf = prev.protobuf.overrideAttrs (old: rec {
