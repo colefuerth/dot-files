@@ -126,6 +126,8 @@ in
         {
           boot.plymouth.enable = false;
 
+          boot.tmp.cleanOnBoot = lib.mkDefault true;
+
           nix.gc = {
             randomizedDelaySec = "45min";
             options = "--delete-older-than 7d";
