@@ -93,7 +93,7 @@
         openssl
         curl
         git
-        nodejs_20
+        nodejs_22
         python3
       ];
     };
