@@ -107,7 +107,6 @@
           tqdm
         ]
       ))
-      spank
     ])
     ++ (with pkgs; [
       # anz deps
@@ -228,20 +227,6 @@
   # Programs
   programs = {
     zsh.enable = true;
-  };
-
-  launchd.daemons.spank = {
-    serviceConfig = {
-      ProgramArguments = [
-        "${pkgs.spank}/bin/spank"
-        "--min-amplitude"
-        "0.5"
-        "--sexy"
-      ];
-      RunAtLoad = false;
-      StandardOutPath = "/tmp/spank.out.log";
-      StandardErrorPath = "/tmp/spank.err.log";
-    };
   };
 
   # Home-manager configuration for this machine

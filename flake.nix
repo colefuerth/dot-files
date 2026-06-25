@@ -30,8 +30,6 @@
       home-manager.follows = "home-manager";
       nix-darwin.follows = "nix-darwin";
     };
-    spank.url = "github:taigrr/spank";
-    spank.inputs.nixpkgs.follows = "nixpkgs";
     tw3mm.url = "github:Systemcluster/The-Witcher-3-Mod-manager";
     tw3mm.flake = false;
     # heaviside-nixpkgs.url = "git+ssh://git@github.com/heaviside-industries/heaviside-nixpkgs.git?ref=refs/heads/master";
