@@ -194,6 +194,8 @@
     casks = [
       "brave-browser"
       "claude-code@latest"
+      "cursor"
+      "cursor-cli"
       "discord"
       "ghostty"
       "google-chrome"
@@ -218,6 +220,7 @@
     ];
     brews = [
       "afsctool"
+      "azure-cli"
       "koekeishiya/formulae/yabai"
       "koekeishiya/formulae/skhd"
       "bnomei/tmux-mcp/tmux-mcp-rs"
