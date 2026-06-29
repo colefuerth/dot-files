@@ -1,5 +1,18 @@
 { pkgs, inputs }:
 {
+  # Shared Python environment package list. Pass to <python>.withPackages so
+  # each host keeps its own interpreter version while sharing one package list.
+  pyPackages =
+    ps: with ps; [
+      matplotlib
+      numpy
+      pandas
+      pip
+      pyserial
+      scipy
+      tqdm
+    ];
+
   # Consolas Nerd Font
   consolas-nf = pkgs.stdenvNoCC.mkDerivation rec {
     pname = "consolas-nf";
@@ -44,12 +57,6 @@
     cp -r ${./scripts}/* $out/bin/
     # Make all scripts executable
     chmod +x $out/bin/*
-  '';
-
-  # Derivation containing all completion files
-  completions = pkgs.runCommand "dot-files-completions" { } ''
-    mkdir -p $out
-    cp -r ${./completions}/* $out/
   '';
 
   # Derivation containing all config files

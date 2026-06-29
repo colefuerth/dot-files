@@ -1,6 +1,5 @@
 {
   config,
-  dotFilesPackages,
   inputs,
   lib,
   pkgs,
@@ -68,20 +67,8 @@ in
     # Install essential packages
     environment.systemPackages = with pkgs; [
       cosmic-term # COSMIC terminal
-      adwaita-icon-theme # Icon theme
-      dotFilesPackages.consolas-nf
-      gnome-disk-utility
     ];
 
-    home-manager.users.cole = {
-      home.pointerCursor = {
-        name = "Adwaita";
-        package = pkgs.adwaita-icon-theme;
-        size = 24;
-        gtk.enable = true;
-        x11.enable = true;
-      };
-    };
     # Configure firefox for better COSMIC theming if needed
     programs.firefox = lib.mkIf config.programs.firefox.enable {
       preferences = {

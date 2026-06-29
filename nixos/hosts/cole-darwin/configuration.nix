@@ -96,17 +96,7 @@
       micro
       nil
       nixfmt-tree
-      (python312.withPackages (
-        ps: with ps; [
-          matplotlib
-          numpy
-          pandas
-          pip
-          pyserial
-          scipy
-          tqdm
-        ]
-      ))
+      (python312.withPackages dotFilesPackages.pyPackages)
     ])
     ++ (with pkgs; [
       # anz deps
@@ -342,16 +332,6 @@
           StandardOutPath = "/tmp/skhd.out.log";
           StandardErrorPath = "/tmp/skhd.err.log";
         };
-      };
-      yabai = {
-        enable = false;
-        # config = {
-        #   ProgramArguments = [ "/opt/homebrew/bin/yabai" ];
-        #   KeepAlive = true;
-        #   RunAtLoad = true;
-        #   StandardOutPath = "/tmp/yabai.out.log";
-        #   StandardErrorPath = "/tmp/yabai.err.log";
-        # };
       };
     };
 

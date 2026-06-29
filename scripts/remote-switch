@@ -70,12 +70,6 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
-if [[ "${flake}" == "" ]]; then
-  echo "ERROR: The flake must be specified with -f FLAKE"
-  usage
-  exit 1
-fi
-
 if [[ -n "${remote_builder}" ]]; then
   if [[ -z "${system}" ]]; then
     echo "ERROR: --system must be specified when using --remote for remote builds"

@@ -32,8 +32,6 @@
     };
     tw3mm.url = "github:Systemcluster/The-Witcher-3-Mod-manager";
     tw3mm.flake = false;
-    # heaviside-nixpkgs.url = "git+ssh://git@github.com/heaviside-industries/heaviside-nixpkgs.git?ref=refs/heads/master";
-    # heaviside-nixpkgs.inputs.nixpkgs.follows = "nixpkgs";
   };
 
   outputs =
@@ -54,36 +52,15 @@
         "aarch64-linux"
         "aarch64-darwin"
       ];
-      forAllSystems =
-        f:
-        builtins.listToAttrs (
-          map (name: {
-            inherit name;
-            value = f name;
-          }) systems
-        );
+      forAllSystems = nixpkgs.lib.genAttrs systems;
 
       # Helper to create the common module list for a host configuration
       mkConfigModules =
         {
           host,
           username,
-          system,
-          isDarwin ? false,
-          backupSuffix ? "bak.home-manager-${
-            self.shortRev or self.dirtyShortRev or self.lastModified or "unknown"
-          }",
+          dotFilesPackages,
         }:
-        let
-          pkgs = import nixpkgs {
-            inherit system;
-            overlays = [
-              nix-vscode-extensions.overlays.default
-              self.overlays.default
-            ];
-          };
-          dotFilesPackages = import ./packages.nix { inherit pkgs inputs; };
-        in
         [
           ./nixos/hosts/${host}/configuration.nix
           home-manager.nixosModules.home-manager
@@ -98,7 +75,9 @@
             };
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
-            home-manager.backupFileExtension = backupSuffix;
+            home-manager.backupFileExtension = "bak.home-manager-${
+              self.shortRev or self.dirtyShortRev or self.lastModified or "unknown"
+            }";
             home-manager.users.${username} = import ./nixos/users/${username}/home.nix;
           }
           sops-nix.nixosModules.sops
@@ -140,7 +119,7 @@
             inherit
               host
               username
-              system
+              dotFilesPackages
               ;
           };
         };
@@ -266,7 +245,6 @@
           inherit (dotFilesPackages)
             aliases
             scripts
-            completions
             configs
             bambu-studio
             consolas-nf
@@ -341,7 +319,7 @@
                 { ... }:
                 {
                   imports = mkConfigModules {
-                    inherit host username system;
+                    inherit host username dotFilesPackages;
                   };
                   # Override hardware-specific settings for VM testing
                   virtualisation.graphics = false;

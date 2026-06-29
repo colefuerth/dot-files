@@ -3,13 +3,6 @@
   imports = [ ./bluetooth.nix ];
   # stuff needed to use an xbox one controller
   hardware = {
-    bluetooth = {
-      settings.General = {
-        FastConnectable = true;
-      };
-    };
-    xone.enable = false;
-    xpad-noone.enable = false;
     xpadneo.enable = true;
   };
   boot = {

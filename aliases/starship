@@ -1,6 +1,6 @@
 if command -v starship &> /dev/null; then
     if [ -z "$SHRC" ]; then
-        SHRC=$(basename "$SHELL")
+        SHRC=${SHELL##*/}
     fi
     eval "$(starship init $SHRC)"
 fi

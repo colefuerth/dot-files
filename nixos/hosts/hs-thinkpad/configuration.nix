@@ -22,29 +22,22 @@ in
     ../../common/graphical.nix
     ../../common/laptop.nix
     ../../common/nixbuild.nix
+    ../../common/solaar.nix
+    ../../common/ssh-heaviside.nix
+    ../../common/tailscale.nix
+    ../../common/user.nix
+    ../../common/wallpaper-engine.nix
     ../../common/xone.nix
     ./hardware-configuration.nix
-    # ./globalprotect.nix
-    # ./falcon-sensor.nix
     inputs.nixos-hardware.nixosModules.lenovo-thinkpad-p1-gen3
   ];
-
-  # Enable common NixOS configuration settings
-  nixcfg.enable = true;
-  nixcfg.cachix = {
-    enable = true;
-    users = [ username ];
-  };
 
   # Desktop Environment Configuration
   # Enable only one at a time:
   nixcfg.gnome.enable = false;
   nixcfg.cosmic.enable = true;
 
-  nixcfg.nixbuild = {
-    enable = false;
-    disableThisSystem = false;
-  };
+  nixcfg.nixbuild.enable = false;
 
   # Select the kernel version
   boot.kernelPackages = pkgs.linuxPackages_latest;
@@ -53,10 +46,6 @@ in
   # Bootloader
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
-
-  # boot.kernelParams = [
-  # ];
-  boot.plymouth.enable = false;
 
   # `fprintd-enroll` to enroll fingerprints
   services.fprintd.enable = true;
@@ -70,58 +59,33 @@ in
     acpi_call
   ];
 
-  # Define a user account. Don't forget to set a password with ‘passwd’.
-  users.users.${username} = {
-    isNormalUser = true;
-    description = "Cole Fuerth";
-    shell = pkgs.zsh;
-    extraGroups = [
-      "dialout"
-      "docker"
-      "networkmanager"
-      "video"
-      "wheel"
+  users.users.${username}.packages =
+    with pkgs;
+    [
+      act
+      binsider
+      codex
+      discord
+      firefoxpwa
+      flameshot
+      git-lfs
+      google-chrome
+      grim
+      kdePackages.okular
+      micro
+      opencode
+      ristretto
+      signal-desktop
+      slack
+      slurp
+      spotify
+      tidal-hifi
+      vlc
+    ]
+    ++ [
+      dotFilesPackages.bambu-studio
     ];
-    packages =
-      with pkgs;
-      [
-        act
-        binsider
-        codex
-        discord
-        firefoxpwa
-        flameshot
-        git-lfs
-        google-chrome
-        grim
-        kdePackages.okular
-        micro
-        opencode
-        ristretto
-        signal-desktop
-        slack
-        slurp
-        spotify
-        tidal-hifi
-        vlc
-      ]
-      ++ [
-        dotFilesPackages.bambu-studio
-      ];
-    # ++ [
-    #   # Wrapper for rpi-imager to run with sudo and proper Wayland support
-    #   (pkgs.writeShellScriptBin "rpi-imager" ''
-    #     exec sudo -E env \
-    #       "WAYLAND_DISPLAY=$WAYLAND_DISPLAY" \
-    #       "XDG_RUNTIME_DIR=$XDG_RUNTIME_DIR" \
-    #       "QT_QPA_PLATFORM=wayland" \
-    #       ${pkgs.rpi-imager}/bin/rpi-imager "$@"
-    #   '')
-    # ];
-    initialHashedPassword = "$y$j9T$YcR7aNLjwHuI5yMbcA8UB.$UbVZuOsp9AsovPS8ApWj4flsMZJUBStWA3e1E8SSBo1";
-  };
 
-  nixpkgs.config.allowUnfree = lib.mkForce true;
   nixpkgs.config.cudaSupport = true;
 
   environment.systemPackages = with pkgs; [
@@ -133,17 +97,7 @@ in
     nixfmt-tree
     pciutils
     platformio
-    (python312.withPackages (
-      ps: with ps; [
-        matplotlib
-        numpy
-        pandas
-        pip
-        pyserial
-        scipy
-        tqdm
-      ]
-    ))
+    (python312.withPackages dotFilesPackages.pyPackages)
     smartmontools
     solaar
     tio
@@ -152,9 +106,6 @@ in
     wineWow64Packages.waylandFull
     tumbler
   ];
-
-  networking.firewall.allowedTCPPorts = [ 22 ];
-  networking.firewall.allowedUDPPorts = [ 5353 ];
 
   # initial system state when machine was created, used for backwards compatibility
   system.stateVersion = "25.11";
@@ -189,15 +140,6 @@ in
   # mx master 3s
   hardware.logitech.wireless.enable = true;
   hardware.logitech.wireless.enableGraphical = true;
-  systemd.user.services.solaar = {
-    description = "Solaar - Logitech Device Manager";
-    wantedBy = [ "graphical-session.target" ];
-    after = [ "graphical-session.target" ];
-    serviceConfig = {
-      ExecStart = "${pkgs.solaar}/bin/solaar --window=hide";
-      Restart = "on-failure";
-    };
-  };
 
   services.xserver.videoDrivers = [ "nvidia" ];
 
@@ -217,116 +159,36 @@ in
     };
   };
 
-  # Udev rule to automatically start/stop wallpaper based on AC power
-  services.udev.extraRules = ''
-    # Monitor AC adapter state changes and toggle wallpaper service
-    # ATTR{type}=="Mains" ensures only the AC adapter triggers these rules,
-    # not USB-C power supply devices which enumerate with online=0 at boot.
-    SUBSYSTEM=="power_supply", ATTR{type}=="Mains", ATTR{online}=="0", RUN+="${pkgs.systemd}/bin/systemctl --user --machine=${username}@.host stop linux-wallpaperengine.service"
-    SUBSYSTEM=="power_supply", ATTR{type}=="Mains", ATTR{online}=="1", RUN+="${pkgs.systemd}/bin/systemctl --user --machine=${username}@.host reset-failed linux-wallpaperengine.service"
-    SUBSYSTEM=="power_supply", ATTR{type}=="Mains", ATTR{online}=="1", RUN+="${pkgs.systemd}/bin/systemctl --user --machine=${username}@.host start linux-wallpaperengine.service"
-  '';
+  nixcfg.wallpaperEngine = {
+    enable = true;
+    wallpapers = [
+      {
+        # laptop display
+        monitor = "eDP-1"; # Your laptop's internal display
+        wallpaperId = wallpaperIds.floppa-ps1;
+        scaling = "fit"; # "stretch", "fit", "fill", or "default"
+        fps = 24;
+        audio.silent = true; # only use this flag once for all monitors
+      }
+      {
+        # Ultrawide
+        monitor = "DP-3";
+        wallpaperId = wallpaperIds.hyper-cube-oled;
+      }
+      {
+        # mini
+        monitor = "DP-2";
+        wallpaperId = wallpaperIds.frieren-cold;
+      }
+    ];
+  };
 
   # Home-manager configuration for this machine
   home-manager.users.${username} = {
-    services.linux-wallpaperengine = {
-      # https://github.com/nix-community/home-manager/blob/master/modules/services/linux-wallpaperengine.nix
-      enable = true;
-      assetsPath = "/home/cole/.local/share/Steam/steamapps/common/wallpaper_engine/assets";
-      wallpapers = [
-        {
-          # laptop display
-          monitor = "eDP-1"; # Your laptop's internal display
-          wallpaperId = wallpaperIds.floppa-ps1;
-          scaling = "fit"; # "stretch", "fit", "fill", or "default"
-          fps = 24;
-          audio.silent = true; # only use this flag once for all monitors
-          # extraOptions = [
-          #   "--set-property spacemode=1"
-          #   "--set-property backgroundcolor=0.0,0.0,0.0"
-          # ];
-        }
-        {
-          # Ultrawide
-          monitor = "DP-3";
-          wallpaperId = wallpaperIds.hyper-cube-oled;
-        }
-        {
-          # mini
-          monitor = "DP-2";
-          wallpaperId = wallpaperIds.frieren-cold;
-        }
-      ];
-    };
-    systemd.user.services.linux-wallpaperengine = {
-      Unit.ConditionACPower = true;
-      Service = {
-        Restart = lib.mkForce "always";
-        RestartSec = "3s";
-      };
-    };
-    systemd.user.services.linux-wallpaperengine-watchdog = {
-      Unit = {
-        Description = "Recover linux-wallpaperengine if failed on AC power";
-        ConditionACPower = true;
-      };
-      Service = {
-        Type = "oneshot";
-        ExecStart = "${pkgs.bash}/bin/bash -c '${pkgs.systemd}/bin/systemctl --user reset-failed linux-wallpaperengine.service 2>/dev/null; ${pkgs.systemd}/bin/systemctl --user start linux-wallpaperengine.service'";
-      };
-    };
-    systemd.user.timers.linux-wallpaperengine-watchdog = {
-      Unit.Description = "Periodically recover linux-wallpaperengine";
-      Timer = {
-        OnBootSec = "30s";
-        OnUnitActiveSec = "5min";
-      };
-      Install.WantedBy = [ "timers.target" ];
-    };
-    programs.ssh = {
-      matchBlocks = {
-        "eu.nixbuild.net" = {
-          hostname = "eu.nixbuild.net";
-          # PubkeyAcceptedKeyTypes ssh-ed25519
-          serverAliveInterval = 60;
-          # IPQoS throughput
-          identityFile = "/home/cole/.ssh/nixbuild/heaviside-shared";
-        };
-        "t" = {
-          user = "heaviside_ai";
-          hostname = "10.100.20.38";
-          identityFile = "/home/cole/.ssh/id_ed25519";
-        };
-        "mothpi" = {
-          user = "moth";
-          hostname = "moth.local";
-          identityFile = "/home/cole/.ssh/id_rsa";
-          forwardX11 = true;
-          forwardX11Trusted = true;
-        };
-        "bms_test" = {
-          user = "heaviside";
-          hostname = "moth-production-tester.local";
-          identityFile = "/home/cole/.ssh/id_rsa";
-        };
-        "pi" = {
-          user = "cole";
-          hostname = "colepi.local";
-          serverAliveInterval = 60;
-          identityFile = "/home/cole/.ssh/id_rsa";
-          forwardX11 = true;
-          forwardX11Trusted = true;
-        };
-        "s" = {
-          user = "cole";
-          # hostname = "heaviside-thelio-server.local";
-          hostname = "10.100.20.28";
-          serverAliveInterval = 60;
-        };
-        "narwhal" = {
-          user = "heaviside";
-          hostname = "narwhal-Pi4.local";
-        };
+    programs.ssh.matchBlocks = {
+      "narwhal" = {
+        user = "heaviside";
+        hostname = "narwhal-Pi4.local";
       };
     };
   };
@@ -334,11 +196,6 @@ in
   services.hardware.bolt.enable = true;
 
   services.envfs.enable = false;
-
-  services.tailscale = {
-    enable = true;
-    useRoutingFeatures = "client";
-  };
 
   programs = {
     _1password.enable = true;

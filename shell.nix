@@ -42,15 +42,6 @@ pkgs.writeShellScriptBin "cole-shell" ''
   autoload -U compinit && compinit
   autoload -U colors && colors
 
-  # Load completions
-  if [[ -d "${dotFilesPackages.completions}" ]] && [[ -n "$(ls -A ${dotFilesPackages.completions} 2>/dev/null)" ]]; then
-    for f in ${dotFilesPackages.completions}/*; do
-      if [[ -f "$f" ]] && ! grep -q "^complete " "$f" 2>/dev/null; then
-        source "$f"
-      fi
-    done
-  fi
-
   # Load aliases (skip mcfly and starship)
   for f in ${dotFilesPackages.aliases}/*; do
     if [[ -f "$f" ]]; then

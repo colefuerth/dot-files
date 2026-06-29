@@ -24,8 +24,4 @@ fi
 # Get file size for better progress indication
 size=$(stat -c%s "$infile" 2>/dev/null || stat -f%z "$infile" 2>/dev/null)
 
-if [ -n "$size" ]; then
-    dd if="$infile" bs=4M | pv -s "$size" | dd of="$outfile" conv=fsync oflag=direct iflag=fullblock bs=4M && sync
-else
-    dd if="$infile" bs=4M | pv | dd of="$outfile" conv=fsync oflag=direct iflag=fullblock bs=4M && sync
-fi
+dd if="$infile" bs=4M | pv ${size:+-s "$size"} | dd of="$outfile" conv=fsync oflag=direct iflag=fullblock bs=4M && sync

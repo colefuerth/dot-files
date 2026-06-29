@@ -1,4 +1,5 @@
 {
+  dotFilesPackages,
   lib,
   inputs,
   pkgs,
@@ -17,16 +18,13 @@ in
     ../../common/cosmic.nix
     ../../common/graphical.nix
     ../../common/laptop.nix
+    ../../common/tailscale.nix
+    ../../common/user.nix
+    ../../common/wallpaper-engine.nix
     ../../common/xone.nix
     ./hardware-configuration.nix
     inputs.nixos-hardware.nixosModules.common-cpu-intel
   ];
-
-  nixcfg.enable = true;
-  nixcfg.cachix = {
-    enable = true;
-    users = [ username ];
-  };
 
   nixcfg.cosmic.enable = true;
 
@@ -36,40 +34,24 @@ in
   # Bootloader
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
-  boot.plymouth.enable = false;
 
-  # Define a user account. Don't forget to set a password with ‘passwd’.
-  users.users.${username} = {
-    isNormalUser = true;
-    description = "Cole Fuerth";
-    shell = pkgs.zsh;
-    extraGroups = [
-      "dialout"
-      "docker"
-      "networkmanager"
-      "video"
-      "wheel"
-    ];
-    packages = with pkgs; [
-      binsider
-      codex
-      discord
-      firefoxpwa
-      flameshot
-      google-chrome
-      grim
-      kdePackages.okular
-      micro
-      ristretto
-      signal-desktop
-      slurp
-      spotify
-      vlc
-    ];
-    initialHashedPassword = "$y$j9T$YcR7aNLjwHuI5yMbcA8UB.$UbVZuOsp9AsovPS8ApWj4flsMZJUBStWA3e1E8SSBo1";
-  };
+  users.users.${username}.packages = with pkgs; [
+    binsider
+    codex
+    discord
+    firefoxpwa
+    flameshot
+    google-chrome
+    grim
+    kdePackages.okular
+    micro
+    ristretto
+    signal-desktop
+    slurp
+    spotify
+    vlc
+  ];
 
-  nixpkgs.config.allowUnfree = lib.mkForce true;
   nixpkgs.config.cudaSupport = true;
 
   environment.systemPackages = with pkgs; [
@@ -80,17 +62,7 @@ in
     nil
     nixfmt-tree
     pciutils
-    (python312.withPackages (
-      ps: with ps; [
-        matplotlib
-        numpy
-        pandas
-        pip
-        pyserial
-        scipy
-        tqdm
-      ]
-    ))
+    (python312.withPackages dotFilesPackages.pyPackages)
     smartmontools
     solaar
     tio
@@ -104,9 +76,6 @@ in
     enable = true;
     settings.PasswordAuthentication = true;
   };
-
-  networking.firewall.allowedTCPPorts = [ 22 ];
-  networking.firewall.allowedUDPPorts = [ 5353 ];
 
   system.stateVersion = "25.11";
 
@@ -163,73 +132,24 @@ in
     };
   };
 
-  # Udev rule to automatically start/stop wallpaper based on AC power
-  services.udev.extraRules = ''
-    # Monitor AC adapter state changes and toggle wallpaper service
-    # ATTR{type}=="Mains" ensures only the AC adapter triggers these rules,
-    # not USB-C power supply devices which enumerate with online=0 at boot.
-    SUBSYSTEM=="power_supply", ATTR{type}=="Mains", ATTR{online}=="0", RUN+="${pkgs.systemd}/bin/systemctl --user --machine=${username}@.host stop linux-wallpaperengine.service"
-    SUBSYSTEM=="power_supply", ATTR{type}=="Mains", ATTR{online}=="1", RUN+="${pkgs.systemd}/bin/systemctl --user --machine=${username}@.host reset-failed linux-wallpaperengine.service"
-    SUBSYSTEM=="power_supply", ATTR{type}=="Mains", ATTR{online}=="1", RUN+="${pkgs.systemd}/bin/systemctl --user --machine=${username}@.host start linux-wallpaperengine.service"
-  '';
-
-  # Home-manager configuration for this machine
-  home-manager.users.${username} = {
-    services.linux-wallpaperengine = {
-      # https://github.com/nix-community/home-manager/blob/master/modules/services/linux-wallpaperengine.nix
-      enable = true;
-      assetsPath = "/home/cole/.local/share/Steam/steamapps/common/wallpaper_engine/assets";
-      wallpapers = [
-        {
-          # laptop display
-          monitor = "eDP-1"; # Your laptop's internal display
-          wallpaperId = wallpaperIds.floppa-ps1;
-          scaling = "fill"; # "stretch", "fit", "fill", or "default"
-          fps = 24;
-          audio.silent = true; # only use this flag once for all monitors
-          # extraOptions = [
-          #   "--set-property spacemode=1"
-          #   "--set-property backgroundcolor=0.0,0.0,0.0"
-          # ];
-        }
-      ];
-    };
-    systemd.user.services.linux-wallpaperengine = {
-      Unit.ConditionACPower = true;
-      Service = {
-        Restart = lib.mkForce "always";
-        RestartSec = "3s";
-        # Enable Intel iGPU hardware acceleration via VAAPI
-        Environment = [
-          "LIBVA_DRIVER_NAME=iHD" # Intel media driver for Core Ultra
-          "LIBVA_DRIVERS_PATH=${pkgs.intel-media-driver}/lib/dri"
-        ];
-      };
-    };
-    systemd.user.services.linux-wallpaperengine-watchdog = {
-      Unit = {
-        Description = "Recover linux-wallpaperengine if failed on AC power";
-        ConditionACPower = true;
-      };
-      Service = {
-        Type = "oneshot";
-        ExecStart = "${pkgs.bash}/bin/bash -c '${pkgs.systemd}/bin/systemctl --user reset-failed linux-wallpaperengine.service 2>/dev/null; ${pkgs.systemd}/bin/systemctl --user start linux-wallpaperengine.service'";
-      };
-    };
-    systemd.user.timers.linux-wallpaperengine-watchdog = {
-      Unit.Description = "Periodically recover linux-wallpaperengine";
-      Timer = {
-        OnBootSec = "30s";
-        OnUnitActiveSec = "5min";
-      };
-      Install.WantedBy = [ "timers.target" ];
-    };
+  nixcfg.wallpaperEngine = {
+    enable = true;
+    serviceEnvironment = [
+      # Enable Intel iGPU hardware acceleration via VAAPI
+      "LIBVA_DRIVER_NAME=iHD" # Intel media driver for Core Ultra
+      "LIBVA_DRIVERS_PATH=${pkgs.intel-media-driver}/lib/dri"
+    ];
+    wallpapers = [
+      {
+        # laptop display
+        monitor = "eDP-1"; # Your laptop's internal display
+        wallpaperId = wallpaperIds.floppa-ps1;
+        scaling = "fill"; # "stretch", "fit", "fill", or "default"
+        fps = 24;
+        audio.silent = true; # only use this flag once for all monitors
+      }
+    ];
   };
 
   services.hardware.bolt.enable = true;
-
-  services.tailscale = {
-    enable = true;
-    useRoutingFeatures = "client";
-  };
 }
