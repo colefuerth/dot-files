@@ -16,14 +16,13 @@ in
     ../../common/audio.nix
     ../../common/bluetooth.nix
     ../../common/cachix.nix
-    ../../common/cachix/heaviside-industries.nix
     ../../common/cosmic.nix
     ../../common/gnome.nix
     ../../common/graphical.nix
     ../../common/laptop.nix
     ../../common/nixbuild.nix
     ../../common/solaar.nix
-    ../../common/ssh-heaviside.nix
+    ../../common/ssh.nix
     ../../common/tailscale.nix
     ../../common/user.nix
     ../../common/wallpaper-engine.nix
@@ -181,16 +180,6 @@ in
         wallpaperId = wallpaperIds.frieren-cold;
       }
     ];
-  };
-
-  # Home-manager configuration for this machine
-  home-manager.users.${username} = {
-    programs.ssh.matchBlocks = {
-      "narwhal" = {
-        user = "heaviside";
-        hostname = "narwhal-Pi4.local";
-      };
-    };
   };
 
   services.hardware.bolt.enable = true;
