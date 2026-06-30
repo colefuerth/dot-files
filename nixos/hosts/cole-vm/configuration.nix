@@ -7,11 +7,6 @@
   username,
   ...
 }:
-let
-  kernel-pkgs = config.boot.kernelPackages;
-
-  # Simplified graphics setup - no complex NVIDIA configuration
-in
 {
   imports = [
     ../../common
@@ -21,24 +16,10 @@ in
     inputs.vscode-server.nixosModules.default
   ];
 
-  # Enable common NixOS configuration settings
-  nixcfg.enable = true;
-  nixcfg.cachix = {
-    enable = true;
-    users = [ username ];
-  };
-  nixcfg.nixbuild = {
-    enable = true;
-    disableThisSystem = false;
-  };
-
   # Select the kernel version
   boot.kernelPackages = pkgs.linuxPackages_latest;
 
-  # Bootloader.
-  # boot.loader.systemd-boot.enable = true;
-  # boot.loader.efi.canTouchEfiVariables = true;
-  # use the default one that was generated with the system for safety
+  # Bootloader — use the default one generated with the system for safety
   boot.loader.grub.enable = true;
   boot.loader.grub.device = "/dev/vda";
   boot.loader.grub.useOSProber = true;
@@ -76,9 +57,6 @@ in
 
   services.vscode-server.enable = true;
 
-  # Enable touchpad support (enabled default in most desktopManager).
-  # services.xserver.libinput.enable = true;
-
   # Define a user account. Don't forget to set a password with 'passwd'.
   users.mutableUsers = false; # Required for declarative password management in VMs
   users.users.root.initialPassword = "root"; # Root login for debugging
@@ -97,8 +75,6 @@ in
     shell = pkgs.zsh;
   };
 
-  nixpkgs.config.allowUnfree = true;
-
   environment.systemPackages = with pkgs; [
     claude-code
     vscode-with-extensions
@@ -108,10 +84,6 @@ in
     enable = true;
     settings.PasswordAuthentication = true;
   };
-
-  # Open ports in the firewall.
-  networking.firewall.enable = true;
-  networking.firewall.allowedTCPPorts = [ 22 ];
 
   system.stateVersion = "26.05";
 

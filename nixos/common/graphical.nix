@@ -2,6 +2,7 @@
   dotFilesPackages,
   pkgs,
   lib,
+  username,
   ...
 }:
 {
@@ -14,7 +15,6 @@
     };
     fontconfig = {
       enable = true;
-      antialias = true;
       cache32Bit = true;
       useEmbeddedBitmaps = true;
       defaultFonts = {
@@ -27,23 +27,23 @@
     ];
   };
 
-  # users.users.${username} = {
-  #   packages =
-  #     with pkgs;
-  #     [
-  #     ];
-  # };
-
   programs = {
-    firefox = with pkgs; {
-      enable = lib.mkDefault true;
-      package = lib.mkDefault firefox;
-      # nativeMessagingHosts = [ firefoxpwa ];
-    };
-    vscode = {
-      enable = lib.mkDefault true;
-      package = lib.mkDefault pkgs.vscode;
-    };
+    firefox.enable = lib.mkDefault true;
+    vscode.enable = lib.mkDefault true;
+  };
+
+  # Shared across desktop environments (cosmic/plasma/cinnamon).
+  environment.systemPackages = with pkgs; [
+    adwaita-icon-theme
+    gnome-disk-utility
+  ];
+
+  home-manager.users.${username}.home.pointerCursor = {
+    name = "Adwaita";
+    package = pkgs.adwaita-icon-theme;
+    size = 24;
+    gtk.enable = true;
+    x11.enable = true;
   };
 
   services.printing.enable = true;

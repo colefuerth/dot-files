@@ -25,32 +25,10 @@
   wsl.enable = true;
   wsl.defaultUser = username;
 
-  nixcfg.enable = true;
-  nixcfg.cachix = {
-    enable = true;
-    users = [ username ];
-  };
-
   boot.kernelPackages = pkgs.linuxPackages;
 
   networking.hostName = host;
   networking.wireless.enable = lib.mkForce false;
-
-  time.timeZone = "America/Los_Angeles";
-
-  i18n.defaultLocale = "en_US.UTF-8";
-
-  i18n.extraLocaleSettings = {
-    LC_ADDRESS = "en_US.UTF-8";
-    LC_IDENTIFICATION = "en_US.UTF-8";
-    LC_MEASUREMENT = "en_US.UTF-8";
-    LC_MONETARY = "en_US.UTF-8";
-    LC_NAME = "en_US.UTF-8";
-    LC_NUMERIC = "en_US.UTF-8";
-    LC_PAPER = "en_US.UTF-8";
-    LC_TELEPHONE = "en_US.UTF-8";
-    LC_TIME = "en_US.UTF-8";
-  };
 
   services.vscode-server.enable = true;
 
@@ -71,9 +49,6 @@
     shell = pkgs.zsh;
   };
 
-  # Allow unfree packages
-  nixpkgs.config.allowUnfree = lib.mkDefault true;
-
   environment.systemPackages = with pkgs; [
     cachix
     claude-code
@@ -83,28 +58,6 @@
 
   virtualisation.docker.enable = true;
   virtualisation.docker.daemon.settings.features.cdi = true;
-
-  programs = {
-    nix-ld = {
-      # required for vscode-server to run as a service
-      enable = true;
-      libraries = with pkgs; [
-        stdenv.cc.cc.lib
-        openssl
-        curl
-        git
-        nodejs_22
-        python3
-      ];
-    };
-    vim = {
-      enable = true;
-      defaultEditor = false;
-    };
-    zsh = {
-      enable = true;
-    };
-  };
 
   system.stateVersion = "25.11"; # Did you read the comment?
 }

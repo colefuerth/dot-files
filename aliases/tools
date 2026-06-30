@@ -1,5 +1,3 @@
-# alias cp='/usr/local/bin/advcp'
-# alias mv='/usr/local/bin/advmv'
 alias acp='/usr/local/bin/advcp -g'
 alias amv='/usr/local/bin/advmv -g'
 if command -v 7zz &> /dev/null; then

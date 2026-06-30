@@ -7,10 +7,6 @@ RD_SIZE='40G'
 # Parameters can ve changed per-session, with:
 # RD_MP="$PWD/buildcore" && RD_IMG="$RD_MP".tar && RD_SIZE='30G'
 
-delete_rd() {
-    rm "$RD_IMG"
-}
-
 mount_rd() {
     echo "Mounting $RD_SIZE ramdisk at $RD_MP!"
     sudo mkdir -p "$RD_MP"

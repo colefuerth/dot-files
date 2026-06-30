@@ -3,11 +3,9 @@ let
   inherit (prev) lib;
 in
 (lib.composeManyExtensions [
-  (import ./chromium)
   (import ./flameshot inputs)
   (import ./signal-desktop)
   # (import ./freetype-qdoled)
-  (import ./spank inputs)
   # (import ./fresh-editor)
   # (import ./gh)
   # disable SSH overlay and use home-manager to fix ~/.ssh/config perms

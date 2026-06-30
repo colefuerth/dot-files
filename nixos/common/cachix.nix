@@ -2,6 +2,7 @@
   config,
   pkgs,
   lib,
+  username,
   ...
 }:
 let
@@ -18,6 +19,7 @@ in
         type = lib.types.bool;
       };
       users = lib.mkOption {
+        default = [ username ];
         description = "List of all users who should be trusted to use Cachix";
         type = lib.types.listOf lib.types.str;
       };
@@ -30,9 +32,6 @@ in
 
       nix.settings.trusted-users = cfg.users;
     }
-    # TODO: make this better with nix lib code to
-    #       read the ./cachix dir and compile attrs
     // (import ./cachix/nix-community.nix)
     // (import ./cachix/cuda-maintainers.nix);
-  # // (import ./cachix/heaviside-industries.nix)
 }

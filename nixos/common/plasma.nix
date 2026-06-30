@@ -1,6 +1,5 @@
 {
   config,
-  dotFilesPackages,
   lib,
   pkgs,
   ...
@@ -40,21 +39,8 @@ in
     ];
 
     environment.systemPackages = with pkgs; [
-      adwaita-icon-theme
-      dotFilesPackages.consolas-nf
-      gnome-disk-utility
       vulkan-hdr-layer-kwin6
     ];
-
-    home-manager.users.cole = {
-      home.pointerCursor = {
-        name = "Adwaita";
-        package = pkgs.adwaita-icon-theme;
-        size = 24;
-        gtk.enable = true;
-        x11.enable = true;
-      };
-    };
 
     xdg.portal = {
       enable = true;

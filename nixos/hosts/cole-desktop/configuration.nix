@@ -96,6 +96,9 @@ in
     ../../common/cosmic.nix
     ../../common/graphical.nix
     ../../common/plasma.nix
+    ../../common/solaar.nix
+    ../../common/tailscale.nix
+    ../../common/user.nix
     ../../common/xone.nix
     ./hardware-configuration.nix
     "${inputs.nixos-hardware}/common/gpu/nvidia/blackwell/default.nix"
@@ -105,13 +108,6 @@ in
     inputs.nixos-hardware.nixosModules.common-cpu-amd-pstate
     inputs.nixos-hardware.nixosModules.common-pc-ssd
   ];
-
-  # Enable common NixOS configuration settings
-  nixcfg.enable = true;
-  nixcfg.cachix = {
-    enable = true;
-    users = [ username ];
-  };
 
   # Sign every store path added on this host so other machines (e.g. cole-darwin
   # pulling closures via `nomt`) can trust them by adding the matching public
@@ -155,19 +151,10 @@ in
     tctiEnvironment.enable = true;
   };
 
-  # Define a user account. Don't forget to set a password with ‘passwd’.
+  # Base account (shell/groups/password) comes from common/user.nix; this host
+  # adds libvirtd group membership and its own package set.
   users.users.${username} = {
-    isNormalUser = true;
-    description = "Cole Fuerth";
-    shell = pkgs.zsh;
-    extraGroups = [
-      "dialout"
-      "docker"
-      "libvirtd"
-      "networkmanager"
-      "video"
-      "wheel"
-    ];
+    extraGroups = [ "libvirtd" ];
     packages =
       (with pkgs; [
         act
@@ -196,20 +183,8 @@ in
       ++ (with dotFilesPackages; [
         tw3mm
       ]);
-    # ++ [
-    #   # Wrapper for rpi-imager to run with sudo and proper Wayland support
-    #   (pkgs.writeShellScriptBin "rpi-imager" ''
-    #     exec sudo -E env \
-    #       "WAYLAND_DISPLAY=$WAYLAND_DISPLAY" \
-    #       "XDG_RUNTIME_DIR=$XDG_RUNTIME_DIR" \
-    #       "QT_QPA_PLATFORM=wayland" \
-    #       ${pkgs.rpi-imager}/bin/rpi-imager "$@"
-    #   '')
-    # ];
-    initialHashedPassword = "$y$j9T$YcR7aNLjwHuI5yMbcA8UB.$UbVZuOsp9AsovPS8ApWj4flsMZJUBStWA3e1E8SSBo1";
   };
 
-  nixpkgs.config.allowUnfree = lib.mkForce true;
   nixpkgs.config.cudaSupport = true;
 
   environment.systemPackages = with pkgs; [
@@ -223,17 +198,7 @@ in
     powertop
     sbctl
     tpm2-tools
-    (python313.withPackages (
-      ps: with ps; [
-        matplotlib
-        numpy
-        pandas
-        pip
-        pyserial
-        scipy
-        tqdm
-      ]
-    ))
+    (python313.withPackages dotFilesPackages.pyPackages)
     smartmontools
     solaar
     tio
@@ -265,22 +230,9 @@ in
     }
   ];
 
-  networking.firewall.allowedTCPPorts = [ 22 ];
-  networking.firewall.allowedUDPPorts = [ 5353 ];
-
   # initial system state when machine was created, used for backwards compatibility
   # DO NOT CHANGE AFTER THE INITIAL INSTALLATION
   system.stateVersion = "26.05";
-
-  systemd.user.services.solaar = {
-    description = "Solaar - Logitech Device Manager";
-    wantedBy = [ "graphical-session.target" ];
-    after = [ "graphical-session.target" ];
-    serviceConfig = {
-      ExecStart = "${pkgs.solaar}/bin/solaar --window=hide";
-      Restart = "on-failure";
-    };
-  };
 
   # RNNoise denoising for the G733 mic via a native PipeWire filter-chain.
   # Replaces NoiseTorch — pipewire-pulse does not implement module-ladspa-source,
@@ -448,13 +400,6 @@ in
 
     # You should use the default configuration (which is no configuration), as that works the best out of the box.
     # However, if you need to configure something see https://github.com/WiVRn/WiVRn/blob/master/docs/configuration.md for configuration options and https://mynixos.com/nixpkgs/option/services.wivrn.config.json for an example configuration.
-  };
-
-  # services.openssh.settings.PasswordAuthentication = true;
-
-  services.tailscale = {
-    enable = true;
-    useRoutingFeatures = "client";
   };
 
   # TEMPORARY (trip): keep the desktop awake so I can SSH in over Tailscale
