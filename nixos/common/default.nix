@@ -118,6 +118,11 @@ in
         {
           boot.tmp.cleanOnBoot = lib.mkDefault true;
 
+          # Don't link packages' "doc" outputs into the system path. This keeps
+          # broken upstream doc builds (e.g. CPython's Sphinx docs) out of the
+          # closure; man/info pages are still installed.
+          documentation.doc.enable = false;
+
           nix.gc = {
             randomizedDelaySec = "45min";
             options = "--delete-older-than 7d";

@@ -85,6 +85,51 @@ let
       amixer -c 1 set 'Capture' 50% >/dev/null 2>&1 || true
     '';
   };
+
+  # Pin WiVRn to the upstream v26.6.1 release rather than the nixpkgs version.
+  # Reuses the nixpkgs build recipe but repoints src + monado to the tag and
+  # adds the build inputs current WiVRn needs (mirrors the extras the upstream
+  # flake carries: https://github.com/WiVRn/WiVRn/blob/master/flake.nix). The
+  # monado rev must match the tag's monado-rev file or the recipe's postUnpack
+  # check fails; GIT_DESC is derived from `version`, so bumping it is enough.
+  wivrnLatest = pkgs.wivrn.overrideAttrs (
+    finalAttrs: oldAttrs: {
+      version = "26.6.1";
+      src = pkgs.fetchFromGitHub {
+        owner = "wivrn";
+        repo = "wivrn";
+        rev = "v${finalAttrs.version}";
+        hash = "sha256-eXU7hYLYchAb6AbCyINfTmOp0NdxK35Kg9tcid2ucg4=";
+      };
+      monado = pkgs.applyPatches {
+        src = pkgs.fetchFromGitLab {
+          domain = "gitlab.freedesktop.org";
+          owner = "monado";
+          repo = "monado";
+          rev = "1b526bb3a0ff326ecd05af4c2c541407f53c6d4b";
+          hash = "sha256-SzuCQ1uX15vFGwGt3gswlVF2Su8sIND4R3tsTJ4T1LY=";
+        };
+        postPatch = ''
+          ${finalAttrs.src}/patches/apply.sh ${finalAttrs.src}/patches/monado/*
+        '';
+      };
+      buildInputs =
+        oldAttrs.buildInputs
+        ++ (with pkgs; [
+          sdl2-compat
+          libpng
+          kdePackages.kirigami-addons
+          curl
+          ktx-tools
+        ]);
+      nativeBuildInputs = oldAttrs.nativeBuildInputs ++ [ pkgs.util-linux ];
+      # 26.6.x's CMake insists on GIT_COMMIT, which the older nixpkgs recipe
+      # doesn't pass; there's no .git in the fetched source to infer it from.
+      cmakeFlags = (oldAttrs.cmakeFlags or [ ]) ++ [
+        (lib.cmakeFeature "GIT_COMMIT" "31dbc36f9a23c179d22b609fc51a9513f45e8bda")
+      ];
+    }
+  );
 in
 {
   imports = [
@@ -95,6 +140,8 @@ in
     ../../common/cinnamon.nix
     ../../common/cosmic.nix
     ../../common/graphical.nix
+    ../../common/llama-server.nix
+    ../../common/odysseus.nix
     ../../common/plasma.nix
     ../../common/solaar.nix
     ../../common/tailscale.nix
@@ -188,6 +235,7 @@ in
   nixpkgs.config.cudaSupport = true;
 
   environment.systemPackages = with pkgs; [
+    android-tools
     fastfetch
     gamescope
     hplipWithPlugin
@@ -297,6 +345,41 @@ in
     open = true;
     powerManagement.enable = true;
   };
+  hardware.nvidia-container-toolkit.enable = true; # restored — keeps container CDI GPU working
+
+  services.ollama = {
+    enable = true;
+    package = pkgs.ollama-cuda; # replaces the deprecated `acceleration = "cuda"`
+    host = "0.0.0.0"; # reachable from the Odysseus container via host.docker.internal
+  };
+
+  # Let Docker containers reach host services (Ollama on 172.17.0.1:11434).
+  # The firewall default-denies, and compose stacks land on dynamically-named
+  # br-* bridges, so trust the default bridge plus the br-* wildcard.
+  networking.firewall.trustedInterfaces = [
+    "docker0"
+    "br-+"
+  ];
+
+  services.odysseus.enable = true;
+
+  # Reliable GPU GGUF serving, declaratively — the Odysseus Cookbook's own tmux
+  # "Launch" path never actually starts llama-server in this native systemd
+  # setup, so serve the model directly and register http://127.0.0.1:8000/v1 as
+  # an OpenAI endpoint in Odysseus (Settings), like the Ollama endpoint.
+  # Runs as the odysseus user so it can read GGUFs the Cookbook downloaded under
+  # /var/lib/odysseus. Verify the exact snapshot path after a Cookbook download:
+  #   sudo find /var/lib/odysseus -iname '*.gguf'
+  services.llama-server = {
+    enable = true;
+    user = "odysseus";
+    group = "odysseus";
+    models.deepseek-coder-v2-lite = {
+      model = "/var/lib/odysseus/.cache/huggingface/hub/models--bartowski--DeepSeek-Coder-V2-Lite-Instruct-GGUF/snapshots/8f248fa2072348f77a8bc37754e470de1f61866e/DeepSeek-Coder-V2-Lite-Instruct-Q4_K_M.gguf";
+      port = 8000;
+      contextSize = 8192;
+    };
+  };
 
   # Allow non-root users to read CPU power consumption (RAPL energy counters)
   systemd.services.powercap-permissions = {
@@ -386,11 +469,13 @@ in
   services.wivrn = {
     enable = true;
     openFirewall = true;
+    package = wivrnLatest;
 
-    # Write information to /etc/xdg/openxr/1/active_runtime.json, VR applications
-    # will automatically read this and work with WiVRn (Note: This does not currently
-    # apply for games run in Valve's Proton)
-    # defaultRuntime = true;
+    # Steam/Proton games run inside the pressure-vessel sandbox, which doesn't
+    # import the host's OpenXR runtime — so games can't find WiVRn even though
+    # the headset connects fine. This sets PRESSURE_VESSEL_IMPORT_OPENXR_1_RUNTIMES
+    # system-wide so Steam discovers WiVRn. Requires a logout/login to take effect.
+    steam.importOXRRuntimes = true;
 
     # Run WiVRn as a systemd service on startup
     autoStart = true;
@@ -472,8 +557,8 @@ in
       package = pkgs.steam.override {
         # ${pkgs.util-linux}/bin/renice -n 0 $$ > /dev/null 2>&1
         extraProfile = ''
-          # Lower CPU and I/O priority so updates/transfers don't starve the system
           ${pkgs.util-linux}/bin/ionice -c 3 -p $$ > /dev/null 2>&1
+          export PRESSURE_VESSEL_IMPORT_OPENXR_1_RUNTIMES=1
         '';
       };
     };

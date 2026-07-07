@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 
 # Thin wrapper around nomr: same logic, different remote builder + system.
-exec env REMOTE=rd SYSTEM=x86_64-linux nomr "$@"
+exec env REMOTE="${REMOTE:-rd}" SYSTEM="${SYSTEM:-x86_64-linux}" nomr "$@"
