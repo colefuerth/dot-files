@@ -23,53 +23,46 @@
     "cole-desktop-1:Gy9dhiisebzFg8c6mmsCyihQ+9LivAM1BWiWYx4iZPU="
   ];
 
-  # Pin protobuf to 35.0
   nixpkgs.overlays = [
-    (final: prev: {
-      protobuf = prev.protobuf.overrideAttrs (old: rec {
-        version = "35.0";
-        src = prev.fetchFromGitHub {
-          owner = "protocolbuffers";
-          repo = "protobuf";
-          tag = "v${version}";
-          hash = "sha256-J0NA19W44CzgSjKv3A+1An6vDRTDjaWMhDzQGEOtrCk=";
-        };
-        # Drop patches that were upstreamed into v35.0 (nixpkgs still applies
-        # them for any version >= 30 / >= 33).
-        patches = builtins.filter (
-          p:
-          let
-            s = toString p;
-          in
-          !(lib.hasSuffix "211f52431b9ec30d4d4a1c76aafd64bd78d93c43.patch" s)
-          && !(lib.hasSuffix "8282f0f8ecf8b847e5964a308e041ba3b049811c.patch" s)
-        ) (old.patches or [ ]);
-      });
-      pythonPackagesExtensions = prev.pythonPackagesExtensions ++ [
-        (python-final: python-prev: {
-          protobuf = python-prev.protobuf.overrideAttrs (old: rec {
-            version = "7.35.0";
-            src = prev.fetchPypi {
-              pname = "protobuf";
-              inherit version;
-              hash = "sha256-ou/YRgX0HlWfGIGwkStECZ0KKsm/RrNHSCPxD7OTsOY=";
-            };
-          });
-        })
-      ];
-    })
-    (final: prev: {
-      golangci-lint = prev.golangci-lint.overrideAttrs (old: {
-        version = "2.10.1";
-        src = prev.fetchFromGitHub {
-          owner = "golangci";
-          repo = "golangci-lint";
-          tag = "v2.10.1";
-          hash = "sha256-rHttQ+QJ9JrFvgfoX68Y0lD6BUv/aoOpRRFvZ1BIGIs=";
-        };
-        vendorHash = "sha256-yREpROQJ300+mii7R2oiyDjOGcYXBpv3o/park0TJYE=";
-      });
-    })
+    (
+      final: prev:
+      let
+        version = "35.1";
+      in
+      {
+        protobuf = prev.protobuf.overrideAttrs (old: {
+          version = version;
+          src = prev.fetchFromGitHub {
+            owner = "protocolbuffers";
+            repo = "protobuf";
+            tag = "v${version}";
+            hash = "sha256-nif9xjd+3ASR2pvvSXkzTEWoKi2oKLzV9gMQ3EevBVk=";
+          };
+          # Drop patches that were upstreamed into v35.0 (nixpkgs still applies
+          # them for any version >= 30 / >= 33).
+          patches = builtins.filter (
+            p:
+            let
+              s = toString p;
+            in
+            !(lib.hasSuffix "211f52431b9ec30d4d4a1c76aafd64bd78d93c43.patch" s)
+            && !(lib.hasSuffix "8282f0f8ecf8b847e5964a308e041ba3b049811c.patch" s)
+          ) (old.patches or [ ]);
+        });
+        pythonPackagesExtensions = prev.pythonPackagesExtensions ++ [
+          (python-final: python-prev: {
+            protobuf = python-prev.protobuf.overrideAttrs (old: {
+              version = "7.${version}";
+              src = prev.fetchPypi {
+                pname = "protobuf";
+                version = "7.${version}";
+                hash = "sha256-zhFaJv4MOaLCmXPZFNMn5RamRVRkSJ/jzR5RobNU+Bo=";
+              };
+            });
+          })
+        ];
+      }
+    )
   ];
 
   # Set primary user for system defaults
@@ -205,12 +198,14 @@
       "vlc"
     ];
     taps = [
-      "koekeishiya/formulae"
       "bnomei/tmux-mcp"
+      "koekeishiya/formulae"
+      "hashicorp/tap"
     ];
     brews = [
       "afsctool"
       "azure-cli"
+      "hashicorp/tap/terraform"
       "koekeishiya/formulae/yabai"
       "koekeishiya/formulae/skhd"
       "bnomei/tmux-mcp/tmux-mcp-rs"
@@ -392,7 +387,7 @@
     # Ghostty terminal config
     home.file.".config/ghostty/config".text = ''
       font-family = "Consolas Nerd Font Mono"
-      macos-titlebar-style = hidden
+      # macos-titlebar-style = hidden
       theme = "Atom One Dark"
     '';
   };
