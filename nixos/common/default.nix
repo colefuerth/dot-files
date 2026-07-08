@@ -12,6 +12,8 @@ let
   isLinux = !isDarwin;
 in
 {
+  imports = [ ./ssh.nix ];
+
   options = {
     nixcfg = {
       enable = lib.mkOption {

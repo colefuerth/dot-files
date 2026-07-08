@@ -13,7 +13,6 @@
     ../../common/bluetooth.nix
     ../../common/cachix.nix
     ../../common/nixbuild.nix
-    ../../common/ssh.nix
     ../../common/user.nix
     ./hardware-configuration.nix
     inputs.nixos-hardware-pi-5.nixosModules.raspberry-pi-5

@@ -22,7 +22,6 @@ in
     ../../common/laptop.nix
     ../../common/nixbuild.nix
     ../../common/solaar.nix
-    ../../common/ssh.nix
     ../../common/tailscale.nix
     ../../common/user.nix
     ../../common/wallpaper-engine.nix

@@ -274,23 +274,6 @@
 
     programs.ssh = {
       addKeysToAgent = "yes";
-      matchBlocks = {
-        rd = {
-          user = "cole";
-          hostname = "100.100.194.119"; # tailscale
-          serverAliveInterval = 60;
-        };
-        d = {
-          user = "cole";
-          hostname = "cole-desktop.local";
-          serverAliveInterval = 60;
-        };
-        rs = {
-          user = "cole";
-          hostname = "100.86.198.50"; # tailscale
-          serverAliveInterval = 60;
-        };
-      };
     };
 
     programs.git = {
