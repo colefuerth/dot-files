@@ -38,6 +38,10 @@
     gnome-disk-utility
   ];
 
+  users.users.${username}.packages = with pkgs; [
+    qalculate-qt
+  ];
+
   home-manager.users.${username}.home.pointerCursor = {
     name = "Adwaita";
     package = pkgs.adwaita-icon-theme;
