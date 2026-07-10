@@ -177,8 +177,8 @@
     casks = [
       "brave-browser"
       "claude-code@latest"
-      "cursor"
-      "cursor-cli"
+      # "cursor"
+      # "cursor-cli"
       "discord"
       "ghostty"
       "google-chrome"
