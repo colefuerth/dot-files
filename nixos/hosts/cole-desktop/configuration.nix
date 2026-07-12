@@ -216,6 +216,7 @@ in
         grim
         kdePackages.okular
         libreoffice
+        lutris
         micro
         opencode
         r2modman
@@ -238,7 +239,6 @@ in
     android-tools
     fastfetch
     gamescope
-    hplipWithPlugin
     mangohud
     nil
     nixfmt-tree
@@ -348,7 +348,7 @@ in
   hardware.nvidia-container-toolkit.enable = true; # restored — keeps container CDI GPU working
 
   services.ollama = {
-    enable = true;
+    enable = false;
     package = pkgs.ollama-cuda; # replaces the deprecated `acceleration = "cuda"`
     host = "0.0.0.0"; # reachable from the Odysseus container via host.docker.internal
   };
@@ -361,7 +361,7 @@ in
     "br-+"
   ];
 
-  services.odysseus.enable = true;
+  services.odysseus.enable = false;
 
   # Reliable GPU GGUF serving, declaratively — the Odysseus Cookbook's own tmux
   # "Launch" path never actually starts llama-server in this native systemd
@@ -371,7 +371,7 @@ in
   # /var/lib/odysseus. Verify the exact snapshot path after a Cookbook download:
   #   sudo find /var/lib/odysseus -iname '*.gguf'
   services.llama-server = {
-    enable = true;
+    enable = false;
     user = "odysseus";
     group = "odysseus";
     models.deepseek-coder-v2-lite = {
@@ -433,11 +433,11 @@ in
         ];
       };
     };
+      # gtk-titlebar = false
+      # window-decoration = false
     home.file.".config/ghostty/config".text = ''
       font-family = "Consolas Nerd Font Mono"
       theme = "Atom One Dark"
-      window-decoration = false
-      gtk-titlebar = false
       keybind = ctrl+shift+enter=toggle_fullscreen
     '';
   };
@@ -548,53 +548,53 @@ in
     virt-manager.enable = true;
   };
 
-  nixpkgs.overlays = [
-    (
-      final: prev:
-      let
-        src = prev.fetchFromGitHub {
-          owner = "thefossguy";
-          repo = "nixpkgs";
-          rev = "e872b0d136394b0e8cf560d08a2a894f74a8e05a";
-          hash = "sha256-nwtoV0C028BZLtS0hPlZjUybPb3kuRCFjLu6HyKZmwlp41s0hI=";
-        };
+  # nixpkgs.overlays = [
+  #   (
+  #     final: prev:
+  #     let
+  #       src = prev.fetchFromGitHub {
+  #         owner = "thefossguy";
+  #         repo = "nixpkgs";
+  #         rev = "e872b0d136394b0e8cf560d08a2a894f74a8e05a";
+  #         hash = "sha256-nwtoV0C028BZLtS0hPlZjUybPb3kuRCFjLu6HyKZmwlp41s0hI=";
+  #       };
 
-        byName = name: "${src}/pkgs/by-name/${builtins.substring 0 2 name}/${name}/package.nix";
+  #       byName = name: "${src}/pkgs/by-name/${builtins.substring 0 2 name}/${name}/package.nix";
 
-        pkgNames = [
-          "cosmic-applets"
-          "cosmic-applibrary"
-          "cosmic-bg"
-          "cosmic-comp"
-          "cosmic-edit"
-          "cosmic-files"
-          "cosmic-greeter"
-          "cosmic-icons"
-          "cosmic-idle"
-          "cosmic-initial-setup"
-          "cosmic-launcher"
-          "cosmic-notifications"
-          "cosmic-osd"
-          "cosmic-panel"
-          "cosmic-player"
-          "cosmic-randr"
-          "cosmic-screenshot"
-          "cosmic-session"
-          "cosmic-settings"
-          "cosmic-settings-daemon"
-          "cosmic-store"
-          "cosmic-term"
-          "cosmic-wallpapers"
-          "cosmic-workspaces-epoch"
-          "xdg-desktop-portal-cosmic"
-        ];
-      in
-      prev.lib.genAttrs pkgNames (
-        name:
-        (final.callPackage (byName name) { }).overrideAttrs (_: {
-          doCheck = false;
-        })
-      )
-    )
-  ];
+  #       pkgNames = [
+  #         "cosmic-applets"
+  #         "cosmic-applibrary"
+  #         "cosmic-bg"
+  #         "cosmic-comp"
+  #         "cosmic-edit"
+  #         "cosmic-files"
+  #         "cosmic-greeter"
+  #         "cosmic-icons"
+  #         "cosmic-idle"
+  #         "cosmic-initial-setup"
+  #         "cosmic-launcher"
+  #         "cosmic-notifications"
+  #         "cosmic-osd"
+  #         "cosmic-panel"
+  #         "cosmic-player"
+  #         "cosmic-randr"
+  #         "cosmic-screenshot"
+  #         "cosmic-session"
+  #         "cosmic-settings"
+  #         "cosmic-settings-daemon"
+  #         "cosmic-store"
+  #         "cosmic-term"
+  #         "cosmic-wallpapers"
+  #         "cosmic-workspaces-epoch"
+  #         "xdg-desktop-portal-cosmic"
+  #       ];
+  #     in
+  #     prev.lib.genAttrs pkgNames (
+  #       name:
+  #       (final.callPackage (byName name) { }).overrideAttrs (_: {
+  #         doCheck = false;
+  #       })
+  #     )
+  #   )
+  # ];
 }
