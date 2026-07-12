@@ -38,9 +38,12 @@
     gnome-disk-utility
   ];
 
-  users.users.${username}.packages = with pkgs; [
-    qalculate-qt
-  ];
+  users.users.${username} = {
+    packages = with pkgs; [
+      qalculate-qt
+    ];
+    extraGroups = [ "scanner" "lp" ];
+  };
 
   home-manager.users.${username}.home.pointerCursor = {
     name = "Adwaita";
@@ -50,5 +53,15 @@
     x11.enable = true;
   };
 
-  services.printing.enable = true;
+  services.printing = {
+    enable = true;
+    drivers = with pkgs; [
+      hplipWithPlugin # make sure to run `NIXPKGS_ALLOW_UNFREE=1 nix-shell -p hplipWithPlugin --run 'sudo -E hp-setup'`
+    ];
+  };
+
+  hardware.sane = {
+    enable = true;
+    extraBackends = [ pkgs.hplipWithPlugin ];
+  };
 }
