@@ -185,6 +185,7 @@
       "hot"
       "linear"
       "localsend"
+      "logi-options+"
       "orbstack"
       "private-internet-access"
       "unnaturalscrollwheels"
