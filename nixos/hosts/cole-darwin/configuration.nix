@@ -81,7 +81,7 @@
     (with pkgs; [
       act
       docker
-      ffmpeg-full
+      # ffmpeg-full
       ffpb
       gh
       git-lfs
