@@ -53,7 +53,6 @@
       gpg.enable = true;
       home-manager.enable = true;
       mcfly.enable = true;
-      spotify-player.enable = true;
       ssh = {
         enable = lib.mkDefault true;
         package = pkgs.openssh.override { withKerberos = true; };

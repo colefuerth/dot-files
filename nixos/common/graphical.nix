@@ -29,6 +29,7 @@
 
   programs = {
     firefox.enable = lib.mkDefault true;
+    spotify-player.enable = lib.mkDefault true;
     vscode.enable = lib.mkDefault true;
   };
 
