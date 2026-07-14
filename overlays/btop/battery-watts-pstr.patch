@@ -1,0 +1,85 @@
+--- a/src/osx/smc.hpp
++++ b/src/osx/smc.hpp
+@@ -41,6 +41,7 @@
+ #define DATATYPE_UINT16 "ui16"
+ #define DATATYPE_UINT32 "ui32"
+ #define DATATYPE_SP78 "sp78"
++#define DATATYPE_FLT "flt "
+ 
+ // key values
+ #define SMC_KEY_CPU_TEMP "TC0P" // proximity temp?
+@@ -49,6 +50,7 @@
+ #define SMC_KEY_CPU1_TEMP "TC1C"
+ #define SMC_KEY_CPU2_TEMP "TC2C"  // etc
+ #define SMC_KEY_FAN0_RPM_CUR "F0Ac"
++#define SMC_KEY_SYSTEM_POWER "PSTR" // total system power draw in watts, Apple Silicon
+ 
+ typedef struct {
+ 	char major;
+@@ -102,10 +104,12 @@
+ 		virtual ~SMCConnection();
+ 
+ 		long long getTemp(int core);
++		float getSystemPower();
+ 
+ 	   private:
+ 		kern_return_t SMCReadKey(UInt32Char_t key, SMCVal_t *val);
+ 		long long getSMCTemp(char *key);
++		float getSMCFloat(char *key);
+ 		kern_return_t SMCCall(int index, SMCKeyData_t *inputStructure, SMCKeyData_t *outputStructure);
+ 
+ 		io_connect_t conn;
+--- a/src/osx/smc.cpp
++++ b/src/osx/smc.cpp
+@@ -85,6 +85,24 @@
+ 		return -1;
+ 	}
+ 
++	float SMCConnection::getSMCFloat(char *key) {
++		SMCVal_t val;
++		kern_return_t result = SMCReadKey(key, &val);
++		if (result == kIOReturnSuccess and val.dataSize == 4 and strcmp(val.dataType, DATATYPE_FLT) == 0) {
++			float value;
++			memcpy(&value, val.bytes, sizeof(value));
++			return value;
++		}
++		return -1.0f;
++	}
++
++	//? Total system power draw. AppleSmartBattery's amperage keys only refresh on the
++	//? battery's slow SMBus poll, so they sit frozen for minutes; the SMC key is live.
++	float SMCConnection::getSystemPower() {
++		char key[] = SMC_KEY_SYSTEM_POWER;
++		return getSMCFloat(key);
++	}
++
+ 	// core means physical core in SMC, while in core map it's cpu threads :-/ Only an issue on hackintosh?
+ 	// this means we can only get the T per physical core
+ 	// another issue with the SMC API is that the key is always 4 chars -> what with systems with more than 9 physical cores?
+--- a/src/osx/btop_collect.cpp
++++ b/src/osx/btop_collect.cpp
+@@ -949,6 +949,7 @@
+ 
+ 		uint32_t percent = -1;
+ 		long seconds = -1;
++		float watts = -1;
+ 		string status = "discharging";
+ 		IOPSInfo_Wrap ps_info{};
+ 		if (ps_info()) {
+@@ -984,7 +985,15 @@
+ 				has_battery = false;
+ 			}
+ 		}
+-		return {percent, -1, seconds, status};
++		try {
++			SMCConnection smcCon;
++			float power = smcCon.getSystemPower();
++			if (power >= 0.0f) watts = power;
++		} catch (const std::runtime_error &) {
++			//? no SMC, leave watts at -1 so the readout stays hidden
++		}
++
++		return {percent, watts, seconds, status};
+ 	}
+ 
+ 	auto collect(bool no_update) -> cpu_info & {

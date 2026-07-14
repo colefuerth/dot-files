@@ -1,0 +1,49 @@
+--- a/src/osx/btop_collect.cpp
++++ b/src/osx/btop_collect.cpp
+@@ -462,6 +462,8 @@
+ 			bool got_gpu_util = false;
+ 			double gpu_power_watts = 0;
+ 			bool got_gpu_power = false;
++			double cpu_power_watts = 0;
++			bool got_cpu_power = false;
+ 
+ 			long chan_count = CFArrayGetCount(channels);
+ 			for (long i = 0; i < chan_count; i++) {
+@@ -527,6 +529,24 @@
+ 					if (divisor > 0) {
+ 						gpu_power_watts = energy / divisor;
+ 						got_gpu_power = true;
++					}
++				}
++
++				//? CPU package power from Energy Model (same subscription as GPU Energy)
++				if (group == "Energy Model" and channel == "CPU Energy") {
++					string unit = cfstring_to_string(IOReportChannelGetUnitLabel(item));
++					int64_t val = IOReportSimpleGetIntegerValue(item, 0);
++					double energy = static_cast<double>(val);
++					double divisor = static_cast<double>(dt) / 1000.0; // dt is in ms
++
++					if (unit.find("nJ") != string::npos) energy /= 1e9;
++					else if (unit.find("uJ") != string::npos or unit.find("\xc2\xb5J") != string::npos) energy /= 1e6;
++					else if (unit.find("mJ") != string::npos) energy /= 1e3;
++					//? energy is now in Joules
++
++					if (divisor > 0) {
++						cpu_power_watts = energy / divisor;
++						got_cpu_power = true;
+ 					}
+ 				}
+ 			}
+@@ -544,6 +564,12 @@
+ 					gpus_slice[0].pwr_max_usage = gpus_slice[0].pwr_usage;
+ 				gpus_slice[0].gpu_percent.at("gpu-pwr-totals").push_back(
+ 					clamp(static_cast<long long>(round(static_cast<double>(gpus_slice[0].pwr_usage) * 100.0 / static_cast<double>(gpus_slice[0].pwr_max_usage))), 0ll, 100ll));
++			}
++
++			//? Store CPU package power, drawn in the cpu box
++			if (got_cpu_power) {
++				Cpu::supports_watts = true;
++				Cpu::current_cpu.usage_watts = static_cast<float>(cpu_power_watts);
+ 			}
+ 
+ 			//? GPU temperature

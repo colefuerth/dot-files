@@ -3,6 +3,7 @@ let
   inherit (prev) lib;
 in
 (lib.composeManyExtensions [
+  (import ./btop)
   (import ./flameshot inputs)
   (import ./signal-desktop)
   # (import ./freetype-qdoled)
