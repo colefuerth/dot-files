@@ -433,8 +433,8 @@ in
         ];
       };
     };
-      # gtk-titlebar = false
-      # window-decoration = false
+    # gtk-titlebar = false
+    # window-decoration = false
     home.file.".config/ghostty/config".text = ''
       font-family = "Consolas Nerd Font Mono"
       theme = "Atom One Dark"

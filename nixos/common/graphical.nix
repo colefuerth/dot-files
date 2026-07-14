@@ -43,7 +43,10 @@
     packages = with pkgs; [
       qalculate-qt
     ];
-    extraGroups = [ "scanner" "lp" ];
+    extraGroups = [
+      "scanner"
+      "lp"
+    ];
   };
 
   home-manager.users.${username}.home.pointerCursor = {
