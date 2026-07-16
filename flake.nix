@@ -205,6 +205,11 @@
           username = "cole";
           system = "aarch64-linux";
         };
+        cole-server = mkNixosConfiguration {
+          host = "cole-server";
+          username = "cole";
+          system = "x86_64-linux";
+        };
         hs-thinkpad = mkNixosConfiguration {
           host = "hs-thinkpad";
           username = "cole";
@@ -240,6 +245,7 @@
           cole-desktop-vm = self.nixosConfigurations.cole-desktop.config.system.build.vm;
           cole-vm-vm = self.nixosConfigurations.cole-vm.config.system.build.vm;
           cole-pi-vm = self.nixosConfigurations.cole-pi.config.system.build.vm;
+          cole-server-vm = self.nixosConfigurations.cole-server.config.system.build.vm;
           hs-thinkpad-vm = self.nixosConfigurations.hs-thinkpad.config.system.build.vm;
           # Note: cole-wsl2-vm is not included because WSL configurations cannot be built as VMs
           inherit (dotFilesPackages)
@@ -281,6 +287,10 @@
             };
             cole-pi = {
               host = "cole-pi";
+              username = "cole";
+            };
+            cole-server = {
+              host = "cole-server";
               username = "cole";
             };
             # Note: cole-wsl2 excluded - WSL configurations cannot be tested as VMs
