@@ -3,3 +3,4 @@ config.bash
 /.opencode/
 *.qcow2
 .claude
+.DS_Store
