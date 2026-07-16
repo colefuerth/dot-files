@@ -23,6 +23,41 @@
     "cole-desktop-1:Gy9dhiisebzFg8c6mmsCyihQ+9LivAM1BWiWYx4iZPU="
   ];
 
+  # Delegate x86_64-linux builds to rd (cole-desktop) over ssh instead of
+  # emulating x86 on the mac. The nix-daemon runs as root, so connection
+  # details are spelled out here rather than relying on cole's ~/.ssh/config.
+  nix.distributedBuilds = true;
+  nix.buildMachines = [
+    {
+      hostName = "100.100.194.119"; # rd (cole-desktop) over tailscale
+      sshUser = username;
+      sshKey = "/Users/${username}/.ssh/id_ed25519";
+      # rd's ed25519 host key, so the daemon trusts it without a manual
+      # `ssh` to seed /var/root/.ssh/known_hosts. base64 -w0 of
+      # /etc/ssh/ssh_host_ed25519_key.pub on rd.
+      publicHostKey = "c3NoLWVkMjU1MTkgQUFBQUMzTnphQzFsWkRJMU5URTVBQUFBSUFTRU1GME1tV1c3ZzVhWmpaN2dFY1c2eWhKcFMyVXFqUzkyS2NxQzNOY08gcm9vdEBjb2xlLWRlc2t0b3AK";
+      system = "x86_64-linux";
+      protocol = "ssh-ng";
+      maxJobs = 100;
+      supportedFeatures = [
+        "benchmark"
+        "big-parallel"
+      ];
+    }
+  ];
+  # Have rd pull dependencies from substituters itself instead of copying the
+  # whole closure over from the mac.
+  nix.settings.builders-use-substitutes = true;
+
+  # Trust the admin user (cole) so the CLI can override restricted settings
+  # like `store`/`builders`. Needed to drive remote builds that keep outputs
+  # off the mac, e.g. `nix build --eval-store auto --store ssh-ng://cole@rd
+  # --max-jobs 0 .#nixosConfigurations.cole-server...`.
+  nix.settings.trusted-users = [
+    "root"
+    "@admin"
+  ];
+
   nixpkgs.overlays = [
     (
       final: prev:
