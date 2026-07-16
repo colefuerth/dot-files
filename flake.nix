@@ -22,7 +22,7 @@
     vscode-server.url = "github:nix-community/nixos-vscode-server";
     nix-darwin.url = "github:LnL7/nix-darwin";
     nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
-    dschana-system-config.url = "github:DSchana/system-config?ref=master";
+    dschana-system-config.url = "git+https://codeberg.org/dschana/system-config?ref=master";
     dschana-system-config.inputs = {
       nixpkgs.follows = "nixpkgs";
       nixpkgs-cosmic-pinned.follows = "nixpkgs";

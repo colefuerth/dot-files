@@ -2,6 +2,7 @@
   config,
   lib,
   pkgs,
+  inputs,
   username,
   dotFilesPackages,
   ...
@@ -158,6 +159,9 @@
     home.file.".config/flameshot/flameshot.ini".source =
       "${dotFilesPackages.configs}/flameshot/flameshot.ini";
     home.file.".config/ranger/rc.conf".source = "${dotFilesPackages.configs}/ranger/rc.conf";
+    # take .text, not the whole entry: the upstream source drv is pinned to aarch64-darwin
+    home.file.".config/herdr/config.toml".text =
+      inputs.dschana-system-config.darwinConfigurations.anz-macbook.config.home-manager.users.dschana.home.file.".config/herdr/config.toml".text;
     services.gpg-agent = {
       enable = true;
       enableBashIntegration = true;

@@ -9,6 +9,7 @@
       pandas
       pip
       pyserial
+      python-lsp-server
       scipy
       tqdm
     ];
