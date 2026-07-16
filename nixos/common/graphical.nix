@@ -29,7 +29,6 @@
 
   programs = {
     firefox.enable = lib.mkDefault true;
-    spotify-player.enable = lib.mkDefault true;
     vscode.enable = lib.mkDefault true;
   };
 
@@ -49,12 +48,15 @@
     ];
   };
 
-  home-manager.users.${username}.home.pointerCursor = {
-    name = "Adwaita";
-    package = pkgs.adwaita-icon-theme;
-    size = 24;
-    gtk.enable = true;
-    x11.enable = true;
+  home-manager.users.${username} = {
+    programs.spotify-player.enable = lib.mkDefault true;
+    home.pointerCursor = {
+      name = "Adwaita";
+      package = pkgs.adwaita-icon-theme;
+      size = 24;
+      gtk.enable = true;
+      x11.enable = true;
+    };
   };
 
   services.printing = {

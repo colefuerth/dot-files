@@ -314,6 +314,7 @@
                   username
                   dotFilesPackages
                   ;
+                isDarwin = false;
               };
               nodes.machine =
                 { ... }:
