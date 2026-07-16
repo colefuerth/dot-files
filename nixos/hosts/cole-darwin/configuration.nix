@@ -85,11 +85,12 @@
       ffpb
       gh
       git-lfs
+      herdr
       libclang
       micro
       nil
       nixfmt-tree
-      (python312.withPackages dotFilesPackages.pyPackages)
+      (python314.withPackages dotFilesPackages.pyPackages)
     ])
     ++ (with pkgs; [
       # anz deps
