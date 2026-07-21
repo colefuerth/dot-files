@@ -1,0 +1,44 @@
+# Ported from rs:/docker/minecraft. Run with a .env file next to this
+# holding RCON_PASSWORD=<secret> (repo is public, so it can't live here).
+services:
+  mc:
+    container_name: minecraft
+    image: itzg/minecraft-server:latest
+    ports:
+      - 25565:25565
+      - 25575:25575
+      - 19132:19132/udp
+    environment:
+      EULA: "TRUE"
+      TYPE: "FABRIC"
+      MAX_MEMORY: "8G"
+      JVM_OPTS: "-XX:+UnlockExperimentalVMOptions -XX:+UseG1GC -XX:G1NewSizePercent=20 -XX:G1ReservePercent=20 -XX:MaxGCPauseMillis=200 -XX:G1HeapRegionSize=32M"
+      GUI: "false"
+      MOTD: "gays against fellow gays"
+      EXEC_DIRECTLY: "true"
+      ENABLE_RCON: "true"
+      RCON_PASSWORD: "${RCON_PASSWORD:?set RCON_PASSWORD in .env}"
+      VERSION: "LATEST"
+      DIFFICULTY: "hard"
+      MAX_PLAYERS: "69"
+      ALLOW_FLIGHT: "true"
+      SERVER_NAME: "men and woman against women"
+      VIEW_DISTANCE: "24"
+      SIMULATION_DISTANCE: "10"
+      MOD_PLATFORM: "MODRINTH"
+      MODRINTH_LOADER: "fabric"
+      MODRINTH_ALLOWED_VERSION_TYPE: "alpha"
+      MODRINTH_DEFAULT_VERSION_TYPE: "beta"
+      MODRINTH_MODPACK: "https://modrinth.com/modpack/fabulously-optimized"
+      MODRINTH_PROJECTS: "c2me-fabric,no-chat-reports,fallingtree,geyser,journeymap"
+      MODRINTH_DOWNLOAD_DEPENDENCIES: "optional"
+      OPS: SquareWheelBike
+      EXISTING_OPS_FILE: MERGE
+      ONLINE_MODE: FALSE
+      SPAWN_PROTECTION: "1"
+    tty: true
+    stdin_open: true
+    restart: no
+    volumes:
+      - ./server:/data
+    cpus: 8
