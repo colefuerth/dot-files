@@ -35,24 +35,26 @@ in
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
-  users.users.${username}.packages = with pkgs; [
-    binsider
-    codex
-    discord
-    firefoxpwa
-    flameshot
-    google-chrome
-    grim
-    kdePackages.okular
-    micro
-    ristretto
-    signal-desktop
-    slurp
-    spotify
-    vlc
-  ];
-
-  nixpkgs.config.cudaSupport = true;
+  users.users.${username}.packages =
+    (with pkgs; [
+      binsider
+      codex
+      discord
+      firefoxpwa
+      flameshot
+      google-chrome
+      grim
+      kdePackages.okular
+      micro
+      ristretto
+      signal-desktop
+      slurp
+      spotify
+      vlc
+    ])
+    ++ (with dotFilesPackages; [
+      bedrock-on-linux
+    ]);
 
   environment.systemPackages = with pkgs; [
     avrdude

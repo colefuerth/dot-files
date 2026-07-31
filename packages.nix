@@ -76,6 +76,8 @@
     tw3mm = inputs.tw3mm;
   };
 
+  bedrock-on-linux = import ./packages/bedrock-on-linux.nix { inherit pkgs; };
+
   # Convenience derivation that includes the welcome script
   welcome = "${./10-welcome}";
 

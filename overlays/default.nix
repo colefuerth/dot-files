@@ -4,7 +4,9 @@ let
 in
 (lib.composeManyExtensions [
   (import ./btop)
+  (import ./firefox.nix)
   (import ./flameshot inputs)
+  (import ./scipy.nix)
   (import ./signal-desktop)
   # (import ./freetype-qdoled)
   # (import ./fresh-editor)
