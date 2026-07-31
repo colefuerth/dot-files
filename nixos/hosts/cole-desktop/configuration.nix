@@ -229,6 +229,7 @@ in
         vlc
       ])
       ++ (with dotFilesPackages; [
+        bedrock-on-linux
         tw3mm
       ]);
   };
@@ -238,6 +239,7 @@ in
   environment.systemPackages = with pkgs; [
     android-tools
     fastfetch
+    gamemode
     gamescope
     mangohud
     nil
@@ -400,6 +402,9 @@ in
   # Home-manager configuration for this machine
   home-manager.users.${username} = {
     home.stateVersion = "26.05";
+
+    programs.firefox.enable = false;
+
     services.linux-wallpaperengine = {
       # https://github.com/nix-community/home-manager/blob/master/modules/services/linux-wallpaperengine.nix
       enable = true;
