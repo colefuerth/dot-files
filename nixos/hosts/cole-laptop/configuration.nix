@@ -21,6 +21,7 @@ in
     ../../common/tailscale.nix
     ../../common/user.nix
     ../../common/wallpaper-engine.nix
+    ../../users/caroline/user.nix
     ../../common/xone.nix
     ./hardware-configuration.nix
     inputs.nixos-hardware.nixosModules.common-cpu-intel

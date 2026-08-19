@@ -54,11 +54,20 @@
       ];
       forAllSystems = nixpkgs.lib.genAttrs systems;
 
+      # home-manager user entry: `username` is passed per-user (not via
+      # extraSpecialArgs) so a host can have more than one home.
+      mkHomeUser = user: {
+        imports = [ ./nixos/users/${user}/home.nix ];
+        _module.args.username = user;
+      };
+
       # Helper to create the common module list for a host configuration
+      # `username` is the primary (admin) user; `extraUsers` get a home only.
       mkConfigModules =
         {
           host,
           username,
+          extraUsers ? [ ],
           dotFilesPackages,
         }:
         [
@@ -69,7 +78,6 @@
               inherit
                 inputs
                 host
-                username
                 dotFilesPackages
                 ;
             };
@@ -78,7 +86,7 @@
             home-manager.backupFileExtension = "bak.home-manager-${
               self.shortRev or self.dirtyShortRev or self.lastModified or "unknown"
             }";
-            home-manager.users.${username} = import ./nixos/users/${username}/home.nix;
+            home-manager.users = nixpkgs.lib.genAttrs ([ username ] ++ extraUsers) mkHomeUser;
           }
           sops-nix.nixosModules.sops
           determinate.nixosModules.default
@@ -92,6 +100,7 @@
           host,
           username,
           system,
+          extraUsers ? [ ],
         }:
         let
           pkgs = import nixpkgs {
@@ -119,6 +128,7 @@
             inherit
               host
               username
+              extraUsers
               dotFilesPackages
               ;
           };
@@ -160,7 +170,6 @@
                 inherit
                   inputs
                   host
-                  username
                   dotFilesPackages
                   ;
               };
@@ -169,7 +178,7 @@
               home-manager.backupFileExtension = "bak.home-manager-${
                 self.shortRev or self.dirtyShortRev or self.lastModified or "unknown"
               }";
-              home-manager.users.${username} = import ./nixos/users/${username}/home.nix;
+              home-manager.users.${username} = mkHomeUser username;
             }
             sops-nix.darwinModules.sops
           ];
@@ -183,6 +192,7 @@
         cole-laptop = mkNixosConfiguration {
           host = "cole-laptop";
           username = "cole";
+          extraUsers = [ "caroline" ];
           system = "x86_64-linux";
         };
         cole-desktop = mkNixosConfiguration {
@@ -250,11 +260,9 @@
           # Note: cole-wsl2-vm is not included because WSL configurations cannot be built as VMs
           inherit (dotFilesPackages)
             aliases
-            scripts
             configs
             bambu-studio
             consolas-nf
-            remote-switch
             ;
 
           # Standalone shell environment
@@ -272,6 +280,7 @@
             cole-laptop = {
               host = "cole-laptop";
               username = "cole";
+              extraUsers = [ "caroline" ];
             };
             cole-desktop = {
               host = "cole-desktop";
@@ -299,7 +308,11 @@
           nixos-lib = import (nixpkgs + "/nixos/lib") { };
           mkBootTest =
             name:
-            { host, username }:
+            {
+              host,
+              username,
+              extraUsers ? [ ],
+            }:
             let
               testPkgs = import nixpkgs {
                 inherit system;
@@ -330,7 +343,12 @@
                 { ... }:
                 {
                   imports = mkConfigModules {
-                    inherit host username dotFilesPackages;
+                    inherit
+                      host
+                      username
+                      extraUsers
+                      dotFilesPackages
+                      ;
                   };
                   # Override hardware-specific settings for VM testing
                   virtualisation.graphics = false;
