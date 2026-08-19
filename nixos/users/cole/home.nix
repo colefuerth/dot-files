@@ -160,9 +160,31 @@
     home.file.".config/flameshot/flameshot.ini".source =
       "${dotFilesPackages.configs}/flameshot/flameshot.ini";
     home.file.".config/ranger/rc.conf".source = "${dotFilesPackages.configs}/ranger/rc.conf";
-    # take .text, not the whole entry: the upstream source drv is pinned to aarch64-darwin
-    home.file.".config/herdr/config.toml".text =
-      inputs.dschana-system-config.darwinConfigurations.anz-macbook.config.home-manager.users.dschana.home.file.".config/herdr/config.toml".text;
+    home.activation.herdrConfig =
+      let
+        herdrConfig = pkgs.writeText "herdr-config.toml" ''
+          [keys]
+          new_tab = "prefix+c"
+          rename_tab = "prefix+,"
+          previous_tab = "prefix+p"
+          next_tab = "prefix+n"
+          focus_pane_left = "prefix+left"
+          focus_pane_down = "prefix+down"
+          focus_pane_up = "prefix+up"
+          focus_pane_right = "prefix+right"
+          split_vertical = "prefix+%"
+          split_horizontal = "prefix+\""
+
+          [theme]
+          name = "one-dark"
+          auto_switch = true
+          light_name = "one-light"
+          dark_name = "one-dark"
+        '';
+      in
+      lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+        $DRY_RUN_CMD install $VERBOSE_ARG -Dm644 ${herdrConfig} ${config.home.homeDirectory}/.config/herdr/config.toml
+      '';
     services.gpg-agent = {
       enable = true;
       enableBashIntegration = true;

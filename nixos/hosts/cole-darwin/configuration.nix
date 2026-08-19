@@ -13,6 +13,7 @@
   ];
 
   # time.timeZone = "America/Toronto";
+  # time.timeZone = "America/Chicago";
 
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
@@ -425,7 +426,7 @@
     home.file.".config/ghostty/config".text = ''
       font-family = "Consolas Nerd Font Mono"
       # macos-titlebar-style = hidden
-      theme = "Atom One Dark"
+      theme = dark:Atom One Dark,light:Atom One Light
     '';
   };
 }
