@@ -256,6 +256,7 @@ in
     winetricks
     wineWow64Packages.waylandFull
     tumbler
+    xrandr
   ];
 
   fileSystems = {
@@ -345,6 +346,9 @@ in
 
   hardware.nvidia = {
     open = true;
+    package = config.boot.kernelPackages.nvidiaPackages.latest;
+    modesetting.enable = true;
+    nvidiaSettings = true;
     powerManagement.enable = true;
   };
   hardware.nvidia-container-toolkit.enable = true; # restored — keeps container CDI GPU working
@@ -412,7 +416,7 @@ in
       wallpapers = [
         {
           # ultrawide
-          monitor = "DP-1"; # Your laptop's internal display
+          monitor = "DP-2"; # Your laptop's internal display
           wallpaperId = wallpaperIds.hyper-cube-oled;
           scaling = "default"; # "stretch", "fit", "fill", or "default"
           fps = 24;
@@ -422,9 +426,14 @@ in
             "--set-property backgroundcolor=0.0,0.0,0.0"
           ];
         }
+        # {
+        #   monitor = "HDMI-A-1";
+        #   wallpaperId = wallpaperIds.frieren-cold;
+        # }
         {
-          monitor = "HDMI-A-1";
-          wallpaperId = wallpaperIds.frieren-cold;
+          # ultrawide
+          monitor = "DP-1"; # Your laptop's internal display
+          wallpaperId = wallpaperIds.ascii-donut;
         }
       ];
     };

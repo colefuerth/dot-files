@@ -2,26 +2,29 @@
 
 let
   # Packages for the shell environment
-  shellPackages = with pkgs; [
-    btop
-    direnv
-    eza
-    fresh-editor
-    git
-    mcfly
-    micro
-    ncdu
-    ranger
-    starship
-    zsh
-    zsh-autosuggestions
-    zsh-autocomplete
-    zsh-syntax-highlighting
-  ];
+  shellPackages =
+    with pkgs;
+    [
+      btop
+      direnv
+      eza
+      fresh-editor
+      git
+      mcfly
+      micro
+      ncdu
+      ranger
+      starship
+      zsh
+      zsh-autosuggestions
+      zsh-autocomplete
+      zsh-syntax-highlighting
+    ]
+    ++ dotFilesPackages.scriptPackages;
 in
 pkgs.writeShellScriptBin "cole-shell" ''
   export SHRC="zsh"
-  export PATH="${pkgs.lib.makeBinPath shellPackages}:${dotFilesPackages.scripts}/bin:$PATH"
+  export PATH="${pkgs.lib.makeBinPath shellPackages}:$PATH"
   export STARSHIP_CONFIG="${dotFilesPackages.configs}/starship.toml"
 
   # Create temporary zshrc

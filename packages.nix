@@ -52,13 +52,9 @@
     cp -r ${./aliases}/* $out/
   '';
 
-  # Derivation containing all scripts
-  scripts = pkgs.runCommand "dot-files-scripts" { } ''
-    mkdir -p $out/bin
-    cp -r ${./scripts}/* $out/bin/
-    # Make all scripts executable
-    chmod +x $out/bin/*
-  '';
+  # Each utility script in ./scripts as its own package (with its runtime
+  # dependencies bundled). A list, spliced into home.packages / the shell PATH.
+  scriptPackages = import ./packages/scripts.nix { inherit pkgs; };
 
   # Derivation containing all config files
   configs = pkgs.runCommand "dot-files-configs" { } ''
@@ -144,16 +140,4 @@
     };
   };
 
-  remote-switch = pkgs.writeShellApplication {
-    name = "remote-switch";
-    runtimeInputs = with pkgs; [
-      bash
-      coreutils
-      nix
-      nix-output-monitor
-      openssh
-      sshpass
-    ];
-    text = builtins.readFile ./scripts/remote-switch;
-  };
 }
