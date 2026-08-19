@@ -6,7 +6,7 @@ in
   (import ./btop)
   (import ./firefox.nix)
   (import ./flameshot inputs)
-  (import ./scipy.nix)
+  (import ./python-test-skips.nix)
   (import ./signal-desktop)
   # (import ./freetype-qdoled)
   # (import ./fresh-editor)
