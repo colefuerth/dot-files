@@ -135,10 +135,6 @@ in
     ];
   };
 
-  # mx master 3s
-  hardware.logitech.wireless.enable = true;
-  hardware.logitech.wireless.enableGraphical = true;
-
   services.xserver.videoDrivers = [ "nvidia" ];
 
   hardware.nvidia = {

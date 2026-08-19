@@ -15,11 +15,13 @@
       homeDirectory = if pkgs.stdenv.isDarwin then "/Users/${username}" else "/home/${username}";
       stateVersion = lib.mkDefault "25.11";
       language.base = "en_US.UTF-8";
-      packages = with pkgs; [
-        inxi
-        ncdu
-        fastfetch
-      ];
+      packages =
+        (with pkgs; [
+          inxi
+          ncdu
+          fastfetch
+        ])
+        ++ dotFilesPackages.scriptPackages;
     };
 
     nixpkgs.config = {
@@ -122,7 +124,6 @@
                   esac
                 fi
               done
-              export PATH=$PATH:${dotFilesPackages.scripts}/bin
             '';
             # dev shell setup
             zshConfigLateInit = lib.mkOrder 1500 ''
