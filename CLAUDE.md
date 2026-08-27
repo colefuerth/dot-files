@@ -36,7 +36,10 @@ packages/              # Extra nix package definitions (tour.nix, f5.nix)
 
 ```bash
 # Apply current host config (macOS)
-nom build .\#darwinConfigurations.cole-darwin.config.system.build.toplevel && sudo ./result/switch
+# Must be `switch`: only it advances /nix/var/nix/profiles/system, which the
+# boot-time org.nixos.activate-system daemon replays. Activating ./result
+# directly leaves that profile stale and every reboot rolls the system back.
+sudo darwin-rebuild --log-format internal-json -v --flake ~/dot-files\#cole-darwin switch |& nom --json
 
 # Apply config on NixOS (uses nom for output)
 sudo nixos-rebuild --log-format internal-json -v --flake /home/cole/dot-files\#<hostname> switch |& nom --json
