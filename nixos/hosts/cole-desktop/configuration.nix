@@ -537,13 +537,13 @@ in
     # However, if you need to configure something see https://github.com/WiVRn/WiVRn/blob/master/docs/configuration.md for configuration options and https://mynixos.com/nixpkgs/option/services.wivrn.config.json for an example configuration.
   };
 
-  # TEMPORARY (trip): keep the desktop awake so I can SSH in over Tailscale
-  # while I'm away. Remove this block when I'm back home.
-  services.logind.lidSwitch = "ignore";
-  systemd.targets.sleep.enable = false;
-  systemd.targets.suspend.enable = false;
-  systemd.targets.hibernate.enable = false;
-  systemd.targets.hybrid-sleep.enable = false;
+  # # TEMPORARY (trip): keep the desktop awake so I can SSH in over Tailscale
+  # # while I'm away. Remove this block when I'm back home.
+  # services.logind.lidSwitch = "ignore";
+  # systemd.targets.sleep.enable = false;
+  # systemd.targets.suspend.enable = false;
+  # systemd.targets.hibernate.enable = false;
+  # systemd.targets.hybrid-sleep.enable = false;
 
   systemd.services.tailscale-autoconnect = {
     description = "Bring Tailscale up at boot";
