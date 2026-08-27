@@ -179,9 +179,64 @@ in
   # reinitialize the RTX 5070 Ti on S3 resume (Xid 13 shader exceptions)
   boot.kernelParams = [ "mem_sleep_default=s2idle" ];
 
-  # NT synchronization primitives driver — lets Proton/Wine use real Windows
-  # sync semantics instead of the fsync/esync userland fallbacks.
-  boot.kernelModules = [ "ntsync" ];
+  boot.kernelModules = [
+    "ntsync" # windows filesystem primitives
+    "nct6775" # motherboard sensors
+  ];
+
+  # Labels for the NCT6797D so `sensors` prints something meaningful instead of
+  # fan1..fan7. Mapping was established empirically by ramping each PWM channel
+  # and watching which tach responded — fan1 is the AIO pump (RPM stays flat
+  # across the whole duty range), fan2 the radiator fan, fan3-5 the case fans.
+  #
+  # The in* rails are ignored because the board leaves their min/max registers
+  # at zero, so each reports a permanent bogus ALARM. Clearing that properly
+  # means writing thresholds into the chip with `sensors -s`, which is not worth
+  # a unit for voltage readings this board reports unreliably anyway.
+  environment.etc."sensors.d/nct6797.conf".text = ''
+    chip "nct6797-isa-0a20"
+
+        label fan1 "AIO Pump"
+        label fan2 "AIO Radiator"
+        label fan3 "Case Fan 1"
+        label fan4 "Case Fan 2"
+        label fan5 "Case Fan 3"
+        ignore fan6
+        ignore fan7
+        ignore pwm6
+        ignore pwm7
+
+        label temp1 "Motherboard"
+        label temp2 "CPU Socket"
+        label temp13 "CPU (Tdie)"
+        ignore temp4
+        ignore temp6
+        ignore temp7
+        ignore temp8
+        ignore temp9
+        ignore temp10
+        ignore temp11
+        ignore temp12
+
+        label in0 "Vcore"
+        ignore in1
+        ignore in2
+        ignore in3
+        ignore in4
+        ignore in5
+        ignore in6
+        ignore in7
+        ignore in8
+        ignore in9
+        ignore in10
+        ignore in11
+        ignore in12
+        ignore in13
+        ignore in14
+
+        ignore intrusion0
+        ignore intrusion1
+  '';
 
   # Bootloader — lanzaboote (signed stub) replaces systemd-boot for Secure Boot.
   # Keep systemd-boot disabled via mkForce so nothing re-enables it.
@@ -245,6 +300,7 @@ in
     fastfetch
     gamemode
     gamescope
+    lm_sensors
     mangohud
     nil
     nixfmt-tree
