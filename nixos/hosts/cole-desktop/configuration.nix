@@ -167,6 +167,10 @@ in
   nixcfg.cosmic.enable = false;
   nixcfg.plasma.enable = true;
 
+  # GB203 (RTX 5070 Ti) HDMI out -> the TV. Becomes the default output whenever
+  # the controller connects and Big Picture opens.
+  nixcfg.xone.bigPictureSink = "alsa_output.pci-0000_2d_00.1.hdmi-stereo";
+
   # Select the kernel version
   boot.kernelPackages = pkgs.linuxPackages_latest;
   boot.binfmt.emulatedSystems = [ "aarch64-linux" ];
