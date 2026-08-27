@@ -258,17 +258,10 @@
           cole-server-vm = self.nixosConfigurations.cole-server.config.system.build.vm;
           hs-thinkpad-vm = self.nixosConfigurations.hs-thinkpad.config.system.build.vm;
           # Note: cole-wsl2-vm is not included because WSL configurations cannot be built as VMs
-          inherit (dotFilesPackages)
-            aliases
-            configs
-            bambu-studio
-            consolas-nf
-            ;
-
-          # Standalone shell environment
           shell = import ./shell.nix { inherit pkgs dotFilesPackages; };
           default = shell;
         }
+        // dotFilesPackages
       );
 
       checks = forAllSystems (
