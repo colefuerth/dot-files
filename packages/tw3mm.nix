@@ -19,6 +19,10 @@ pkgs.stdenv.mkDerivation {
 
   src = tw3mm;
 
+  patches = [
+    ./patches/tw3mm-stringio.patch
+  ];
+
   nativeBuildInputs = [
     pkgs.makeWrapper
     pkgs.qt6.wrapQtAppsHook

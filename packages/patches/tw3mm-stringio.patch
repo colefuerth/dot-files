@@ -1,0 +1,12 @@
+diff --git a/src/core/model.py b/src/core/model.py
+index bd4f7ac..3575360 100644
+--- a/src/core/model.py
++++ b/src/core/model.py
+@@ -1,6 +1,7 @@
+ '''Mod management model'''
+ # pylint: disable=invalid-name,missing-docstring,wildcard-import,unused-wildcard-import
+ 
++from io import StringIO
+ from typing import Dict, List, KeysView, ValuesView
+ from os import path
+ import re
