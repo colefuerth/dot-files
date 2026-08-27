@@ -118,7 +118,18 @@ in
       ++ lib.optionals isLinux [
         # Linux-specific configuration
         {
+          # Back /tmp with a tmpfs (defaults to 50% of RAM). It starts empty every
+          # boot, so systemd-tmpfiles-setup no longer has to recursively unlink a
+          # session's worth of files off the btrfs root before sysinit.target --
+          # that wipe was blocking boot for minutes. It also means /tmp can no
+          # longer eat the system disk. cleanOnBoot stays as a cheap fallback for
+          # any host that overrides useTmpfs back to false.
+          boot.tmp.useTmpfs = lib.mkDefault true;
           boot.tmp.cleanOnBoot = lib.mkDefault true;
+
+          # Nix builds default to $TMPDIR=/tmp; point the daemon at disk-backed
+          # /var/tmp so a large build spills to the SSD instead of exhausting RAM.
+          systemd.services.nix-daemon.environment.TMPDIR = lib.mkDefault "/var/tmp";
 
           # Don't link packages' "doc" outputs into the system path. This keeps
           # broken upstream doc builds (e.g. CPython's Sphinx docs) out of the
