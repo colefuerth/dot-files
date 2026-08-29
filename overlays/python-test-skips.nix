@@ -3,7 +3,6 @@
 # full test suites. A few of those suites fail for reasons unrelated to how we
 # use the package — flaky tolerances, or tests coupled to a fast-drifting
 # upstream at this pin:
-#   - scipy:  borderline floating-point tolerance tests on x86_64
 #   - pylint: "primer" tests that diff pylint output against a pinned astroid
 #             (pulled in transitively by python-lsp-server)
 #
@@ -13,7 +12,6 @@
 final: prev:
 let
   skipChecks = [
-    "scipy"
     "pylint"
   ];
 in
