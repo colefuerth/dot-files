@@ -1,5 +1,6 @@
 {
   dotFilesPackages,
+  config,
   lib,
   inputs,
   pkgs,
@@ -116,7 +117,10 @@ in
   ];
 
   hardware.nvidia = {
+    # GTX 1060 Max-Q is Pascal: dropped by the 595 branch, and open kernel
+    # modules need Turing or newer. Pin the 580 legacy branch.
     open = false;
+    package = config.boot.kernelPackages.nvidiaPackages.legacy_580;
     prime = {
       # [offload, sync, reverseSync] only one should be true
       offload.enable = true; # use igpu for everything except when using the offload cmd
