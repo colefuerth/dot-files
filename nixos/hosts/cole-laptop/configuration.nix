@@ -57,6 +57,8 @@ in
       bedrock-on-linux
     ]);
 
+  users.users.caroline.packages = [ pkgs.discord ];
+
   environment.systemPackages = with pkgs; [
     avrdude
     claude-code
