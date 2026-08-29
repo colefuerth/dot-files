@@ -345,6 +345,88 @@ in
   # DO NOT CHANGE AFTER THE INITIAL INSTALLATION
   system.stateVersion = "26.05";
 
+  # Razer Seiren Mini chain (desk mic, used with speakers so it needs AEC):
+  #   raw mic -> echo-cancel (WebRTC AEC) -> rnnoise -> "rnnoise_seiren_source"
+  #
+  # AEC runs first so RNNoise never sees the speaker bleed. monitor.mode=true
+  # takes the reference signal from the monitor ports of the *default sink*, so
+  # no virtual sink is created and nothing has to be re-routed — it follows
+  # whatever output is active. WebRTC's own noise suppressor is off; RNNoise
+  # does that job far better. echo_cancel_seiren is an intermediate —
+  # priority.session=1 keeps wireplumber from ever selecting it as the default
+  # input. The G733 chain below deliberately has no AEC: it is a closed-back
+  # headset, so there is no acoustic path from its output back into its mic.
+  services.pipewire.extraConfig.pipewire."98-seiren-aec-rnnoise" = {
+    "context.modules" = [
+      {
+        name = "libpipewire-module-echo-cancel";
+        args = {
+          "library.name" = "aec/libspa-aec-webrtc";
+          "monitor.mode" = true;
+          "audio.rate" = 48000;
+          "audio.channels" = 1;
+          "audio.position" = [ "MONO" ];
+          "aec.args" = {
+            "webrtc.noise_suppression" = false;
+            "webrtc.gain_control" = true;
+            "webrtc.high_pass_filter" = true;
+          };
+          "capture.props" = {
+            "node.name" = "capture.aec_seiren";
+            "node.passive" = true;
+            "target.object" = "alsa_input.usb-Razer_Inc_Razer_Seiren_Mini_UC2208L03305162-00.mono-fallback";
+          };
+          "source.props" = {
+            "node.name" = "echo_cancel_seiren";
+            "node.description" = "Seiren Mini Echo-Cancelled Microphone";
+            "priority.session" = 1;
+          };
+          # In monitor.mode this stream captures the default sink's monitor (the
+          # AEC reference); it is not a virtual sink. playback.props is unused.
+          "sink.props" = {
+            "node.name" = "capture.aec_seiren_reference";
+            "node.passive" = true;
+          };
+        };
+      }
+      {
+        name = "libpipewire-module-filter-chain";
+        args = {
+          "node.description" = "Seiren Mini (AEC + RNNoise)";
+          "media.name" = "Seiren Mini (AEC + RNNoise)";
+          "filter.graph" = {
+            nodes = [
+              {
+                type = "ladspa";
+                name = "rnnoise";
+                plugin = "librnnoise_ladspa";
+                label = "noise_suppressor_mono";
+                control = {
+                  "VAD Threshold (%)" = 50.0;
+                };
+              }
+            ];
+          };
+          "capture.props" = {
+            "node.name" = "capture.rnnoise_seiren";
+            "node.passive" = true;
+            "audio.rate" = 48000;
+            "target.object" = "echo_cancel_seiren";
+          };
+          "playback.props" = {
+            "node.name" = "rnnoise_seiren_source";
+            "node.description" = "Seiren Mini Clean Microphone";
+            "media.class" = "Audio/Source";
+            "audio.rate" = 48000;
+            # Higher than the G733 chain: when the desk mic is plugged in it wins.
+            "priority.session" = 2100;
+            "priority.driver" = 2100;
+          };
+        };
+      }
+    ];
+  };
+
   # RNNoise denoising for the G733 mic via a native PipeWire filter-chain.
   # Replaces NoiseTorch — pipewire-pulse does not implement module-ladspa-source,
   # so noisetorch's PA-emulated module load fails with "No such entity". The
