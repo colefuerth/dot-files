@@ -20,7 +20,7 @@ pkgs.stdenv.mkDerivation {
   src = tw3mm;
 
   patches = [
-    ./patches/tw3mm-stringio.patch
+    # ./patches/tw3mm-stringio.patch
   ];
 
   nativeBuildInputs = [
