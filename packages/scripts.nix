@@ -63,6 +63,15 @@ in
   (bashScript "switch" [ pkgs.nix-output-monitor ])
   # tv only drives systemctl --user, which is always ambient on its NixOS hosts.
   (bashScript "tv" [ ])
+  # win10-vm needs virt-install and virsh; hostname comes from coreutils.
+  (bashScript "win10-vm" (
+    with pkgs;
+    [
+      virt-manager
+      libvirt
+      coreutils
+    ]
+  ))
   nomr
   (bashScript "nomt" [
     nomr

@@ -1,0 +1,112 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+# Manage the local Windows 10 test VM on qemu:///system.
+#
+# Mirrors the config that actually works for win10-node on cole-server: q35,
+# a SATA disk and an e1000e NIC (the stock Win10 installer ships no virtio
+# storage/network drivers, so virtio buses leave Setup with no disk to install
+# to), plus VNC bound to loopback — reached over an SSH tunnel from the Mac
+# exactly like the server one, rather than exposed on the LAN.
+#
+# Everything lives under $VM_DIR in $HOME so no step needs root: membership in
+# the libvirtd group is enough to drive qemu:///system, and libvirtd's qemu
+# runs as root (virtualisation.libvirtd.qemu.runAsRoot) so it can read there.
+
+NAME="${WIN10_VM_NAME:-win10-node}"
+VM_DIR="${WIN10_VM_DIR:-$HOME/vm}"
+ISO="${WIN10_VM_ISO:-$VM_DIR/iso/Win10_22H2_English_x64.iso}"
+DISK="$VM_DIR/$NAME.qcow2"
+SIZE="${WIN10_VM_SIZE:-60}"
+RAM="${WIN10_VM_RAM:-16384}"
+# Windows 10 licenses by socket (Pro caps at two), and a bare --vcpus N hands
+# qemu N sockets of one core — so Windows counts 2 and ignores the rest. Give
+# it a single socket shaped like the host instead: 8 cores x 2 threads = 16.
+VCPUS="${WIN10_VM_VCPUS:-16,sockets=1,cores=8,threads=2}"
+VNC_PORT="${WIN10_VM_VNC_PORT:-5901}"
+
+V=(virsh -c qemu:///system)
+
+die() { echo "win10-vm: $*" >&2; exit 1; }
+exists() { "${V[@]}" dominfo "$NAME" &>/dev/null; }
+
+# The default NAT network is libvirt state, not something the NixOS module
+# declares, so a fresh machine needs it brought up once.
+ensure_net() {
+    "${V[@]}" net-info default &>/dev/null || die "libvirt 'default' network is missing"
+    "${V[@]}" net-list --name | grep -qx default || "${V[@]}" net-start default
+    "${V[@]}" net-autostart default >/dev/null
+}
+
+create() {
+    exists && die "domain '$NAME' already exists — use 'win10-vm recreate' to rebuild it"
+    [[ -f $ISO ]] || die "installer ISO not found: $ISO"
+    ensure_net
+    mkdir -p "$VM_DIR"
+
+    virt-install \
+        --connect qemu:///system \
+        --name "$NAME" \
+        --memory "$RAM" \
+        --vcpus "$VCPUS" \
+        --cpu host-passthrough \
+        --machine q35 \
+        --osinfo win10 \
+        --disk "path=$DISK,size=$SIZE,format=qcow2,bus=sata,cache=writeback,discard=unmap" \
+        --cdrom "$ISO" \
+        --network network=default,model=e1000e \
+        --graphics "vnc,port=$VNC_PORT,listen=127.0.0.1" \
+        --video qxl \
+        --sound ich9 \
+        --virt-type kvm \
+        --noautoconsole
+
+    echo
+    vnc_hint
+}
+
+remove() {
+    exists || { echo "no domain '$NAME'"; return 0; }
+    "${V[@]}" destroy "$NAME" &>/dev/null || true
+    "${V[@]}" undefine "$NAME" --nvram --remove-all-storage
+}
+
+vnc_hint() {
+    cat <<HINT
+VNC is on 127.0.0.1:$VNC_PORT of $(hostname). From the Mac:
+
+    ssh -N -L $VNC_PORT:127.0.0.1:$VNC_PORT $(hostname)
+
+then point TigerVNC at localhost:$VNC_PORT
+HINT
+}
+
+case "${1:-}" in
+    create)   create ;;
+    recreate) remove; create ;;
+    rm)       remove ;;
+    start)    ensure_net; "${V[@]}" start "$NAME" ;;
+    stop)     "${V[@]}" shutdown "$NAME" ;;
+    kill)     "${V[@]}" destroy "$NAME" ;;
+    vnc)      vnc_hint ;;
+    status)   "${V[@]}" list --all; exists && "${V[@]}" domdisplay "$NAME" ;;
+    *)
+        cat <<USAGE
+Usage: win10-vm <command>
+
+Commands:
+  create      Build the VM and boot the Windows installer
+  recreate    Delete it (disk included) and build again from scratch
+  rm          Delete the VM and its disk
+  start       Boot the VM
+  stop        Graceful shutdown
+  kill        Pull the power
+  vnc         Print the SSH tunnel command for TigerVNC
+  status      Show domain state and display URI
+
+Overrides: WIN10_VM_{NAME,DIR,ISO,SIZE,RAM,VCPUS,VNC_PORT}
+USAGE
+        exit 1
+        ;;
+esac
