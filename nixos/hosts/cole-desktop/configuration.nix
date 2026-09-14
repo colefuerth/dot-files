@@ -278,6 +278,7 @@ in
         lutris
         micro
         opencode
+        prismlauncher
         r2modman
         ristretto
         signal-desktop
@@ -332,6 +333,47 @@ in
       device = "/dev/disk/by-uuid/82b3fa85-c97f-41e5-9520-a0b681bc8671";
       fsType = "ext4";
     };
+  };
+
+  # Samba share of /mnt/hdd.
+  #
+  # The share definition is declarative, but the account password deliberately
+  # is not. Samba keeps its own passdb (separate from the Unix password) storing
+  # an unsalted MD4 "NT hash" — that hash *is* the credential for NTLM auth, so
+  # unlike `initialHashedPassword` (yescrypt, slow) it can't safely live in the
+  # world-readable Nix store, let alone a public repo. Run once per machine:
+  #   sudo smbpasswd -a cole
+  services.samba = {
+    enable = true;
+    openFirewall = true;
+    settings = {
+      global = {
+        "server role" = "standalone server";
+        # Reject unknown users outright instead of silently downgrading them to
+        # guest — the share below is authenticated, so a guest fallback would
+        # only turn "wrong username" into a confusing permission denied.
+        "map to guest" = "Never";
+        "server string" = "cole-desktop";
+      };
+      hdd = {
+        path = "/mnt/hdd";
+        comment = "cole-desktop /mnt/hdd";
+        "read only" = "no";
+        "valid users" = username;
+        # Written files land owned by cole with sane perms regardless of what
+        # the client asks for.
+        "create mask" = "0644";
+        "directory mask" = "0755";
+      };
+    };
+  };
+
+  # WS-Discovery — makes the host show up in Windows Explorer's Network pane and
+  # in Dolphin, rather than needing \\192.168.69.4 typed by hand. The NetBIOS
+  # browsing that used to do this is disabled on modern clients (SMB1 removal).
+  services.samba-wsdd = {
+    enable = true;
+    openFirewall = true;
   };
 
   swapDevices = [

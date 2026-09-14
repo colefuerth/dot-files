@@ -167,7 +167,10 @@ in
               enable = true;
               binfmt = true;
             };
-            java.enable = true;
+            java = {
+              enable = true;
+              package = pkgs.jdk25;
+            };
             nix-ld = {
               enable = true;
               libraries = with pkgs; [
