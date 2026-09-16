@@ -61,6 +61,7 @@ in
             [
               _7zz
               binutils # provides strings, objdump, nm, etc.
+              cargo
               curl
               dig
               eza
@@ -84,6 +85,7 @@ in
               ranger
               ripgrep
               rsync
+              rustc
               tmux
               unrar
               unzip

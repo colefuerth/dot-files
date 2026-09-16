@@ -3,12 +3,19 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
+    croft.url = "github:vitali87/croft?ref=main";
+    croft.flake = false;
     determinate.url = "https://flakehub.com/f/DeterminateSystems/determinate/*";
     determinate.inputs.nixpkgs.follows = "nixpkgs";
+    flake-utils.url = "github:numtide/flake-utils";
     home-manager.url = "github:nix-community/home-manager?ref=master";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
     lanzaboote.url = "github:nix-community/lanzaboote/v1.1.0";
     lanzaboote.inputs.nixpkgs.follows = "nixpkgs";
+    rust-overlay = {
+      url = "github:oxalica/rust-overlay";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     sops-nix.url = "github:Mic92/sops-nix";
     sops-nix.inputs.nixpkgs.follows = "nixpkgs";
     nix-vscode-extensions.url = "github:nix-community/nix-vscode-extensions";
@@ -39,7 +46,9 @@
       self,
       nixpkgs,
       determinate,
+      flake-utils,
       home-manager,
+      rust-overlay,
       sops-nix,
       nixos-wsl,
       nix-vscode-extensions,
@@ -106,6 +115,7 @@
           pkgs = import nixpkgs {
             inherit system;
             overlays = [
+              rust-overlay.overlays.default
               nix-vscode-extensions.overlays.default
               self.overlays.default
             ];
@@ -144,6 +154,7 @@
           pkgs = import nixpkgs {
             inherit system;
             overlays = [
+              rust-overlay.overlays.default
               nix-vscode-extensions.overlays.default
               self.overlays.default
             ];
@@ -245,7 +256,10 @@
               builtins.elem (nixpkgs.lib.getName pkg) [
                 "claude-code"
               ];
-            overlays = [ self.overlays.default ];
+            overlays = [
+              self.overlays.default
+              rust-overlay.overlays.default
+            ];
           };
           dotFilesPackages = import ./packages.nix { inherit pkgs inputs; };
         in
@@ -310,6 +324,7 @@
               testPkgs = import nixpkgs {
                 inherit system;
                 overlays = [
+                  rust-overlay.overlays.default
                   nix-vscode-extensions.overlays.default
                   self.overlays.default
                 ];

@@ -1,4 +1,8 @@
-{ pkgs, inputs }:
+{
+  pkgs,
+  inputs,
+  ...
+}:
 {
   # Shared Python environment package list. Pass to <python>.withPackages so
   # each host keeps its own interpreter version while sharing one package list.
@@ -73,6 +77,10 @@
   };
 
   bedrock-on-linux = import ./packages/bedrock-on-linux.nix { inherit pkgs; };
+
+  croft = import ./packages/croft.nix {
+    inherit pkgs inputs;
+  };
 
   # Convenience derivation that includes the welcome script
   welcome = "${./10-welcome}";
