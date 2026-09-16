@@ -290,6 +290,7 @@ in
       ])
       ++ (with dotFilesPackages; [
         bedrock-on-linux
+        croft
         tw3mm
       ]);
   };
