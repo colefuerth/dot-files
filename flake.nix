@@ -275,7 +275,7 @@
           shell = import ./shell.nix { inherit pkgs dotFilesPackages; };
           default = shell;
         }
-        // dotFilesPackages
+        // nixpkgs.lib.filterAttrs (_: nixpkgs.lib.isDerivation) dotFilesPackages
       );
 
       checks = forAllSystems (
