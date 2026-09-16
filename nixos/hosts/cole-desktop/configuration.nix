@@ -133,6 +133,7 @@ let
 in
 {
   imports = [
+    ../../common/wallpaper-engine.nix
     ../../common
     ../../common/audio.nix
     ../../common/bluetooth.nix
@@ -588,50 +589,34 @@ in
     };
   };
 
+  nixcfg.wallpaperEngine = {
+    enable = true;
+    serviceEnvironment = [
+      "LIBVA_DRIVER_NAME=nvidia"
+      "LIBVA_DRIVERS_PATH=${pkgs.nvidia-vaapi-driver}/lib/dri"
+    ];
+    # Only "video" and "scene" wallpapers used to render here -- "web" ones came
+    # out black until overlays/linux-wallpaperengine fixed the upstream GL bug.
+    monitors = {
+      # Alienware AW3423DWF ultrawide QD-OLED
+      "DEL AW3423DWF" = {
+        wallpaperId = wallpaperIds.frieren-cold;
+        scaling = "default";
+      };
+      # Samsung Odyssey G5
+      "SAM LC27G5xT".wallpaperId = wallpaperIds.polish-cow-dandadan;
+      # TCL Beyond TV
+      "TCL Beyond TV".wallpaperId = wallpaperIds.frieren-cold;
+    };
+    defaultWallpaper.wallpaperId = wallpaperIds.firewatch-clock;
+  };
+
   # Home-manager configuration for this machine
   home-manager.users.${username} = {
     home.stateVersion = "26.05";
 
     programs.firefox.enable = false;
 
-    services.linux-wallpaperengine = {
-      # https://github.com/nix-community/home-manager/blob/master/modules/services/linux-wallpaperengine.nix
-      enable = true;
-      assetsPath = "/home/cole/.local/share/Steam/steamapps/common/wallpaper_engine/assets";
-      wallpapers = [
-        {
-          # ultrawide
-          monitor = "DP-2"; # Your laptop's internal display
-          wallpaperId = wallpaperIds.hyper-cube-oled;
-          scaling = "default"; # "stretch", "fit", "fill", or "default"
-          fps = 24;
-          audio.silent = false; # only use this flag once for all monitors
-          extraOptions = [
-            #   "--set-property spacemode=1"
-            "--set-property backgroundcolor=0.0,0.0,0.0"
-          ];
-        }
-        # {
-        #   monitor = "HDMI-A-1";
-        #   wallpaperId = wallpaperIds.frieren-cold;
-        # }
-        {
-          # ultrawide
-          monitor = "DP-1"; # Your laptop's internal display
-          wallpaperId = wallpaperIds.ascii-donut;
-        }
-      ];
-    };
-    systemd.user.services.linux-wallpaperengine = {
-      Service = {
-        Restart = lib.mkForce "always";
-        RestartSec = "3s";
-        Environment = [
-          "LIBVA_DRIVER_NAME=nvidia"
-          "LIBVA_DRIVERS_PATH=${pkgs.nvidia-vaapi-driver}/lib/dri"
-        ];
-      };
-    };
     # gtk-titlebar = false
     # window-decoration = false
     home.file.".config/ghostty/config".text = ''

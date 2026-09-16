@@ -1,0 +1,10 @@
+--- a/src/WallpaperEngine/WebBrowser/CEF/RenderHandler.cpp	2026-09-15 22:27:20.160573611 -0700
++++ b/src/WallpaperEngine/WebBrowser/CEF/RenderHandler.cpp	2026-09-15 22:27:20.167464017 -0700
+@@ -24,4 +24,4 @@
+ 
+ int RenderHandler::getHeight () const { return this->m_webdata->getHeight (); }
+ 
+-GLuint RenderHandler::texture () const { return this->m_webdata->getWallpaperFramebuffer (); }
+\ No newline at end of file
++GLuint RenderHandler::texture () const { return this->m_webdata->getWallpaperTexture (); }
+\ No newline at end of file

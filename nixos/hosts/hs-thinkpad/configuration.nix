@@ -155,26 +155,19 @@ in
 
   nixcfg.wallpaperEngine = {
     enable = true;
-    wallpapers = [
-      {
-        # laptop display
-        monitor = "eDP-1"; # Your laptop's internal display
+    acGated = true; # laptop: don't burn battery drawing a wallpaper
+    silent = true;
+    connectors = {
+      "eDP-1" = {
+        # internal display
         wallpaperId = wallpaperIds.floppa-ps1;
         scaling = "fit"; # "stretch", "fit", "fill", or "default"
-        fps = 24;
-        audio.silent = true; # only use this flag once for all monitors
-      }
-      {
-        # Ultrawide
-        monitor = "DP-3";
-        wallpaperId = wallpaperIds.hyper-cube-oled;
-      }
-      {
-        # mini
-        monitor = "DP-2";
-        wallpaperId = wallpaperIds.frieren-cold;
-      }
-    ];
+      };
+      # Ultrawide
+      "DP-3".wallpaperId = wallpaperIds.hyper-cube-oled;
+      # mini
+      "DP-2".wallpaperId = wallpaperIds.frieren-cold;
+    };
   };
 
   services.hardware.bolt.enable = true;

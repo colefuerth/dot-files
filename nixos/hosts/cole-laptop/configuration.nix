@@ -143,21 +143,18 @@ in
 
   nixcfg.wallpaperEngine = {
     enable = true;
+    acGated = true; # laptop: don't burn battery drawing a wallpaper
+    silent = true;
     serviceEnvironment = [
       # Enable Intel iGPU hardware acceleration via VAAPI
       "LIBVA_DRIVER_NAME=iHD" # Intel media driver for Core Ultra
       "LIBVA_DRIVERS_PATH=${pkgs.intel-media-driver}/lib/dri"
     ];
-    wallpapers = [
-      {
-        # laptop display
-        monitor = "eDP-1"; # Your laptop's internal display
-        wallpaperId = wallpaperIds.floppa-ps1;
-        scaling = "fill"; # "stretch", "fit", "fill", or "default"
-        fps = 24;
-        audio.silent = true; # only use this flag once for all monitors
-      }
-    ];
+    connectors."eDP-1" = {
+      # internal display
+      wallpaperId = wallpaperIds.floppa-ps1;
+      scaling = "fill"; # "stretch", "fit", "fill", or "default"
+    };
   };
 
   services.hardware.bolt.enable = true;

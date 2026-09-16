@@ -6,6 +6,7 @@ in
   (import ./btop)
   (import ./firefox.nix)
   (import ./flameshot inputs)
+  (import ./linux-wallpaperengine)
   # (import ./python-test-skips.nix)
   (import ./signal-desktop)
   # (import ./freetype-qdoled)
