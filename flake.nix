@@ -348,7 +348,7 @@
                 isDarwin = false;
               };
               nodes.machine =
-                { ... }:
+                { lib, ... }:
                 {
                   imports = mkConfigModules {
                     inherit
@@ -360,6 +360,7 @@
                   };
                   # Override hardware-specific settings for VM testing
                   virtualisation.graphics = false;
+                  hardware.nvidia-container-toolkit.enable = lib.mkForce false;
                 };
               testScript = ''
                 machine.start()
