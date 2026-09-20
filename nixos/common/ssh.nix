@@ -51,5 +51,15 @@
       hostname = "100.125.46.32"; # tailscale
       serverAliveInterval = 60;
     };
+    "m" = {
+      user = "cole";
+      hostname = "Coles-Macbook-Air.local";
+      serverAliveInterval = 60;
+    };
+    "rm" = {
+      user = "cole";
+      hostname = "100.81.60.108"; # tailscale
+      serverAliveInterval = 60;
+    };
   };
 }
