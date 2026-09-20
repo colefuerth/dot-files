@@ -70,6 +70,8 @@
   tour = import ./packages/tour.nix { inherit pkgs; };
   f5 = import ./packages/f5.nix { inherit pkgs; };
 
+  sudoplz = import ./packages/sudoplz.nix { inherit pkgs; };
+
   # The Witcher 3 Mod Manager (uses the tw3mm flake input as source)
   tw3mm = import ./packages/tw3mm.nix {
     inherit pkgs;

@@ -15,27 +15,18 @@
   # time.timeZone = "America/Toronto";
   # time.timeZone = "America/Chicago";
 
-  # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
 
-  # Trust the binary cache key from cole-desktop (rd) so signed closures
-  # pulled by `nomt` are accepted by the local nix daemon.
   nix.settings.trusted-public-keys = [
     "cole-desktop-1:Gy9dhiisebzFg8c6mmsCyihQ+9LivAM1BWiWYx4iZPU="
   ];
 
-  # Delegate x86_64-linux builds to rd (cole-desktop) over ssh instead of
-  # emulating x86 on the mac. The nix-daemon runs as root, so connection
-  # details are spelled out here rather than relying on cole's ~/.ssh/config.
   nix.distributedBuilds = true;
   nix.buildMachines = [
     {
       hostName = "100.100.194.119"; # rd (cole-desktop) over tailscale
       sshUser = username;
       sshKey = "/Users/${username}/.ssh/id_ed25519";
-      # rd's ed25519 host key, so the daemon trusts it without a manual
-      # `ssh` to seed /var/root/.ssh/known_hosts. base64 -w0 of
-      # /etc/ssh/ssh_host_ed25519_key.pub on rd.
       publicHostKey = "c3NoLWVkMjU1MTkgQUFBQUMzTnphQzFsWkRJMU5URTVBQUFBSUFTRU1GME1tV1c3ZzVhWmpaN2dFY1c2eWhKcFMyVXFqUzkyS2NxQzNOY08gcm9vdEBjb2xlLWRlc2t0b3AK";
       system = "x86_64-linux";
       protocol = "ssh-ng";
@@ -46,14 +37,8 @@
       ];
     }
   ];
-  # Have rd pull dependencies from substituters itself instead of copying the
-  # whole closure over from the mac.
   nix.settings.builders-use-substitutes = true;
 
-  # Trust the admin user (cole) so the CLI can override restricted settings
-  # like `store`/`builders`. Needed to drive remote builds that keep outputs
-  # off the mac, e.g. `nix build --eval-store auto --store ssh-ng://cole@rd
-  # --max-jobs 0 .#nixosConfigurations.cole-server...`.
   nix.settings.trusted-users = [
     "root"
     "@admin"
@@ -74,8 +59,6 @@
             tag = "v${version}";
             hash = "sha256-nif9xjd+3ASR2pvvSXkzTEWoKi2oKLzV9gMQ3EevBVk=";
           };
-          # Drop patches that were upstreamed into v35.0 (nixpkgs still applies
-          # them for any version >= 30 / >= 33).
           patches = builtins.filter (
             p:
             let
@@ -84,6 +67,16 @@
             !(lib.hasSuffix "211f52431b9ec30d4d4a1c76aafd64bd78d93c43.patch" s)
             && !(lib.hasSuffix "8282f0f8ecf8b847e5964a308e041ba3b049811c.patch" s)
           ) (old.patches or [ ]);
+        });
+        golangci-lint = prev.golangci-lint.overrideAttrs (old: {
+          version = "2.13.2";
+          src = prev.fetchFromGitHub {
+            owner = "golangci";
+            repo = "golangci-lint";
+            tag = "v2.13.2";
+            hash = "sha256-RbWKPIG+UK82S9W9tp/CciZ669vudh95VOfHfdQWx3M=";
+          };
+          vendorHash = "sha256-R83GeyfuZ+w30jZqFGYi0yua8E1Ey2q7/OlVmw8zDCg=";
         });
         pythonPackagesExtensions = prev.pythonPackagesExtensions ++ [
           (python-final: python-prev: {
@@ -101,10 +94,9 @@
     )
   ];
 
-  # Set primary user for system defaults
   system.primaryUser = username;
 
-  # User configuration
+  # User coniguration
   users.users.${username} = {
     name = username;
     home = "/Users/${username}";
@@ -112,7 +104,6 @@
     shell = pkgs.zsh;
   };
 
-  # System packages (macOS-compatible tools from hs-thinkpad)
   environment.systemPackages =
     (with pkgs; [
       act
@@ -131,7 +122,7 @@
     ++ (with pkgs; [
       # anz deps
       patchutils
-      go
+      go_1_27
       golangci-lint
       gomodifytags
       google-cloud-sdk
@@ -149,10 +140,10 @@
     ])
     ++ [
       dotFilesPackages.f5
+      dotFilesPackages.sudoplz
       dotFilesPackages.tour
     ];
 
-  # System settings
   system.defaults = {
     dock = {
       autohide = true;
@@ -217,6 +208,7 @@
       # "cursor"
       # "cursor-cli"
       "discord"
+      "firefox"
       "ghostty"
       "google-chrome"
       "hot"
@@ -321,6 +313,7 @@
 
     home.sessionVariables = {
       GOPRIVATE = "github.com/anzenna-ai";
+      SUDO_ASKPASS = "${dotFilesPackages.sudoplz}/bin/askpass";
     };
 
     programs.zsh.initExtra = ''

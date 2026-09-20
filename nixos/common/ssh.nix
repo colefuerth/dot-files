@@ -30,6 +30,17 @@
       hostname = "100.100.194.119"; # tailscale
       serverAliveInterval = 60;
     };
+    "vm" = {
+      user = "anzenna";
+      hostname = "192.168.122.185"; # win10 test VM on d's libvirt NAT
+      proxyJump = "d";
+      serverAliveInterval = 60;
+      # recreated on demand (win10-vm recreate) → host key churns; don't wedge
+      extraOptions = {
+        StrictHostKeyChecking = "accept-new";
+        UserKnownHostsFile = "/dev/null";
+      };
+    };
     "l" = {
       user = "cole";
       hostname = "cole-laptop.local";
