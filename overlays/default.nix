@@ -7,7 +7,7 @@ in
   (import ./firefox.nix)
   (import ./flameshot inputs)
   (import ./linux-wallpaperengine)
-  # (import ./python-test-skips.nix)
+  (import ./python-test-skips.nix)
   (import ./signal-desktop)
   # (import ./freetype-qdoled)
   # (import ./fresh-editor)
