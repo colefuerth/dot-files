@@ -8,6 +8,7 @@ in
   (import ./flameshot inputs)
   (import ./linux-wallpaperengine)
   (import ./python-test-skips.nix)
+  (import ./r2modman)
   (import ./signal-desktop)
   # (import ./freetype-qdoled)
   # (import ./fresh-editor)

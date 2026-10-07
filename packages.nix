@@ -3,7 +3,8 @@
   inputs,
   ...
 }:
-{
+# rec: straftat-bepinex takes unity-doorstop as an argument.
+rec {
   # Shared Python environment package list. Pass to <python>.withPackages so
   # each host keeps its own interpreter version while sharing one package list.
   pyPackages =
@@ -79,6 +80,18 @@
   };
 
   bedrock-on-linux = import ./packages/bedrock-on-linux.nix { inherit pkgs; };
+
+  unity-doorstop = import ./packages/unity-doorstop.nix { inherit pkgs; };
+
+  # Drops the Linux BepInEx files into an r2modman profile; the STRAFTAT pack on
+  # Thunderstore is Windows-only, so modded launches start vanilla without them.
+  straftat-bepinex = import ./packages/straftat-bepinex {
+    inherit pkgs unity-doorstop;
+  };
+
+  # The overlaid r2modman (see overlays/r2modman), exposed so it can be installed
+  # or run straight from this flake without taking the whole overlay.
+  inherit (pkgs) r2modman;
 
   croft = import ./packages/croft.nix {
     inherit pkgs inputs;
