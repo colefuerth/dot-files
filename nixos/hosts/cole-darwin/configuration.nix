@@ -253,6 +253,15 @@
       "${inputs.dschana-system-config}/dev-shared/neovim.nix"
     ];
 
+    # Shared btop.conf with this host's overrides appended; btop keeps the last value per key.
+    home.file.".config/btop/btop.conf".source = lib.mkForce (
+      pkgs.writeText "btop.conf" ''
+        ${builtins.readFile ../../../.config/btop/btop.conf}
+        color_theme = "Default"
+        theme_background = True
+      ''
+    );
+
     programs.tmux = {
       enable = true;
       mouse = true;

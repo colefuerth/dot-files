@@ -81,6 +81,7 @@ in
               nvd
               openssh
               openssl
+              pigz
               pv
               ranger
               ripgrep

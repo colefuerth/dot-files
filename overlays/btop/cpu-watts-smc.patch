@@ -1,0 +1,58 @@
+--- a/src/osx/btop_collect.cpp
++++ b/src/osx/btop_collect.cpp
+@@ -1092,6 +1092,17 @@
+ 		if (Config::getB("show_battery") and has_battery)
+ 			current_bat = get_battery();
+ 
++		if (Config::getB("show_cpu_watts")) {
++			try {
++				SMCConnection smcCon;
++				float watts = smcCon.getCpuPower();
++				supports_watts = watts >= 0.0f;
++				if (supports_watts) cpu.usage_watts = watts;
++			} catch (const std::runtime_error &) {
++				supports_watts = false;
++			}
++		}
++
+ 		return cpu;
+ 	}
+ }  // namespace Cpu
+--- a/src/osx/smc.cpp
++++ b/src/osx/smc.cpp
+@@ -103,6 +103,16 @@
+ 		return getSMCFloat(key);
+ 	}
+ 
++	//? CPU cluster power, P + E rails. Replaces IOReport "Energy Model" CPU Energy, which
++	//? macOS 27 freezes for readers without a private entitlement. -1 if a key is missing.
++	float SMCConnection::getCpuPower() {
++		char pkey[] = SMC_KEY_PCLUSTER_POWER;
++		char ekey[] = SMC_KEY_ECLUSTER_POWER;
++		float p = getSMCFloat(pkey);
++		float e = getSMCFloat(ekey);
++		return (p < 0.0f or e < 0.0f) ? -1.0f : p + e;
++	}
++
+ 	// core means physical core in SMC, while in core map it's cpu threads :-/ Only an issue on hackintosh?
+ 	// this means we can only get the T per physical core
+ 	// another issue with the SMC API is that the key is always 4 chars -> what with systems with more than 9 physical cores?
+--- a/src/osx/smc.hpp
++++ b/src/osx/smc.hpp
+@@ -51,6 +51,8 @@
+ #define SMC_KEY_CPU2_TEMP "TC2C"  // etc
+ #define SMC_KEY_FAN0_RPM_CUR "F0Ac"
+ #define SMC_KEY_SYSTEM_POWER "PSTR" // total system power draw in watts, Apple Silicon
++#define SMC_KEY_PCLUSTER_POWER "PP0b" // P-cluster rail watts, base M4
++#define SMC_KEY_ECLUSTER_POWER "PPbb" // E-cluster rail watts, base M4
+ 
+ typedef struct {
+ 	char major;
+@@ -105,6 +107,7 @@
+ 
+ 		long long getTemp(int core);
+ 		float getSystemPower();
++		float getCpuPower();
+ 
+ 	   private:
+ 		kern_return_t SMCReadKey(UInt32Char_t key, SMCVal_t *val);
