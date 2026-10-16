@@ -1,6 +1,6 @@
 --- a/src/osx/btop_collect.cpp
 +++ b/src/osx/btop_collect.cpp
-@@ -1092,6 +1092,17 @@
+@@ -1091,6 +1091,17 @@
  		if (Config::getB("show_battery") and has_battery)
  			current_bat = get_battery();
  
@@ -20,12 +20,10 @@
  }  // namespace Cpu
 --- a/src/osx/smc.cpp
 +++ b/src/osx/smc.cpp
-@@ -103,6 +103,16 @@
+@@ -101,6 +101,14 @@
  		return getSMCFloat(key);
  	}
  
-+	//? CPU cluster power, P + E rails. Replaces IOReport "Energy Model" CPU Energy, which
-+	//? macOS 27 freezes for readers without a private entitlement. -1 if a key is missing.
 +	float SMCConnection::getCpuPower() {
 +		char pkey[] = SMC_KEY_PCLUSTER_POWER;
 +		char ekey[] = SMC_KEY_ECLUSTER_POWER;
@@ -42,9 +40,9 @@
 @@ -51,6 +51,8 @@
  #define SMC_KEY_CPU2_TEMP "TC2C"  // etc
  #define SMC_KEY_FAN0_RPM_CUR "F0Ac"
- #define SMC_KEY_SYSTEM_POWER "PSTR" // total system power draw in watts, Apple Silicon
-+#define SMC_KEY_PCLUSTER_POWER "PP0b" // P-cluster rail watts, base M4
-+#define SMC_KEY_ECLUSTER_POWER "PPbb" // E-cluster rail watts, base M4
+ #define SMC_KEY_SYSTEM_POWER "PSTR"
++#define SMC_KEY_PCLUSTER_POWER "PP0b"
++#define SMC_KEY_ECLUSTER_POWER "PPbb"
  
  typedef struct {
  	char major;

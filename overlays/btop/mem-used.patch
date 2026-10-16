@@ -1,0 +1,11 @@
+--- a/src/osx/btop_collect.cpp
++++ b/src/osx/btop_collect.cpp
+@@ -1242,7 +1242,7 @@
+ 		if (host_statistics64(mach_host_self(), HOST_VM_INFO64, (host_info64_t)&p, &info_size) == 0) {
+ 			mem.stats.at("free") = p.free_count * Shared::pageSize;
+ 			mem.stats.at("cached") = p.external_page_count * Shared::pageSize;
+-			mem.stats.at("used") = (p.active_count + p.wire_count) * Shared::pageSize;
++			mem.stats.at("used") = ((uint64_t)p.internal_page_count - p.purgeable_count + p.wire_count + p.compressor_page_count) * Shared::pageSize;
+ 			mem.stats.at("available") = Shared::totalMem - mem.stats.at("used");
+ 		}
+ 

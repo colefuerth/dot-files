@@ -12,7 +12,7 @@
     ../../common
   ];
 
-  # time.timeZone = "America/Toronto";
+  time.timeZone = "America/Toronto";
   # time.timeZone = "America/Chicago";
 
   nixpkgs.config.allowUnfree = true;
@@ -203,6 +203,7 @@
     };
     # macOS-specific apps that aren't available in nixpkgs or work better via Homebrew
     casks = [
+      # gui apps
       "brave-browser"
       "claude-code@latest"
       # "cursor"
@@ -228,13 +229,16 @@
       "vlc"
     ];
     taps = [
+      # third party repos
       "bnomei/tmux-mcp"
       "koekeishiya/formulae"
       "hashicorp/tap"
     ];
     brews = [
+      # non gui apps
       "afsctool"
       "azure-cli"
+      "coreutils"
       "hashicorp/tap/terraform"
       "koekeishiya/formulae/yabai"
       "koekeishiya/formulae/skhd"
@@ -253,7 +257,6 @@
       "${inputs.dschana-system-config}/dev-shared/neovim.nix"
     ];
 
-    # Shared btop.conf with this host's overrides appended; btop keeps the last value per key.
     home.file.".config/btop/btop.conf".source = lib.mkForce (
       pkgs.writeText "btop.conf" ''
         ${builtins.readFile ../../../.config/btop/btop.conf}
