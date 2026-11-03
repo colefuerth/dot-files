@@ -249,6 +249,7 @@ in
 
   environment.systemPackages = with pkgs; [
     android-tools
+    cameractrls
     clang_22
     fastfetch
     gamemode
@@ -268,6 +269,7 @@ in
     smartmontools
     solaar
     tio
+    v4l-utils
     wineWow64Packages.staging
     winetricks
     wineWow64Packages.waylandFull
@@ -664,6 +666,23 @@ in
           export PRESSURE_VESSEL_IMPORT_OPENXR_1_RUNTIMES=1
         '';
       };
+    };
+    obs-studio = {
+      enable = true;
+      package = (
+        pkgs.obs-studio.override {
+          cudaSupport = true;
+        }
+      );
+      enableVirtualCamera = true;
+      plugins = with pkgs.obs-studio-plugins; [
+        wlrobs
+        obs-backgroundremoval
+        obs-pipewire-audio-capture
+        obs-vaapi # optional AMD hardware acceleration
+        obs-gstreamer
+        obs-vkcapture
+      ];
     };
     # Wraps games in an isolated micro-compositor so they see one virtual
     # display at a chosen resolution. Workaround for engines that crash on
