@@ -9,11 +9,11 @@
 # the FHS sandbox, which is exactly what wrapType2 gives us.
 pkgs.appimageTools.wrapType2 rec {
   pname = "bedrock-on-linux";
-  version = "2.1.1";
+  version = "2.2.5";
 
   src = pkgs.fetchurl {
     url = "https://github.com/Wyze3306/BedrockOnLinux/releases/download/v${version}/BedrockOnLinux-${version}-x86_64.AppImage";
-    hash = "sha256-ooDyhz7BR9IzfA2q/X/yHmBLDuv/M2E3Bz7UQzSzteQ=";
+    hash = "sha256-UglqJlFRwLF7la4N9kbAI0Adkl9HpNVyB8lg/zpBAiA=";
   };
 
   extraPkgs =

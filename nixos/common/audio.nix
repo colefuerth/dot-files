@@ -1,4 +1,4 @@
-{ ... }:
+{ pkgs, username, ... }:
 {
   # Enable sound with pipewire.
   boot.kernelModules = [
@@ -12,5 +12,6 @@
     jack.enable = true;
     pulse.enable = true;
   };
+  users.users.${username}.packages = (with pkgs; [ audacity ]);
   services.pulseaudio.enable = false; # Disable PulseAudio to avoid conflicts with PipeWire
 }

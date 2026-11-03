@@ -85,51 +85,6 @@ let
       amixer -c 1 set 'Capture' 50% >/dev/null 2>&1 || true
     '';
   };
-
-  # Pin WiVRn to the upstream v26.6.1 release rather than the nixpkgs version.
-  # Reuses the nixpkgs build recipe but repoints src + monado to the tag and
-  # adds the build inputs current WiVRn needs (mirrors the extras the upstream
-  # flake carries: https://github.com/WiVRn/WiVRn/blob/master/flake.nix). The
-  # monado rev must match the tag's monado-rev file or the recipe's postUnpack
-  # check fails; GIT_DESC is derived from `version`, so bumping it is enough.
-  wivrnLatest = pkgs.wivrn.overrideAttrs (
-    finalAttrs: oldAttrs: {
-      version = "26.6.1";
-      src = pkgs.fetchFromGitHub {
-        owner = "wivrn";
-        repo = "wivrn";
-        rev = "v${finalAttrs.version}";
-        hash = "sha256-eXU7hYLYchAb6AbCyINfTmOp0NdxK35Kg9tcid2ucg4=";
-      };
-      monado = pkgs.applyPatches {
-        src = pkgs.fetchFromGitLab {
-          domain = "gitlab.freedesktop.org";
-          owner = "monado";
-          repo = "monado";
-          rev = "1b526bb3a0ff326ecd05af4c2c541407f53c6d4b";
-          hash = "sha256-SzuCQ1uX15vFGwGt3gswlVF2Su8sIND4R3tsTJ4T1LY=";
-        };
-        postPatch = ''
-          ${finalAttrs.src}/patches/apply.sh ${finalAttrs.src}/patches/monado/*
-        '';
-      };
-      buildInputs =
-        oldAttrs.buildInputs
-        ++ (with pkgs; [
-          sdl2-compat
-          libpng
-          kdePackages.kirigami-addons
-          curl
-          ktx-tools
-        ]);
-      nativeBuildInputs = oldAttrs.nativeBuildInputs ++ [ pkgs.util-linux ];
-      # 26.6.x's CMake insists on GIT_COMMIT, which the older nixpkgs recipe
-      # doesn't pass; there's no .git in the fetched source to infer it from.
-      cmakeFlags = (oldAttrs.cmakeFlags or [ ]) ++ [
-        (lib.cmakeFeature "GIT_COMMIT" "31dbc36f9a23c179d22b609fc51a9513f45e8bda")
-      ];
-    }
-  );
 in
 {
   imports = [
@@ -248,8 +203,6 @@ in
     pkiBundle = "/var/lib/sbctl";
   };
 
-  # Needed for TPM2-based LUKS unlock via crypttab options.
-  boot.initrd.systemd.enable = true;
   boot.initrd.luks.devices."cryptroot".crypttabExtraOpts = [ "tpm2-device=auto" ];
 
   security.tpm2 = {
@@ -276,7 +229,6 @@ in
         grim
         kdePackages.okular
         libreoffice
-        lutris
         micro
         opencode
         prismlauncher
@@ -291,25 +243,26 @@ in
       ])
       ++ (with dotFilesPackages; [
         bedrock-on-linux
-        croft
         tw3mm
       ]);
   };
 
-  nixpkgs.config.cudaSupport = true;
-
   environment.systemPackages = with pkgs; [
     android-tools
+    clang_22
     fastfetch
     gamemode
     gamescope
+    llvmPackages_22.libclang
     lm_sensors
     mangohud
     nil
+    ninja
     nixfmt-tree
     pciutils
     powertop
     sbctl
+    sdl3 # halo graphical lib
     tpm2-tools
     (python313.withPackages dotFilesPackages.pyPackages)
     smartmontools
@@ -629,22 +582,12 @@ in
   services.wivrn = {
     enable = true;
     openFirewall = true;
-    package = wivrnLatest;
-
-    # Steam/Proton games run inside the pressure-vessel sandbox, which doesn't
-    # import the host's OpenXR runtime — so games can't find WiVRn even though
-    # the headset connects fine. This sets PRESSURE_VESSEL_IMPORT_OPENXR_1_RUNTIMES
-    # system-wide so Steam discovers WiVRn. Requires a logout/login to take effect.
     steam.importOXRRuntimes = true;
-
-    # Run WiVRn as a systemd service on startup
     autoStart = true;
+    package = (pkgs.wivrn.override { cudaSupport = true; });
 
-    # If you're running this with an nVidia GPU and want to use GPU Encoding (and don't otherwise have CUDA enabled system wide), you need to override the cudaSupport variable.
-    # package = (pkgs.wivrn.override { cudaSupport = true; }); # unnecessary when nixpkgs.config.cudaSupport is true
-
-    # You should use the default configuration (which is no configuration), as that works the best out of the box.
-    # However, if you need to configure something see https://github.com/WiVRn/WiVRn/blob/master/docs/configuration.md for configuration options and https://mynixos.com/nixpkgs/option/services.wivrn.config.json for an example configuration.
+    # https://github.com/WiVRn/WiVRn/blob/master/docs/configuration.md
+    # https://mynixos.com/nixpkgs/option/services.wivrn.config.json
   };
 
   # # TEMPORARY (trip): keep the desktop awake so I can SSH in over Tailscale

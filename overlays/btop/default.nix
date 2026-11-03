@@ -9,5 +9,6 @@ final: prev: {
         ];
       })
     else
-      prev.btop;
+      # btop dlopens NVML for NVIDIA GPU stats; only cudaSupport puts /run/opengl-driver/lib in its RUNPATH.
+      prev.btop.override { cudaSupport = true; };
 }

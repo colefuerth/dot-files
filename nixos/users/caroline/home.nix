@@ -24,10 +24,6 @@
         ++ dotFilesPackages.scriptPackages;
     };
 
-    nixpkgs.config = {
-      allowUnfree = lib.mkForce true; # Simplified for now - can restrict later if needed
-    };
-
     programs = {
       btop.enable = true;
       direnv.enable = true;
