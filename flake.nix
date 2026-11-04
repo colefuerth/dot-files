@@ -26,6 +26,8 @@
     nixos-wsl.inputs.nixpkgs.follows = "nixpkgs";
     flameshot.url = "github:flameshot-org/flameshot?ref=master";
     flameshot.inputs.nixpkgs.follows = "nixpkgs";
+    razerforlinux.url = "github:colefuerth/RazerForLinux";
+    razerforlinux.inputs.nixpkgs.follows = "nixpkgs";
     vscode-server.url = "github:nix-community/nixos-vscode-server";
     nix-darwin.url = "github:LnL7/nix-darwin";
     nix-darwin.inputs.nixpkgs.follows = "nixpkgs";

@@ -855,6 +855,26 @@
         "type": "github"
       }
     },
+    "razerforlinux": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1793775741,
+        "narHash": "sha256-ZUjJBvLSWzFmitaPHrNR2JgVTcnmOrYGv0F703oCF2Q=",
+        "owner": "colefuerth",
+        "repo": "RazerForLinux",
+        "rev": "d9d08d7e20ca0f4c66328aac3072fd1835d1e49a",
+        "type": "github"
+      },
+      "original": {
+        "owner": "colefuerth",
+        "repo": "RazerForLinux",
+        "type": "github"
+      }
+    },
     "root": {
       "inputs": {
         "croft": "croft",
@@ -870,6 +890,7 @@
         "nixos-hardware-pi-5": "nixos-hardware-pi-5",
         "nixos-wsl": "nixos-wsl",
         "nixpkgs": "nixpkgs_5",
+        "razerforlinux": "razerforlinux",
         "rust-overlay": "rust-overlay_2",
         "sops-nix": "sops-nix",
         "tw3mm": "tw3mm",
