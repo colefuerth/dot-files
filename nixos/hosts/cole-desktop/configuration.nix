@@ -1,7 +1,6 @@
 {
   config,
   dotFilesPackages,
-  host,
   lib,
   pkgs,
   username,
@@ -105,6 +104,7 @@ in
     ../../common/user.nix
     ../../common/xone.nix
     ./hardware-configuration.nix
+    inputs.brave-previews.nixosModules.default
     "${inputs.nixos-hardware}/common/gpu/nvidia/blackwell/default.nix"
     inputs.lanzaboote.nixosModules.lanzaboote
     inputs.nixos-hardware.nixosModules.common-cpu-amd
@@ -220,7 +220,6 @@ in
       (with pkgs; [
         act
         binsider
-        brave
         claude-code
         discord
         flameshot
@@ -573,6 +572,10 @@ in
     home.stateVersion = "26.05";
 
     programs.firefox.enable = false;
+    programs.brave = {
+      enable = true;
+      commandLineArgs = [ "--password-store=detect" ];
+    };
 
     # gtk-titlebar = false
     # window-decoration = false

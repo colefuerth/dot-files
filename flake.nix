@@ -3,6 +3,8 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
+    brave-previews.url = "github:kcalvelli/brave-browser-previews";
+    brave-previews.inputs.nixpkgs.follows = "nixpkgs";
     croft.url = "github:vitali87/croft?ref=main";
     croft.flake = false;
     determinate.url = "https://flakehub.com/f/DeterminateSystems/determinate/*";
@@ -47,6 +49,7 @@
     {
       self,
       nixpkgs,
+      brave-previews,
       determinate,
       flake-utils,
       home-manager,
