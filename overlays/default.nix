@@ -7,6 +7,7 @@ in
   (import ./firefox.nix)
   (import ./flameshot inputs)
   (import ./linux-wallpaperengine)
+  (import ./okular)
   (import ./openrazer)
   (import ./python-test-skips.nix)
   (import ./r2modman)

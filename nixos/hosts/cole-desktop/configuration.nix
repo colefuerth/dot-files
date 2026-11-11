@@ -231,6 +231,7 @@ in
         kdePackages.okular
         libreoffice
         micro
+        nssTools # certutil/pk12util for okular pdf signing certs
         opencode
         prismlauncher
         r2modman
