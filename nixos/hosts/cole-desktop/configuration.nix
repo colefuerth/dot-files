@@ -664,6 +664,10 @@ in
 
   programs = {
     firefox.enable = false;
+    gpu-screen-recorder = {
+      enable = true;
+      ui.enable = true; # For overlay
+    };
     steam = {
       enable = true;
       protontricks.enable = true;
