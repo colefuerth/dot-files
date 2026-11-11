@@ -476,7 +476,7 @@ in
 
   # TV aux-in loopback: routes line-in (ALC1220) to G733 headset.
   # Not started by default — toggle with: systemctl --user start/stop tv-loopback
-  systemd.user.services.tv-loopback = {
+  systemd.user.services.truetv-loopback = {
     description = "TV Aux-In Audio Loopback";
     after = [ "pipewire.service" ];
     serviceConfig = {
