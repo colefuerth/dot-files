@@ -265,12 +265,13 @@
     };
 
     programs.ssh = {
-      addKeysToAgent = "yes";
+      settings."*".AddKeysToAgent = "yes";
+      enableDefaultConfig = false;
     };
 
     programs.git = {
       enable = true;
-      extraConfig = {
+      settings = {
         url."git@github.com:".insteadOf = "https://github.com/";
         # user.email = "cole@anzenna.ai";
       };
@@ -283,7 +284,7 @@
       SUDO_ASKPASS = "${dotFilesPackages.sudoplz}/bin/askpass";
     };
 
-    programs.zsh.initExtra = ''
+    programs.zsh.initContent = ''
       eval "$(/opt/homebrew/bin/brew shellenv)"
       export GOPATH=$HOME/go
       export GOPRIVATE=github.com/anzenna-ai
