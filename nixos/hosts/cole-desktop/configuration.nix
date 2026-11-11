@@ -653,7 +653,14 @@ in
     };
   };
 
-  virtualisation.libvirtd.enable = true;
+  virtualisation.libvirtd = {
+    enable = true;
+    # The defaults (start/suspend) make libvirt-guests save whatever VM is up
+    # at poweroff and resume it next boot, ignoring per-domain autostart. Shut
+    # guests down cleanly instead and leave them off until started by hand.
+    onBoot = "ignore";
+    onShutdown = "shutdown";
+  };
 
   programs = {
     firefox.enable = false;
