@@ -44,56 +44,6 @@
     "@admin"
   ];
 
-  nixpkgs.overlays = [
-    (
-      final: prev:
-      let
-        version = "35.1";
-      in
-      {
-        protobuf = prev.protobuf.overrideAttrs (old: {
-          version = version;
-          src = prev.fetchFromGitHub {
-            owner = "protocolbuffers";
-            repo = "protobuf";
-            tag = "v${version}";
-            hash = "sha256-nif9xjd+3ASR2pvvSXkzTEWoKi2oKLzV9gMQ3EevBVk=";
-          };
-          patches = builtins.filter (
-            p:
-            let
-              s = toString p;
-            in
-            !(lib.hasSuffix "211f52431b9ec30d4d4a1c76aafd64bd78d93c43.patch" s)
-            && !(lib.hasSuffix "8282f0f8ecf8b847e5964a308e041ba3b049811c.patch" s)
-          ) (old.patches or [ ]);
-        });
-        golangci-lint = prev.golangci-lint.overrideAttrs (old: {
-          version = "2.13.2";
-          src = prev.fetchFromGitHub {
-            owner = "golangci";
-            repo = "golangci-lint";
-            tag = "v2.13.2";
-            hash = "sha256-RbWKPIG+UK82S9W9tp/CciZ669vudh95VOfHfdQWx3M=";
-          };
-          vendorHash = "sha256-R83GeyfuZ+w30jZqFGYi0yua8E1Ey2q7/OlVmw8zDCg=";
-        });
-        pythonPackagesExtensions = prev.pythonPackagesExtensions ++ [
-          (python-final: python-prev: {
-            protobuf = python-prev.protobuf.overrideAttrs (old: {
-              version = "7.${version}";
-              src = prev.fetchPypi {
-                pname = "protobuf";
-                version = "7.${version}";
-                hash = "sha256-zhFaJv4MOaLCmXPZFNMn5RamRVRkSJ/jzR5RobNU+Bo=";
-              };
-            });
-          })
-        ];
-      }
-    )
-  ];
-
   system.primaryUser = username;
 
   # User coniguration
@@ -123,7 +73,6 @@
       # anz deps
       patchutils
       go_1_27
-      golangci-lint
       gomodifytags
       google-cloud-sdk
       google-cloud-sql-proxy
@@ -133,7 +82,6 @@
       nodejs
       pgcli
       postgresql_18
-      protobuf
       protoc-gen-go
       typescript
       uv
@@ -239,7 +187,14 @@
       "afsctool"
       "azure-cli"
       "coreutils"
+      # Bottles instead of nix overlays: overriding protobuf in nixpkgs forced
+      # source rebuilds of grpc, grpcio, arrow-cpp and google-cloud-cpp.
+      # Keep in step with anzenna CI: golangci-lint = GOLANGCI_LINT_VERSION in
+      # anzenna-github-workflows/golangci-lint.yml, protoc = the `protoc vX.<ver>`
+      # header in anzenna-library's generated *.pb.go files.
+      "golangci-lint"
       "hashicorp/tap/terraform"
+      "protobuf"
       "koekeishiya/formulae/yabai"
       "koekeishiya/formulae/skhd"
       "bnomei/tmux-mcp/tmux-mcp-rs"
