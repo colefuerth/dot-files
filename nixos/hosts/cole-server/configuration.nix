@@ -449,12 +449,39 @@ in
           Persistent = true;
         };
       };
-      # /HDD4TB/Archive -> /HDD, what archive-backup.sh was meant to do
+      # /HDD4TB/Archive -> /HDD, what archive-backup.sh was meant to do, plus the photos
       archive = common // {
         repository = "/HDD/restic-archive";
-        paths = [ "/HDD4TB/Archive" ];
+        paths = [
+          "/HDD4TB/Archive"
+          "/HDD4TB/Pictures"
+          "/HDD4TB/phone backup 20250524"
+        ];
         timerConfig = {
           OnCalendar = "Sun 04:00";
+          Persistent = true;
+        };
+      };
+      # Off-site: state + everything irreplaceable -> personal Google Drive.
+      # Same password as the local repos, so restic.pass must also live off this box.
+      offsite = common // {
+        repository = "rclone:gdrive:restic-cole-server";
+        # a string, not a path, so it stays out of the store; root 0600, and
+        # rclone rewrites it when it refreshes the OAuth token
+        rcloneConfigFile = "/HDD/secrets/rclone.conf";
+        rcloneOptions.drive-stop-on-upload-limit = true; # 750 GiB/day cap: fail, retry tomorrow
+        paths = config.services.restic.backups.state.paths ++ [
+          "/HDD4TB/Archive"
+          "/HDD4TB/Pictures"
+          "/HDD4TB/phone backup 20250524"
+          "/HDD/Lecture Recordings"
+        ];
+        inherit (config.services.restic.backups.state) exclude;
+        # read back a fixed 1 GiB from Drive nightly, not a % that grows with the repo
+        checkOpts = [ "--read-data-subset=1G" ];
+        # state's 03:00 run leaves a consistent jellyfin-db-snapshot to pick up
+        timerConfig = {
+          OnCalendar = "04:30";
           Persistent = true;
         };
       };
@@ -467,6 +494,15 @@ in
     "/HDD"
     "/HDD4TB"
   ];
+  systemd.services.restic-backups-offsite = {
+    environment.RESTIC_PACK_SIZE = "64"; # fewer, bigger packs: Drive manages ~2 file uploads/s
+    unitConfig.RequiresMountsFor = [
+      "/HDD"
+      "/HDD4TB"
+    ];
+    # after a missed night both Persistent timers fire at boot: let state's snapshot finish first
+    after = [ "restic-backups-state.service" ];
+  };
 
   # Samba, ported from the Ubuntu smb.conf plus its two Nautilus usershares
   # Passwords are state (/var/lib/samba/private): MIGRATION.md §3 restores the
