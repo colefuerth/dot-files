@@ -115,6 +115,12 @@ in
   };
 
   services.vscode-server.enable = true;
+  # Headless: VS Code is used over Remote-SSH (vscode-server above) and nothing
+  # here can display a GUI app, so skip the ones home.nix turns on by default
+  home-manager.users.${username}.programs = {
+    vscode.enable = false;
+    firefox.enable = false;
+  };
 
   # Define a user account. Don't forget to set a password with 'passwd'.
   users.mutableUsers = false; # Required for declarative password management in VMs
@@ -143,8 +149,7 @@ in
     openssh.authorizedKeys.keys = [
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFozZCB6oPjnWlEZfaZlVI1oXtIAeSpRqw6kOhVlukmB cole@cole-desktop"
     ];
-    packages = with pkgs; [
-    ];
+    packages = [ dotFilesPackages.win10-vm ];
     shell = pkgs.zsh;
   };
 
@@ -158,7 +163,6 @@ in
     nvtopPackages.nvidia
     (python313.withPackages dotFilesPackages.pyPackages)
     uv
-    vscode-with-extensions
   ];
 
   # Ubuntu ran sshd key-only too

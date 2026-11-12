@@ -61,6 +61,9 @@ rec {
   # dependencies bundled). A list, spliced into home.packages / the shell PATH.
   scriptPackages = import ./packages/scripts.nix { inherit pkgs; };
 
+  # Not in scriptPackages: only the hosts that run libvirtd install it.
+  win10-vm = import ./packages/win10-vm.nix { inherit pkgs; };
+
   # Derivation containing all config files (/. rather than /* so dotfiles like
   # .clang-format are copied too)
   configs = pkgs.runCommand "dot-files-configs" { } ''
