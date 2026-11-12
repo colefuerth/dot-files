@@ -1,13 +1,12 @@
 #!/usr/bin/env bash
-# Installs cole-server onto its SSD (MIGRATION.md §2). The installer ISO
+# Installs cole-server onto its SSD (REINSTALL.md). The installer ISO
 # (nix build .#cole-server-installer) runs this on its console with the system
 # closure it carries; by hand, as root on any NixOS installer:
 #   bash install.sh /nix/store/...-nixos-system-cole-server-...
 #
 # Only the SSD below is written. The WD drives are mounted read-only to fetch
-# the server's identity: SSH host keys, the tailscale node and Samba passwords.
-# They come from the restic `state` repo once it exists (later reinstalls),
-# otherwise from the pre-wipe Ubuntu backup (pre-wipe-backup.sh).
+# the server's identity: SSH host keys, the tailscale node and Samba passwords,
+# from the latest snapshot of the restic `state` repo.
 set -euo pipefail
 shopt -s nullglob
 
@@ -26,31 +25,19 @@ die() {
 [ -d /sys/firmware/efi ] || die "booted in legacy BIOS mode: pick the USB stick's UEFI boot entry"
 udevadm settle # tty1 autostarts early; let the disk links appear first
 [ -e "$DISK" ] || die "SSD $DISK not found: is this cole-server?"
-[ -e "$HDD" ] || die "/HDD (WD 1TB) not found: it holds the identity backup"
+[ -e "$HDD" ] || die "/HDD (WD 1TB) not found: it holds the restic password"
+[ -e "$HDD4TB" ] || die "/HDD4TB (WD 4TB) not found: it holds the restic repo"
 
 mkdir -p /hdd /hdd4tb
 mountpoint -q /hdd || mount -o ro "$HDD" /hdd
-if [ -e "$HDD4TB" ] && ! mountpoint -q /hdd4tb; then mount -o ro "$HDD4TB" /hdd4tb; fi
-
-backups=(/hdd/ubuntu-backup-*/root)
-if [ -f /hdd4tb/restic/config ] && [ -f /hdd/secrets/restic.pass ]; then
-	src=restic
-	desc="the restic repo /HDD4TB/restic (latest snapshot)"
-elif [ ${#backups[@]} -gt 0 ]; then
-	src=${backups[-1]}
-	desc=/HDD${src#/hdd}
-	for f in etc/ssh/ssh_host_ed25519_key var/lib/tailscale/tailscaled.state \
-		var/lib/samba/private/passdb.tdb var/lib/samba/private/secrets.tdb; do
-		[ -e "$src/$f" ] || die "$desc/$f is missing"
-	done
-else
-	die "no identity source: neither /HDD4TB/restic nor /HDD/ubuntu-backup-*"
-fi
+mountpoint -q /hdd4tb || mount -o ro "$HDD4TB" /hdd4tb
+[ -f /hdd4tb/restic/config ] || die "no restic repo at /HDD4TB/restic"
+[ -f /hdd/secrets/restic.pass ] || die "no /HDD/secrets/restic.pass"
 
 cat <<EOF
 
 Installs: $SYSTEM
-Identity (SSH host keys, tailscale, Samba passwords) from: $desc
+Identity (SSH host keys, tailscale, Samba passwords) from: the restic repo /HDD4TB/restic (latest snapshot)
 ERASES this disk:
 $(lsblk -o NAME,SIZE,MODEL,SERIAL,FSTYPE,LABEL "$(readlink -f "$DISK")")
 
@@ -82,24 +69,13 @@ done
 mount --mkdir -o umask=077 "$DISK-part1" /mnt/boot
 
 echo "== identity"
-if [ "$src" = restic ]; then
-	restic -r /hdd4tb/restic -p /hdd/secrets/restic.pass --no-lock --cache-dir /tmp/restic-cache \
-		restore latest --target /mnt \
-		--include /etc/ssh --include /var/lib/tailscale --include /var/lib/samba/private
-else
-	install -d -m 755 /mnt/etc/ssh
-	cp -a "$src"/etc/ssh/ssh_host_* /mnt/etc/ssh/
-	install -d -m 700 /mnt/var/lib/tailscale
-	cp -a "$src"/var/lib/tailscale/. /mnt/var/lib/tailscale/
-	install -d -m 755 /mnt/var/lib/samba
-	install -d -m 700 /mnt/var/lib/samba/private
-	cp -a "$src"/var/lib/samba/private/{passdb,secrets}.tdb /mnt/var/lib/samba/private/
-fi
+restic -r /hdd4tb/restic -p /hdd/secrets/restic.pass --no-lock --cache-dir /tmp/restic-cache \
+	restore latest --target /mnt \
+	--include /etc/ssh --include /var/lib/tailscale --include /var/lib/samba/private
 
 echo "== installing (copies ~14G)"
 nixos-install --system "$SYSTEM" --root /mnt --no-root-passwd --no-channel-copy
 
 umount -R /mnt
-umount /hdd
-if mountpoint -q /hdd4tb; then umount /hdd4tb; fi
+umount /hdd /hdd4tb
 echo "== done: cole-server is installed on the SSD"

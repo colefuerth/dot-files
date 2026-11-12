@@ -12,13 +12,10 @@
     ../../common
     ../../common/bluetooth.nix
     ../../common/cachix.nix
-    ../../common/nixbuild.nix
     ../../common/user.nix
     ./hardware-configuration.nix
     inputs.nixos-hardware-pi-5.nixosModules.raspberry-pi-5
   ];
-
-  nixcfg.nixbuild.enable = false;
 
   # Cross-compile from x86_64 instead of emulating aarch64 via QEMU
   nixpkgs.buildPlatform = "x86_64-linux";

@@ -25,13 +25,10 @@ in
       };
     };
   };
-  config =
-    lib.mkIf cfg.enable {
-      environment.systemPackages = [ pkgs.cachix ];
-      nix.settings.substituters = [ "https://cache.nixos.org/?priority=25" ];
+  config = lib.mkIf cfg.enable {
+    environment.systemPackages = [ pkgs.cachix ];
+    nix.settings.substituters = [ "https://cache.nixos.org/?priority=25" ];
 
-      nix.settings.trusted-users = cfg.users;
-    }
-    // (import ./cachix/nix-community.nix)
-    // (import ./cachix/cuda-maintainers.nix);
+    nix.settings.trusted-users = cfg.users;
+  };
 }

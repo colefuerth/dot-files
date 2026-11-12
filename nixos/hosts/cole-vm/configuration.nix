@@ -9,7 +9,6 @@
   imports = [
     ../../common
     ../../common/cachix.nix
-    ../../common/nixbuild.nix
     ../../common/user.nix
     ./hardware-configuration.nix
     inputs.vscode-server.nixosModules.default

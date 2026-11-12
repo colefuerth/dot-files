@@ -100,24 +100,17 @@
               # ncdu wrapper to use config from repo
               alias ncdu='XDG_CONFIG_HOME="${dotFilesPackages.configs}" ncdu'
 
-              # Load all aliases (skip mcfly and starship since handled by home-manager)
+              # Load all aliases
               for f in ${dotFilesPackages.aliases}/*; do
                 if [[ -f "$f" ]]; then
                   fname="$(basename "$f")"
-                  case "$fname" in
-                    "mcfly"|"starship")
-                      # Skip - handled by home-manager
-                      ;;
-                    *)
-                      # Check if file contains bash-only commands
-                      if ! grep -q "shopt\|complete " "$f" 2>/dev/null; then
-                        # echo "Loading alias file: $fname"
-                        source "$f"
-                      else
-                        echo "Skipping bash-only alias file: $fname"
-                      fi
-                      ;;
-                  esac
+                  # Check if file contains bash-only commands
+                  if ! grep -q "shopt\|complete " "$f" 2>/dev/null; then
+                    # echo "Loading alias file: $fname"
+                    source "$f"
+                  else
+                    echo "Skipping bash-only alias file: $fname"
+                  fi
                 fi
               done
             '';

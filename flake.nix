@@ -9,7 +9,6 @@
     croft.flake = false;
     determinate.url = "https://flakehub.com/f/DeterminateSystems/determinate/*";
     determinate.inputs.nixpkgs.follows = "nixpkgs";
-    flake-utils.url = "github:numtide/flake-utils";
     home-manager.url = "github:nix-community/home-manager?ref=master";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
     lanzaboote.url = "github:nix-community/lanzaboote/v1.1.0";
@@ -20,8 +19,6 @@
     };
     sops-nix.url = "github:Mic92/sops-nix";
     sops-nix.inputs.nixpkgs.follows = "nixpkgs";
-    nix-vscode-extensions.url = "github:nix-community/nix-vscode-extensions";
-    nix-vscode-extensions.inputs.nixpkgs.follows = "nixpkgs";
     nixos-hardware.url = "github:nixos/nixos-hardware";
     nixos-hardware-pi-5.url = "github:nixos/nixos-hardware?ref=raspberry-pi-5";
     nixos-wsl.url = "github:nix-community/NixOS-WSL";
@@ -51,12 +48,10 @@
       nixpkgs,
       brave-previews,
       determinate,
-      flake-utils,
       home-manager,
       rust-overlay,
       sops-nix,
       nixos-wsl,
-      nix-vscode-extensions,
       nix-darwin,
       ...
     }@inputs:
@@ -121,7 +116,6 @@
             inherit system;
             overlays = [
               rust-overlay.overlays.default
-              nix-vscode-extensions.overlays.default
               self.overlays.default
             ];
           };
@@ -160,7 +154,6 @@
             inherit system;
             overlays = [
               rust-overlay.overlays.default
-              nix-vscode-extensions.overlays.default
               self.overlays.default
             ];
           };
@@ -241,7 +234,7 @@
           username = "cole";
           system = "x86_64-linux";
         };
-        # USB stick that installs cole-server (nixos/hosts/cole-server/MIGRATION.md)
+        # USB stick that installs cole-server (nixos/hosts/cole-server/REINSTALL.md)
         cole-server-installer = nixpkgs.lib.nixosSystem {
           specialArgs.coleServer = self.nixosConfigurations.cole-server.config.system.build.toplevel;
           modules = [ ./nixos/hosts/cole-server/installer.nix ];
@@ -261,11 +254,6 @@
         let
           pkgs = import nixpkgs {
             inherit system;
-            config.allowUnfreePredicate =
-              pkg:
-              builtins.elem (nixpkgs.lib.getName pkg) [
-                "claude-code"
-              ];
             overlays = [
               self.overlays.default
               rust-overlay.overlays.default
@@ -336,7 +324,6 @@
                 inherit system;
                 overlays = [
                   rust-overlay.overlays.default
-                  nix-vscode-extensions.overlays.default
                   self.overlays.default
                 ];
               };

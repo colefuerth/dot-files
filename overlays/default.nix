@@ -15,8 +15,6 @@ in
   (import ./signal-desktop)
   # (import ./freetype-qdoled)
   # (import ./gh)
-  # disable SSH overlay and use home-manager to fix ~/.ssh/config perms
-  # (import ./openssh)
 ])
   final
   prev

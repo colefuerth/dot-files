@@ -45,19 +45,10 @@ pkgs.writeShellScriptBin "cole-shell" ''
   autoload -U compinit && compinit
   autoload -U colors && colors
 
-  # Load aliases (skip mcfly and starship)
+  # Load aliases
   for f in ${dotFilesPackages.aliases}/*; do
-    if [[ -f "$f" ]]; then
-      fname="$(basename "$f")"
-      case "$fname" in
-        "mcfly"|"starship")
-          ;;
-        *)
-          if ! grep -q "shopt\|complete " "$f" 2>/dev/null; then
-            source "$f"
-          fi
-          ;;
-      esac
+    if [[ -f "$f" ]] && ! grep -q "shopt\|complete " "$f" 2>/dev/null; then
+      source "$f"
     fi
   done
 

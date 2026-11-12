@@ -17,10 +17,8 @@ in
     ../../common/bluetooth.nix
     ../../common/cachix.nix
     ../../common/cosmic.nix
-    ../../common/gnome.nix
     ../../common/graphical.nix
     ../../common/laptop.nix
-    ../../common/nixbuild.nix
     ../../common/solaar.nix
     ../../common/tailscale.nix
     ../../common/user.nix
@@ -30,12 +28,7 @@ in
     inputs.nixos-hardware.nixosModules.lenovo-thinkpad-p1-gen3
   ];
 
-  # Desktop Environment Configuration
-  # Enable only one at a time:
-  nixcfg.gnome.enable = false;
   nixcfg.cosmic.enable = true;
-
-  nixcfg.nixbuild.enable = false;
 
   # Select the kernel version
   boot.kernelPackages = pkgs.linuxPackages_latest;
