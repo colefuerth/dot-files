@@ -307,18 +307,23 @@ in
     xrandr
   ];
 
+  # nofail: a dead or unplugged data disk must not drop boot into the emergency
+  # shell before network and Tailscale come up (no remote way back in).
   fileSystems = {
     "/mnt/balls" = {
       device = "/dev/disk/by-uuid/0e8cb026-25ce-4d4c-a2f7-5b936d89b607";
       fsType = "ext4";
+      options = [ "nofail" ];
     };
     "/mnt/big-boy" = {
       device = "/dev/disk/by-uuid/67de21fa-0e49-4dfd-ae68-81acb80a3b6d";
       fsType = "ext4";
+      options = [ "nofail" ];
     };
     "/mnt/hdd" = {
       device = "/dev/disk/by-uuid/82b3fa85-c97f-41e5-9520-a0b681bc8671";
       fsType = "ext4";
+      options = [ "nofail" ];
     };
   };
 
@@ -354,6 +359,11 @@ in
       };
     };
   };
+
+  # /mnt/hdd is nofail, so without this smbd would happily share the empty
+  # mountpoint (writes land on the root disk). List, not string: it merges with
+  # the module's own "/var/lib/samba".
+  systemd.services.samba-smbd.unitConfig.RequiresMountsFor = [ "/mnt/hdd" ];
 
   # WS-Discovery — makes the host show up in Windows Explorer's Network pane and
   # in Dolphin, rather than needing \\192.168.69.4 typed by hand. The NetBIOS
