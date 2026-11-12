@@ -97,6 +97,7 @@ in
             ++ lib.optionals isLinux [
               gptfdisk
               iotop
+              nodejs_22 # Claude Code plugin hooks run `node`
               usbutils
             ]
             ++ lib.optionals pkgs.stdenv.hostPlatform.isx86_64 [
