@@ -20,6 +20,17 @@
 # so going back to docker stays possible.
 let
   provision = "/HDD/docker/mediaserver/provision";
+  # Root-equivalent for anything running as cole (docker group, nix
+  # trusted-user, libvirtd group), so hidden from the media services below.
+  # These overmount what exists at service start: if docker.socket restarts, the
+  # new /run/docker.sock is reachable until the service restarts too (Jellyfin
+  # does nightly for the backup, filebot-amc on every run; qBittorrent can't open
+  # unix sockets at all). "-": skip a path that doesn't exist.
+  rootSockets = [
+    "-/run/docker.sock"
+    "-/nix/var/nix/daemon-socket"
+    "-/run/libvirt"
+  ];
 in
 {
   imports = [
@@ -230,6 +241,9 @@ in
   };
   systemd.services.jellyfin = {
     environment.JELLYFIN_PublishedServerUrl = "http://jellyfin.colef.club";
+    # cole's real $HOME is hidden below; .NET keeps its DataProtection keys and
+    # fontconfig its cache under $HOME
+    environment.HOME = "/cache";
     unitConfig.RequiresMountsFor = [
       "/HDD"
       "/HDD4TB"
@@ -250,6 +264,11 @@ in
         "/HDD4TB/TV:/media/tv"
         "/HDD4TB/Movies:/media/movies"
       ];
+      # Internet-facing: only its two binds are writable (else the media would
+      # still be writable at /HDD4TB/...), and no cole home, /run/user or sockets
+      ProtectSystem = lib.mkForce "strict";
+      ProtectHome = true;
+      InaccessiblePaths = rootSockets;
     };
   };
   # jellyfin-ffmpeg loads libcuda/libnvcuvid/libnvidia-encode from /run/opengl-driver
@@ -282,6 +301,7 @@ in
       "/home/${username}/torrents_downloads:/watch_downloads"
       "/home/${username}/torrents_nohandbrake:/watch_nohandbrake"
     ];
+    serviceConfig.InaccessiblePaths = rootSockets;
   };
   systemd.tmpfiles.rules = [
     "d /home/${username}/torrents_nohandbrake 0755 ${username} cole -"
@@ -322,6 +342,44 @@ in
         "${provision}/filebot:/var/lib/filebot-amc/filebot/data"
         "/HDD/nohandbrake:/watch"
       ];
+      # It runs 7zz on archives from torrents: writable are only the binds, the
+      # state dir and these, and no cole home, /run/user or sockets
+      ProtectSystem = "strict";
+      ReadWritePaths = [
+        "${provision}/filebot" # --log-file, excludeList
+        "/HDD4TB/Movies"
+        "/HDD4TB/TV"
+        "-/HDD4TB/Music" # music=y; never used so far, mkdir it to let music through
+      ];
+      ProtectHome = true;
+      InaccessiblePaths = rootSockets;
+      PrivateTmp = true;
+      PrivateDevices = true;
+      PrivateUsers = true;
+      NoNewPrivileges = true;
+      # the rest like the nixpkgs jellyfin/qbittorrent units (no
+      # MemoryDenyWriteExecute: the JVM's JIT needs W+X memory)
+      CapabilityBoundingSet = "";
+      LockPersonality = true;
+      ProtectClock = true;
+      ProtectControlGroups = true;
+      ProtectHostname = true;
+      ProtectKernelLogs = true;
+      ProtectKernelModules = true;
+      ProtectKernelTunables = true;
+      ProtectProc = "invisible";
+      RestrictAddressFamilies = [
+        "AF_UNIX"
+        "AF_INET"
+        "AF_INET6"
+        "AF_NETLINK"
+      ];
+      RestrictNamespaces = true;
+      RestrictRealtime = true;
+      RestrictSUIDSGID = true;
+      SystemCallArchitectures = "native";
+      SystemCallFilter = [ "@system-service" ];
+      SystemCallErrorNumber = "EPERM"; # a blocked syscall fails instead of killing the JVM
     };
     # Like the container: only run when the input changed since the last run and
     # has stopped changing (qbt copies finished torrents in; don't sort half a file)
