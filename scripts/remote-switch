@@ -3,13 +3,17 @@ set -euo pipefail
 IFS=$'\n\t'
 
 usage() {
-  echo "Usage: $0"
+  # Not $0: once packaged, that is the .remote-switch-wrapped store path.
+  echo "Usage: remote-switch -c CLOSURE -i [USER@]HOST [options]"
   echo "  -f, --flake       Path to the flake (default: '$(pwd)')"
   echo "  -s, --system      The system architecture for remote builds (i.e. aarch64-linux)"
-  echo "  -c, --closure     Must be a .toplevel closure for a nixos config"
-  echo "  -i, --ip-address  IP address of the remote machine"
-  echo "  -p, --password    Password for sudo access on the remote machine (optional)"
+  echo "  -c, --closure     Flake attribute of a nixos config's toplevel,"
+  echo "                    e.g. nixosConfigurations.cole-pi.config.system.build.toplevel"
+  echo "  -i, --ip-address  Remote machine: IP, [user@]hostname or ssh alias"
+  echo "  -p, --password    sudo (and ssh) password on the remote machine (optional;"
+  echo "                    without it, sudo prompts on the remote terminal if needed)"
   echo "  -a, --action      Action to perform (switch, build, boot, test; default: test)"
+  echo "                    build only copies the closure; boot also reboots the remote"
   echo "  -r, --remote      Remote builder to use (default: none)"
   echo "  -h, --help        Display this help message"
 }
@@ -131,9 +135,10 @@ echo "built ${closurePath} for ${closureToplevel}"
 # Extract hostname from ip_address (might be user@hostname format)
 hostname_part="${ip_address##*@}"
 echo "Resolving hostname: ${hostname_part}"
-resolved_ip=$(getent hosts "${hostname_part}" | awk '{ print $1 }' | head -n1)
+# Not fatal: getent fails for ssh aliases and doesn't exist on macOS.
+resolved_ip=$(getent hosts "${hostname_part}" 2>/dev/null | awk '{ print $1 }' | head -n1) || true
 if [ -z "${resolved_ip}" ]; then
-  echo "WARNING: Could not resolve ${hostname_part}, using original address"
+  echo "WARNING: Could not resolve ${hostname_part} (ssh alias?), using original address"
   target_address="${ip_address}"
 else
   echo "Resolved ${hostname_part} to ${resolved_ip}"
@@ -146,14 +151,15 @@ else
   fi
 fi
 
-# Ping the remote host before any further communication  
-echo "Pinging remote host: ${target_address}"  
-# Extract the host part for ping (strip user@ if present)  
-ping_host="${target_address##*@}"  
-if ! ping -c 2 -W 2 "${ping_host}" >/dev/null 2>&1; then  
-  echo "ERROR: Remote host ${ping_host} is unreachable (ping failed). Aborting."  
-  exit 1  
-fi  
+# Ping the remote host before any further communication. Only a resolved
+# address can be pinged; otherwise ssh itself reports an unreachable host.
+if [ -n "${resolved_ip}" ]; then
+  echo "Pinging remote host: ${resolved_ip}"
+  if ! ping -c 2 -W 2 "${resolved_ip}" >/dev/null 2>&1; then
+    echo "ERROR: Remote host ${resolved_ip} is unreachable (ping failed). Aborting."
+    exit 1
+  fi
+fi
 
 if [ "${password}" == "" ]; then
   NIX_SSHOPTS="-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" \
@@ -165,36 +171,37 @@ fi
 
 echo "copied ${closurePath} to ${ip_address}"
 
-if [ "${password}" == "" ]; then
-  SET_CLOSURE_CMD="sudo nix-env -p /nix/var/nix/profiles/system --set ${closurePath}"
-  ACTION_CMD="sudo ${closurePath}/bin/switch-to-configuration ${action}"
-  REBOOT_CMD="sudo reboot"
+# Like nixos-rebuild build: stop once the closure is copied, activating nothing.
+if [ "${action}" == "build" ]; then
+  exit 0
+fi
 
-  echo "No password was given. Attempting to rebuild without password."
-  # shellcheck disable=SC2029 # We want to expand the commands on the client side
-  ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "${target_address}" "${SET_CLOSURE_CMD}; ${ACTION_CMD}"
-  echo "executed ${action} on asset ${ip_address} with ${closurePath}"
-
-  if [ "${action}" == "boot" ]; then
-    echo "rebooting asset ${ip_address}"
-    ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "${target_address}" "${REBOOT_CMD}"
-    echo "rebooted asset ${ip_address}"
+# Run a command as root on the remote. A password goes to sudo on stdin, so it
+# needs no quoting and never shows up in the remote's process list; without
+# one, -t gives sudo a terminal to prompt on.
+remote_sudo() {
+  local ssh_opts=(-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null)
+  if [ "${password}" == "" ]; then
+    # shellcheck disable=SC2029 # We want to expand the commands on the client side
+    ssh -t "${ssh_opts[@]}" "${target_address}" "sudo sh -c '$1'"
+  else
+    # shellcheck disable=SC2029 # We want to expand the commands on the client side
+    sshpass -p "${password}" ssh "${ssh_opts[@]}" "${target_address}" "sudo -S -p '' sh -c '$1'" <<<"${password}"
   fi
-else
-  # Use sudo -S to read password from stdin
-  SET_CLOSURE_CMD="echo '${password}' | sudo -S -p '' nix-env -p /nix/var/nix/profiles/system --set ${closurePath}"
-  ACTION_CMD="echo '${password}' | sudo -S -p '' ${closurePath}/bin/switch-to-configuration ${action}"
-  REBOOT_CMD="echo '${password}' | sudo -S -p '' reboot"
+}
 
-  echo "Password was given. Attempting to rebuild using password."
-  # shellcheck disable=SC2029 # We want to expand the commands on the client side
-  sshpass -p "${password}" ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "${target_address}" "${SET_CLOSURE_CMD}"
-  sshpass -p "${password}" ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "${target_address}" "${ACTION_CMD}"
-  echo "executed ${action} on asset ${ip_address} with ${closurePath}"
+# Like nixos-rebuild, only switch and boot make this the new system generation;
+# test leaves the profile alone. systemd-run (also as nixos-rebuild does) keeps
+# the activation alive if it restarts the network and drops this ssh session.
+activate="systemd-run --collect --no-ask-password --pipe --quiet --service-type=exec --unit=nixos-rebuild-switch-to-configuration ${closurePath}/bin/switch-to-configuration ${action}"
+if [ "${action}" == "switch" ] || [ "${action}" == "boot" ]; then
+  activate="nix-env -p /nix/var/nix/profiles/system --set ${closurePath} && ${activate}"
+fi
+remote_sudo "${activate}"
+echo "executed ${action} on asset ${ip_address} with ${closurePath}"
 
-  if [ "${action}" == "boot" ]; then
-    echo "rebooting asset ${ip_address}"
-    sshpass -p "${password}" ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "${target_address}" "${REBOOT_CMD}"
-    echo "rebooted asset ${ip_address}"
-  fi
+if [ "${action}" == "boot" ]; then
+  echo "rebooting asset ${ip_address}"
+  remote_sudo reboot
+  echo "rebooted asset ${ip_address}"
 fi
