@@ -7,7 +7,6 @@
 
 {
   config,
-  host,
   inputs,
   lib,
   pkgs,
@@ -19,6 +18,7 @@
   imports = [
     ../../common
     ../../common/cachix.nix
+    ../../common/user.nix
     inputs.vscode-server.nixosModules.default
   ];
 
@@ -27,27 +27,9 @@
 
   boot.kernelPackages = pkgs.linuxPackages;
 
-  networking.hostName = host;
   networking.wireless.enable = lib.mkForce false;
 
   services.vscode-server.enable = true;
-
-  users.users.${username} = {
-    isNormalUser = true;
-    description = username;
-    extraGroups = [
-      # TODO: dialout and docker may be security risks
-      "dialout"
-      "docker"
-      "networkmanager"
-      "video"
-      "wheel"
-    ];
-    packages = with pkgs; [
-      # userspace packages I want to install for all users
-    ];
-    shell = pkgs.zsh;
-  };
 
   environment.systemPackages = with pkgs; [
     cachix
@@ -55,9 +37,6 @@
     fastfetch
     vscode-with-extensions
   ];
-
-  virtualisation.docker.enable = true;
-  virtualisation.docker.daemon.settings.features.cdi = true;
 
   system.stateVersion = "25.11"; # Did you read the comment?
 }
