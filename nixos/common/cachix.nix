@@ -14,7 +14,8 @@ in
       enable = lib.mkOption {
         default = true;
         description = ''
-          Enable a list of Cachix substituters
+          Install cachix, prefer cache.nixos.org and make `users` trusted
+          Nix users. The other caches are set in default.nix.
         '';
         type = lib.types.bool;
       };
