@@ -466,6 +466,8 @@ in
       # Same password as the local repos, so restic.pass must also live off this box.
       offsite = common // {
         repository = "rclone:gdrive:restic-cole-server";
+        # init by hand: if a Drive lookup ever misses the repo, auto-init makes a same-named twin
+        initialize = false;
         # a string, not a path, so it stays out of the store; root 0600, and
         # rclone rewrites it when it refreshes the OAuth token
         rcloneConfigFile = "/HDD/secrets/rclone.conf";
