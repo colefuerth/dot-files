@@ -1,5 +1,6 @@
 {
   config,
+  dotFilesPackages,
   host,
   inputs,
   lib,
@@ -152,8 +153,10 @@ in
     claude-code
     docker-compose # minecraft stack stays in docker (see docker/minecraft in this repo)
     filebot # one-off manual runs (renew the AMC license by replacing ${provision}/filebot/license.psm, not with --license)
+    herdr
     ncdu
     nvtopPackages.nvidia
+    (python313.withPackages dotFilesPackages.pyPackages)
     vscode-with-extensions
   ];
 
