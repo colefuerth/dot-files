@@ -370,6 +370,10 @@ in
   services.tailscale = {
     enable = true;
     openFirewall = true;
+    useRoutingFeatures = "server"; # IPv4/IPv6 forwarding for the exit node
+    # Applied by tailscaled-set, which only runs when tailscaled starts (not on a
+    # switch): after changing these, `sudo systemctl start tailscaled-set`
+    extraSetFlags = [ "--advertise-exit-node" ];
   };
 
   # Secrets live in /HDD/secrets (root 0700) so they survive SSD reinstalls.
