@@ -191,8 +191,8 @@ remote_sudo() {
 }
 
 # Like nixos-rebuild, only switch and boot make this the new system generation;
-# test leaves the profile alone. systemd-run (also as nixos-rebuild does) keeps
-# the activation alive if it restarts the network and drops this ssh session.
+# test leaves the profile alone. systemd-run (as nixos-rebuild does) runs the
+# activation outside this ssh session, so it isn't killed along with it.
 activate="systemd-run --collect --no-ask-password --pipe --quiet --service-type=exec --unit=nixos-rebuild-switch-to-configuration ${closurePath}/bin/switch-to-configuration ${action}"
 if [ "${action}" == "switch" ] || [ "${action}" == "boot" ]; then
   activate="nix-env -p /nix/var/nix/profiles/system --set ${closurePath} && ${activate}"
