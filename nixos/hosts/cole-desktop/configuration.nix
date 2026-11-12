@@ -120,9 +120,38 @@ in
   #     /var/lib/nix-signing-key.sec /var/lib/nix-signing-key.pub
   nix.settings.secret-key-files = "/var/lib/nix-signing-key.sec";
 
+  # The Ubuntu server (`ssh s`, 8 cores) as an opt-in remote builder. Builds
+  # stay local by default (distributedBuilds is off, so `builders` is empty),
+  # but /etc/nix/machines is still generated; `noms <installable>` builds
+  # entirely on s via `-j0 --builders @/etc/nix/machines`.
+  # - The daemon connects as root, so the ssh user/key/host key are spelled out
+  #   here instead of coming from ~/.ssh/config.
+  # - Nix on s is a multi-user install that isn't on PATH for non-interactive
+  #   ssh, hence remote-program.
+  # - s needs `trusted-users = root cole` in /etc/nix/nix.conf.
+  nix.buildMachines = [
+    {
+      hostName = "192.168.69.5?remote-program=/nix/var/nix/profiles/default/bin/nix-daemon";
+      protocol = "ssh-ng";
+      sshUser = username;
+      sshKey = "/home/${username}/.ssh/id_ed25519";
+      # base64 of s's ssh-ed25519 host key
+      publicHostKey = "c3NoLWVkMjU1MTkgQUFBQUMzTnphQzFsWkRJMU5URTVBQUFBSUxjYk13VTdLZWtiTHBiUXJnK284QmsxTDZXYmZPL2tNR1NnWmZWMCtQTW0=";
+      system = "x86_64-linux";
+      maxJobs = 8;
+      supportedFeatures = [
+        "benchmark"
+        "big-parallel"
+      ];
+    }
+  ];
+  # Let s fetch build inputs from cache.nixos.org itself rather than this host
+  # uploading them.
+  nix.settings.builders-use-substitutes = true;
+
   nixcfg.cinnamon.enable = false;
-  nixcfg.cosmic.enable = false;
-  nixcfg.plasma.enable = true;
+  nixcfg.cosmic.enable = true;
+  nixcfg.plasma.enable = false;
 
   # GB203 (RTX 5070 Ti) HDMI out -> the TV. Becomes the default output whenever
   # the controller connects and Big Picture opens.
@@ -546,7 +575,7 @@ in
   };
 
   nixcfg.wallpaperEngine = {
-    enable = true;
+    enable = false;
     serviceEnvironment = [
       "LIBVA_DRIVER_NAME=nvidia"
       "LIBVA_DRIVERS_PATH=${pkgs.nvidia-vaapi-driver}/lib/dri"
@@ -570,6 +599,10 @@ in
   # Home-manager configuration for this machine
   home-manager.users.${username} = {
     home.stateVersion = "26.05";
+
+    # Build on s instead of here (see nix.buildMachines), e.g.
+    #   noms .#nixosConfigurations.cole-desktop.config.system.build.toplevel
+    programs.zsh.shellAliases.noms = "nom build -j0 --builders @/etc/nix/machines";
 
     programs.firefox.enable = false;
     programs.brave = {

@@ -4,26 +4,26 @@ Only the SSD (`sda`) is reinstalled. `/HDD` (all app state, under `/HDD/docker`)
 and `/HDD4TB` (media) are left alone, and the NixOS services use their state
 in place.
 
-| Was (Ubuntu)                              | Now                                                 |
-| ----------------------------------------- | --------------------------------------------------- |
-| jellyfin, qbittorrent, filebot containers | native services, same state dirs via `BindPaths`; Jellyfin transcodes with NVENC |
-| nginx-proxy-manager                       | `services.nginx` + ACME (`jellyfin.colef.club`)     |
-| ddclient, tailscale, samba, libvirtd      | native modules                                      |
-| minecraft (`/docker`, on the SSD)         | docker compose in `/HDD/docker/minecraft`           |
-| cron backups (all broken since 2024)      | `services.restic.backups` (`state`, `archive`)      |
-| plex, openvpn, portainer, cloudflared, xrdp, motion, wireguard, handbrake, musicbot | dropped: dead or unused (state deleted in §4) |
+| Was (Ubuntu)                                                                        | Now                                                                              |
+| ----------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| jellyfin, qbittorrent, filebot containers                                           | native services, same state dirs via `BindPaths`; Jellyfin transcodes with NVENC |
+| nginx-proxy-manager                                                                 | `services.nginx` + ACME (`jellyfin.colef.club`)                                  |
+| ddclient, tailscale, samba, libvirtd                                                | native modules                                                                   |
+| minecraft (`/docker`, on the SSD)                                                   | docker compose in `/HDD/docker/minecraft`                                        |
+| cron backups (all broken since 2024)                                                | `services.restic.backups` (`state`, `archive`)                                   |
+| plex, openvpn, portainer, cloudflared, xrdp, motion, wireguard, handbrake, musicbot | dropped: dead or unused (state deleted in §4)                                    |
 
 ### Secrets and config that carry over
 
-| What                                                                                                   | How                                                                   |
-| ------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------- |
-| Jellyfin, qBittorrent, FileBot (users, API keys, WebUI login, license), NPM data                       | already on `/HDD`, used in place                                      |
-| SSH host keys, Tailscale node identity, Samba passwords (`passdb.tdb` + `secrets.tdb`)                 | the installer copies them onto the SSD (§2)                           |
-| ddclient password                                                                                      | `pre-wipe-backup.sh` saves it to `/HDD/secrets/ddclient.pass`         |
-| ddclient settings, static IP, Samba shares, mounts, firewall                                           | re-declared in `configuration.nix`                                    |
-| Home: SSH keys, `authorized_keys`, zsh history, Claude Code login, app configs, repos                  | restored in §3, except files home-manager now owns                    |
-| `~/X` (now lives on Google Drive)                                                                      | archived to `/HDD4TB/Archive` in §1, not restored                     |
-| Minecraft world, EasyAuth, RCON password; win10-node VM                                                | §3                                                                    |
+| What                                                                                   | How                                                           |
+| -------------------------------------------------------------------------------------- | ------------------------------------------------------------- |
+| Jellyfin, qBittorrent, FileBot (users, API keys, WebUI login, license), NPM data       | already on `/HDD`, used in place                              |
+| SSH host keys, Tailscale node identity, Samba passwords (`passdb.tdb` + `secrets.tdb`) | the installer copies them onto the SSD (§2)                   |
+| ddclient password                                                                      | `pre-wipe-backup.sh` saves it to `/HDD/secrets/ddclient.pass` |
+| ddclient settings, static IP, Samba shares, mounts, firewall                           | re-declared in `configuration.nix`                            |
+| Home: SSH keys, `authorized_keys`, zsh history, Claude Code login, app configs, repos  | restored in §3, except files home-manager now owns            |
+| `~/X` (now lives on Google Drive)                                                      | archived to `/HDD4TB/Archive` in §1, not restored             |
+| Minecraft world, EasyAuth, RCON password; win10-node VM                                | §3                                                            |
 
 Not carried over: the Ubuntu login password (the hashes in `configuration.nix`
 replace it), and the secrets of dropped services: the Cloudflare tunnel token,
@@ -78,8 +78,9 @@ Type `erase`. It partitions only the SSD, which it finds by serial number
 (GPT: `BOOT` ESP + `nixos` btrfs with cole-desktop's `@`, `@home`, `@nix`,
 `@log` and `@snapshots` subvolumes, no LUKS since there's no TPM). The WD drives are only mounted read-only. It then copies the identity
 files and installs the system from the stick, which takes about 10-20 minutes
-with no network or building. When it says done, pull the stick and press Enter
-to reboot into cole-server.
+with no network or building. When it says done, press Enter and pull the stick
+at the HP logo. Pulling it before the reboot crashes the reboot, because the
+installer runs from the stick.
 
 Anything else at the prompt aborts with nothing changed. If it stops with an
 error, `sudo install-cole-server` reruns it. What it does, step by step, is
@@ -91,40 +92,31 @@ The router's WAN TCP 80 forward has to point at `192.168.69.5:80` (it went to
 `:82` for NPM). Without that, ACME can't get the jellyfin cert, and nginx serves
 https with a self-signed placeholder until it can.
 
+`~/dot-files` comes back with the home restore, so copy the script over first:
+
 ```sh
+scp ~/dot-files/nixos/hosts/cole-server/first-boot.sh s:/tmp/   # on cole-desktop
 ssh s   # cole-desktop's key is declared; host key unchanged
-B=$(sudo sh -c 'ls -d /HDD/ubuntu-backup-*/root' | tail -1)   # root-only dir
-
-# Secrets (root-only, on /HDD so later reinstalls keep them). The backup
-# script already wrote /HDD/secrets/ddclient.pass. If it warned that it
-# couldn't, copy the value after `password=` by hand:
-#   sudo grep password "$B/etc/ddclient.conf"
-#   sudo sh -c "umask 077; printf '%s' '<the token>' > /HDD/secrets/ddclient.pass"
-#   sudo systemctl restart ddclient.service
-sudo install -d -m 700 /HDD/secrets
-sudo sh -c 'umask 077; openssl rand -base64 32 > /HDD/secrets/restic.pass'
-sudo cat /HDD/secrets/restic.pass   # -> password manager; the restic repos are useless without it
-
-# Home: everything from the old home that home-manager didn't already put
-# there (it owns ~/.zshrc, ~/.zshenv, ~/.ssh/config and a few ~/.config files;
-# the old versions stay in $B). That includes ~/dot-files, as pulled in §1.
-# Skips ~/X (archived in §1) and the old Ubuntu nix profile.
-sudo rsync -aHAX --ignore-existing --exclude=/X/ --exclude=/torrents_handbrake/ \
-  --exclude=/.nix-profile --exclude=/.local/state/nix/ "$B/home/cole/" /home/cole/
-# zsh history: the old one, then whatever this login has added since
-sudo cat "$B/home/cole/.zsh_history" ~/.zsh_history >~/.zsh_history.new &&
-  mv ~/.zsh_history.new ~/.zsh_history
-
-sudo pdbedit -L   # cole, from the old Samba passwords; if not: sudo smbpasswd -a cole
-
-# Anything else only root could see on Ubuntu (root's dotfiles, crontabs)
-sudo ls -la "$B/root" "$B/var/spool/cron/crontabs"
-
-# Jellyfin: the container ran as root and the service runs as cole, so it
-# fails to start until this is done
-sudo chown -R cole:cole /HDD/docker/mediaserver/provision/jellyfin
-sudo systemctl restart jellyfin
+sudo bash /tmp/first-boot.sh
 ```
+
+`first-boot.sh` is safe to re-run. It:
+
+- creates `/HDD/secrets/restic.pass` and prints it at the end. Save it in a
+  password manager: the restic repos are useless without it.
+- restores the old home from `/HDD/ubuntu-backup-*/root/home/cole`, except
+  files home-manager already put there (`~/.zshrc`, `~/.zshenv`,
+  `~/.ssh/config`, a few `~/.config` files; the old versions stay in the
+  backup). That includes `~/dot-files` as pulled in §1. It skips `~/X` and the
+  old Ubuntu nix profile.
+- puts the old zsh history in front of what this login has added.
+- checks that cole has a Samba password, from the old passdb.
+- lists root's old home and crontabs, the things only root could see on Ubuntu.
+- chowns Jellyfin's state to cole, since the container ran as root, and
+  restarts it.
+- runs ddclient once. If it warns that `ddclient.pass` is missing, copy the
+  value after `password=` from the backup's `etc/ddclient.conf` into it by hand:
+  `sudo sh -c "umask 077; printf '%s' '<the token>' > /HDD/secrets/ddclient.pass"`.
 
 Then check each service:
 
