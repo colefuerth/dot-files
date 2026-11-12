@@ -16,15 +16,19 @@
 # The media services were docker containers; the native units below give each
 # one the exact paths its container saw (systemd BindPaths) because those paths
 # are baked into their state: ~25k absolute paths in jellyfin.db, qbittorrent's
-# fastresume files, filebot's exclude list. State is used in place, untouched,
-# so going back to docker stays possible.
+# fastresume files, the done list media-sort took over from FileBot. State is
+# used in place, untouched, so going back to docker stays possible.
 let
   provision = "/HDD/docker/mediaserver/provision";
+  media-sort = pkgs.writers.writePython3Bin "media-sort" {
+    libraries = [ pkgs.python3Packages.guessit ];
+    flakeIgnore = [ "E501" ];
+  } (builtins.readFile ./media-sort.py);
   # Root-equivalent for anything running as cole (docker group, nix
   # trusted-user, libvirtd group), so hidden from the media services below.
   # These overmount what exists at service start: if docker.socket restarts, the
   # new /run/docker.sock is reachable until the service restarts too (Jellyfin
-  # does nightly for the backup, filebot-amc on every run; qBittorrent can't open
+  # does nightly for the backup, media-sort on every run; qBittorrent can't open
   # unix sockets at all). "-": skip a path that doesn't exist.
   rootSockets = [
     "-/run/docker.sock"
@@ -163,7 +167,7 @@ in
     btop
     claude-code
     docker-compose # minecraft stack stays in docker (see docker/minecraft in this repo)
-    filebot # one-off manual runs (renew the AMC license by replacing ${provision}/filebot/license.psm, not with --license)
+    media-sort # for dry runs, see the media-sort unit
     herdr
     ncdu
     nvtopPackages.nvidia
@@ -308,59 +312,66 @@ in
     "d /home/${username}/torrents_downloads 0755 ${username} cole -"
   ];
 
-  # FileBot AMC, was the jlesage/filebot container: copy finished torrents from
-  # /HDD/nohandbrake into the libraries. Reuses the container's state dir as-is:
-  # license.psm, prefs.properties (OpenSubtitles login), cache, and the
-  # exclude list of already-processed files (stored as /watch/... paths).
-  # To renew the license, drop the new license.psm in place like before.
-  systemd.services.filebot-amc = {
-    description = "FileBot AMC: sort /HDD/nohandbrake into /HDD4TB";
+  # media-sort (./media-sort.py) replaces FileBot AMC, which was the
+  # jlesage/filebot container: it copies finished torrents from
+  # /HDD/nohandbrake into the libraries with FileBot's TMDB names and formats,
+  # so new episodes land in the existing folders. FileBot's exclude list of
+  # processed files (/watch/... paths) is its done list, so nothing is sorted
+  # twice; the rest of ${provision}/filebot is just history now.
+  # TMDB key (themoviedb.org -> Settings -> API -> "API Key"):
+  #   sudo sh -c "umask 077; printf '%s' '<key>' > /HDD/secrets/tmdb.key"
+  # Dry run over everything in /HDD/nohandbrake (prints, writes nothing):
+  #   sudo systemd-run --pty -p User=cole -p LoadCredential=tmdb:/HDD/secrets/tmdb.key -p BindReadOnlyPaths=/HDD/nohandbrake:/watch -E DONE_LIST=/dev/null media-sort --dry-run
+  system.checks = [
+    (pkgs.runCommand "media-sort-self-test" { } "${media-sort}/bin/media-sort --self-test > $out")
+  ];
+  systemd.services.media-sort = {
+    description = "Sort /HDD/nohandbrake into /HDD4TB";
     unitConfig.RequiresMountsFor = [
       "/HDD"
       "/HDD4TB"
     ];
-    path = [ pkgs.filebot ];
+    path = [
+      media-sort
+      pkgs._7zz-rar # rar too, like the container's 7z
+    ];
     environment = {
-      # nixpkgs filebot's app data is $XDG_DATA_HOME/filebot/data; bound below
-      XDG_DATA_HOME = "/var/lib/filebot-amc";
-      # Archive extraction shells out to 7z, which FileBot only uses when it's
-      # an absolute path (an unrar on PATH is ignored). _7zz-rar does rar too,
-      # like the container's /usr/bin/7z.
-      FILEBOT_OPTS = toString [
-        "-Dnet.filebot.license=${provision}/filebot/license.psm"
-        "-Dnet.filebot.archive.7z=${pkgs._7zz-rar}/bin/7zz"
-      ];
+      DONE_LIST = "${provision}/filebot/amc-exlude-list.txt";
+      PYTHONUNBUFFERED = "1"; # log lines in order with tracebacks
     };
     serviceConfig = {
       Type = "oneshot";
       User = username;
-      Group = "cole";
-      UMask = "0022";
-      StateDirectory = "filebot-amc";
-      SuccessExitStatus = 100; # AMC: no files selected for processing
-      BindPaths = [
-        "${provision}/filebot:/var/lib/filebot-amc/filebot/data"
-        "/HDD/nohandbrake:/watch"
+      StateDirectory = "media-sort";
+      LoadCredential = "tmdb:/HDD/secrets/tmdb.key";
+      # archives are unpacked here: the libraries' disk, not the SSD
+      ExecStartPre = "+${pkgs.coreutils}/bin/install -d -o ${username} -g cole /HDD4TB/.media-sort";
+      # It parses names from torrents and unpacks their archives, so of the
+      # data disks it sees only its input (read-only), the libraries, its
+      # scratch dir and the done list; no cole home, /run/user or sockets, and
+      # no D-Bus (polkit would give it cole's networkmanager rights)
+      TemporaryFileSystem = [
+        "/HDD:ro"
+        "/HDD4TB:ro"
       ];
-      # It runs 7zz on archives from torrents: writable are only the binds, the
-      # state dir and these, and no cole home, /run/user or sockets
-      ProtectSystem = "strict";
-      ReadWritePaths = [
-        "${provision}/filebot" # --log-file, excludeList
+      BindReadOnlyPaths = [ "/HDD/nohandbrake:/watch" ];
+      BindPaths = [
+        "${provision}/filebot/amc-exlude-list.txt"
+        "/HDD4TB/.media-sort"
         "/HDD4TB/Movies"
         "/HDD4TB/TV"
-        "-/HDD4TB/Music" # music=y; never used so far, mkdir it to let music through
       ];
+      ProtectSystem = "strict";
       ProtectHome = true;
-      InaccessiblePaths = rootSockets;
+      InaccessiblePaths = rootSockets ++ [ "-/run/dbus" ];
       PrivateTmp = true;
       PrivateDevices = true;
       PrivateUsers = true;
       NoNewPrivileges = true;
-      # the rest like the nixpkgs jellyfin/qbittorrent units (no
-      # MemoryDenyWriteExecute: the JVM's JIT needs W+X memory)
+      # the rest like the nixpkgs jellyfin/qbittorrent units
       CapabilityBoundingSet = "";
       LockPersonality = true;
+      MemoryDenyWriteExecute = true;
       ProtectClock = true;
       ProtectControlGroups = true;
       ProtectHostname = true;
@@ -372,37 +383,28 @@ in
         "AF_UNIX"
         "AF_INET"
         "AF_INET6"
-        "AF_NETLINK"
       ];
       RestrictNamespaces = true;
       RestrictRealtime = true;
       RestrictSUIDSGID = true;
       SystemCallArchitectures = "native";
       SystemCallFilter = [ "@system-service" ];
-      SystemCallErrorNumber = "EPERM"; # a blocked syscall fails instead of killing the JVM
     };
-    # Like the container: only run when the input changed since the last run and
-    # has stopped changing (qbt copies finished torrents in; don't sort half a file)
+    # Like FileBot's container: only run when the input changed since the last
+    # successful run and has stopped changing (qbt copies finished torrents in;
+    # don't sort half a file). A failed run is retried by the next timer tick.
     script = ''
       snap() { find /watch -printf '%P %s\n' | sort | sha1sum; }
       s=$(snap)
       [ "$s" != "$(cat "$STATE_DIRECTORY/last" 2>/dev/null)" ] || exit 0
       sleep 10
       [ "$s" = "$(snap)" ] || exit 0
-      filebot -script fn:amc /watch \
-        --output /HDD4TB --action copy --conflict auto -non-strict --lang English \
-        --log-file ${provision}/filebot/log/amc.log \
-        --def artwork=y clean=y music=y subtitles=en \
-        --def excludeList=${provision}/filebot/amc-exlude-list.txt \
-        --def "movieFormat=Movies/{n} ({y})/{n} ({y})" \
-        --def "seriesFormat=TV/{n}/Season {s}/{n} {sxe} - {t}" \
-        --def "animeFormat=TV/{n}/Season {s}/{n} {sxe} - {t}" \
-        --def "musicFormat={plex}" \
-        || [ $? = 100 ]
+      find /HDD4TB/.media-sort -mindepth 1 -delete # what a killed run left behind
+      media-sort
       echo "$s" > "$STATE_DIRECTORY/last"
     '';
   };
-  systemd.timers.filebot-amc = {
+  systemd.timers.media-sort = {
     wantedBy = [ "timers.target" ];
     timerConfig = {
       OnBootSec = "3min";
