@@ -310,6 +310,9 @@ in
   systemd.tmpfiles.rules = [
     "d /home/${username}/torrents_nohandbrake 0755 ${username} cole -"
     "d /home/${username}/torrents_downloads 0755 ${username} cole -"
+    # media-sort unpacks archives here (libraries' disk, not the SSD). Not a root
+    # ExecStartPre: qBittorrent can write /HDD4TB and plant a symlink root follows.
+    "d /HDD4TB/.media-sort 0755 ${username} cole -"
   ];
 
   # media-sort (./media-sort.py) replaces FileBot AMC, which was the
@@ -344,8 +347,6 @@ in
       User = username;
       StateDirectory = "media-sort";
       LoadCredential = "tmdb:/HDD/secrets/tmdb.key";
-      # archives are unpacked here: the libraries' disk, not the SSD
-      ExecStartPre = "+${pkgs.coreutils}/bin/install -d -o ${username} -g cole /HDD4TB/.media-sort";
       # It parses names from torrents and unpacks their archives, so of the
       # data disks it sees only its input (read-only), the libraries, its
       # scratch dir and the done list; no cole home, /run/user or sockets, and

@@ -89,7 +89,7 @@ def target(rel, suffix):
 def subtitle(f, movie):
     """The release's English subtitle for video f: <stem>.eng.srt next to it,
     Subs/<stem>/2_English.srt (TV packs) or Subs/2_English.srt (movies)."""
-    found = [s for s in f.parent.iterdir() if s.name.startswith(f.stem)]
+    found = [s for s in f.parent.iterdir() if s.name.startswith(f.stem + ".")]
     found += (f.parent / "Subs" / f.stem).glob("*")
     found += (f.parent / "Subs").glob("*") if movie else []
     english = re.compile(r"(?i)(?<![a-z])(en|eng|english)$")
@@ -147,7 +147,10 @@ def unpack(f, rel):
             print(f"[HUMAN] 7zz failed (password? corrupt?), left for a human: {rel}")
             return False
         vids = [v for v in sorted(Path(x).rglob("*")) if v.suffix.lower() in VIDEO and v.is_file() and not v.is_symlink()]
-        return all([handle(v, str(rel.parent / v.relative_to(x))) for v in vids])
+        ok = bool(vids) and all([handle(v, str(rel.parent / v.relative_to(x))) for v in vids])
+        if not ok:  # name the archive: it, not what came out of it, goes on the done list
+            print(f"[HUMAN] archive not fully sorted, left for a human: {rel}")
+        return ok
 
 
 def main():
