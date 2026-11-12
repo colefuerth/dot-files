@@ -157,6 +157,7 @@ in
     ncdu
     nvtopPackages.nvidia
     (python313.withPackages dotFilesPackages.pyPackages)
+    uv
     vscode-with-extensions
   ];
 
