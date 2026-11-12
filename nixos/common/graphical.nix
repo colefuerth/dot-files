@@ -36,6 +36,7 @@
   environment.systemPackages = with pkgs; [
     adwaita-icon-theme
     gnome-disk-utility
+    wl-clipboard # wl-copy/wl-paste; also what Claude Code's /copy uses on Wayland
   ];
 
   users.users.${username} = {
