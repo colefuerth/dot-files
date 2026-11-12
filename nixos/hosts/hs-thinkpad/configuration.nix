@@ -84,8 +84,6 @@ in
       dotFilesPackages.bambu-studio
     ];
 
-  nixpkgs.config.cudaSupport = true;
-
   environment.systemPackages = with pkgs; [
     avrdude
     claude-code
