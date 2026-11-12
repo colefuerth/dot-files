@@ -61,10 +61,11 @@ rec {
   # dependencies bundled). A list, spliced into home.packages / the shell PATH.
   scriptPackages = import ./packages/scripts.nix { inherit pkgs; };
 
-  # Derivation containing all config files
+  # Derivation containing all config files (/. rather than /* so dotfiles like
+  # .clang-format are copied too)
   configs = pkgs.runCommand "dot-files-configs" { } ''
     mkdir -p $out
-    cp -r ${./.config}/* $out/
+    cp -r ${./.config}/. $out/
   '';
 
   # Go packages

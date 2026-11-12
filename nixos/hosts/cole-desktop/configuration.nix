@@ -120,18 +120,16 @@ in
   #     /var/lib/nix-signing-key.sec /var/lib/nix-signing-key.pub
   nix.settings.secret-key-files = "/var/lib/nix-signing-key.sec";
 
-  # The Ubuntu server (`ssh s`, 8 cores) as an opt-in remote builder. Builds
+  # cole-server (`ssh s`, 8 cores) as an opt-in remote builder. Builds
   # stay local by default (distributedBuilds is off, so `builders` is empty),
   # but /etc/nix/machines is still generated; `noms <installable>` builds
   # entirely on s via `-j0 --builders @/etc/nix/machines`.
   # - The daemon connects as root, so the ssh user/key/host key are spelled out
   #   here instead of coming from ~/.ssh/config.
-  # - Nix on s is a multi-user install that isn't on PATH for non-interactive
-  #   ssh, hence remote-program.
-  # - s needs `trusted-users = root cole` in /etc/nix/nix.conf.
+  # - s trusts cole (nixcfg.cachix's trusted-users), which ssh-ng builds need.
   nix.buildMachines = [
     {
-      hostName = "192.168.69.5?remote-program=/nix/var/nix/profiles/default/bin/nix-daemon";
+      hostName = "192.168.69.5";
       protocol = "ssh-ng";
       sshUser = username;
       sshKey = "/home/${username}/.ssh/id_ed25519";

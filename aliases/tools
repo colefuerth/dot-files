@@ -1,7 +1,5 @@
-alias acp='/usr/local/bin/advcp -g'
-alias amv='/usr/local/bin/advmv -g'
 if command -v 7zz &> /dev/null; then
-    alias 7z='/usr/local/bin/7zz'
+    alias 7z='7zz'
 fi
 
 # TLP power management quick status
