@@ -91,4 +91,4 @@ darwin-rebuild switch --flake .#cole-darwin
 
 ## Adding Custom Aliases
 
-Every file in `aliases/` is sourced by zsh, both on the configured hosts (via home-manager) and in the standalone shell, except `mcfly` and `starship`, which are set up separately. To add aliases, add a file there and rebuild.
+zsh sources the files in `aliases/`, both on the configured hosts (via home-manager) and in the standalone shell. To add aliases, add a file there and rebuild.
