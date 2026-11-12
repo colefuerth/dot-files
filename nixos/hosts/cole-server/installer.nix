@@ -30,10 +30,11 @@ in
 
   environment.systemPackages = [ install ];
 
-  # The ISO auto-logs in as nixos on tty1: run the installer there, then reboot
+  # The ISO auto-logs in as nixos on tty1: run the installer there, then reboot.
+  # sudo and systemctl run from the stick, so it has to stay in until the reboot.
   programs.bash.loginShellInit = ''
     if [ "$(tty)" = /dev/tty1 ] && sudo install-cole-server; then
-      read -r -p "Remove the USB stick, then press Enter to reboot into cole-server. "
+      read -r -p "Press Enter to reboot, then pull the USB stick at the HP logo. "
       sudo systemctl reboot
     fi
   '';
