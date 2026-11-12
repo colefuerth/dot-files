@@ -37,11 +37,17 @@ jobs:
         package:
           - aliases
           - bambu-studio
-          - completions
+          - bedrock-on-linux
           - configs
           - consolas-nf
-          - scripts
+          - f5
+          - r2modman
           - shell
+          - straftat-bepinex
+          - sudoplz
+          - tour
+          - tw3mm
+          - unity-doorstop
         system:
           - x86_64-linux
       fail-fast: true

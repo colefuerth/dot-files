@@ -583,22 +583,6 @@
         "type": "github"
       }
     },
-    "nixos-hardware-pi-5": {
-      "locked": {
-        "lastModified": 1714592534,
-        "narHash": "sha256-uQPDNDN6rup0VJgdPrBU4Z6njCbWWu3AeijrUv8fTuc=",
-        "owner": "nixos",
-        "repo": "nixos-hardware",
-        "rev": "b2f60c8bd00c9225d1e97dbe7ea9314379174399",
-        "type": "github"
-      },
-      "original": {
-        "owner": "nixos",
-        "ref": "raspberry-pi-5",
-        "repo": "nixos-hardware",
-        "type": "github"
-      }
-    },
     "nixos-wsl": {
       "inputs": {
         "flake-compat": "flake-compat_4",
@@ -887,7 +871,6 @@
         "lanzaboote": "lanzaboote",
         "nix-darwin": "nix-darwin",
         "nixos-hardware": "nixos-hardware",
-        "nixos-hardware-pi-5": "nixos-hardware-pi-5",
         "nixos-wsl": "nixos-wsl",
         "nixpkgs": "nixpkgs_5",
         "razerforlinux": "razerforlinux",

@@ -1,6 +1,6 @@
 # dot-files
 
-Personal system configuration repo managed with Nix flakes. Configures 7 hosts across NixOS (Linux), nix-darwin (macOS), and WSL2.
+Personal system configuration repo managed with Nix flakes. Configures 8 hosts across NixOS (Linux), nix-darwin (macOS), and WSL2.
 
 ## Repo structure
 
@@ -15,6 +15,7 @@ nixos/
     cole-darwin/       # aarch64-darwin, macOS with yabai + skhd
     cole-wsl2/         # x86_64-linux, WSL
     cole-vm/           # x86_64-linux
+    cole-server/       # x86_64-linux, home media server
     cole-pi/           # aarch64-linux, Raspberry Pi 5
     hs-thinkpad/       # x86_64-linux, ThinkPad P1 Gen 3
   common/              # Shared NixOS modules imported by hosts
@@ -25,10 +26,9 @@ nixos/
     plasma.nix         # KDE Plasma desktop (alternative to cosmic)
     audio.nix, bluetooth.nix, xone.nix, cachix.nix, ...
   users/cole/          # home-manager config (zsh, git, starship, tmux, neovim, etc.)
-overlays/              # Package overlays (chromium, flameshot, fresh-editor, gh)
+overlays/              # Package overlays (btop, firefox, flameshot, fresh-editor, okular, r2modman, etc.)
 aliases/               # Shell alias files sourced by zsh
 scripts/               # Utility scripts added to PATH (switch, remote-switch, nomr, etc.)
-completions/           # Shell completion files
 packages/              # Extra nix package definitions (tour.nix, f5.nix)
 ```
 
@@ -57,7 +57,7 @@ nix build .#shell
 
 ## CI (.github/workflows/main.yml)
 
-Runs on pushes/PRs to `master` and `release/**/*`:
+Runs on pushes/PRs to `main` and `release/**/*`:
 
 1. **format-checks** -- `nix fmt -- --ci`
 2. **flake-checks** -- `nix flake check`
@@ -71,12 +71,12 @@ The formatter is `nixfmt-tree`. Always run `nix fmt` before committing nix chang
 - `flake.nix` defines `mkNixosConfiguration` and `mkDarwinConfiguration` helpers that wire together host config + home-manager + sops-nix + overlays
 - Each host imports `nixos/common/default.nix` plus whatever extra common modules it needs
 - User environment is managed by home-manager via `nixos/users/cole/home.nix`
-- Custom packages (aliases, scripts, completions, configs) are built as derivations in `packages.nix` and passed to home-manager as `dotFilesPackages`
+- Custom packages (aliases, scripts, configs) are built as derivations in `packages.nix` and passed to home-manager as `dotFilesPackages`
 - Neovim config comes from the `dschana-system-config` flake input
 
 ## Conventions
 
 - Nix code is formatted with `nixfmt-tree` (the flake's formatter)
-- The main branch is `main` locally but CI triggers on `master` -- keep this in mind
+- The main branch is `main`, which CI triggers on
 - Hosts use `nixos-unstable` channel for latest packages
 - Secrets are managed with sops-nix
