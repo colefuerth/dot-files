@@ -10,7 +10,8 @@ pkgs.runCommandLocal "win10-vm"
   ''
     install -Dm755 ${../scripts/win10-vm} $out/bin/win10-vm
     patchShebangs $out/bin/win10-vm
-    # virt-install and virsh; hostname comes from coreutils
+    # virt-install and virsh; coreutils for mkdir/cat. hostname and grep stay
+    # ambient (coreutils has no hostname; NixOS always ships both).
     wrapProgram $out/bin/win10-vm --prefix PATH : ${
       pkgs.lib.makeBinPath (
         with pkgs;
