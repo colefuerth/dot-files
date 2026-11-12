@@ -1,5 +1,6 @@
-# Ported from rs:/docker/minecraft. Run with a .env file next to this
-# holding RCON_PASSWORD=<secret> (repo is public, so it can't live here).
+# Lives at /HDD/docker/minecraft on cole-server (world in ./server). Run with a
+# .env file next to this holding RCON_PASSWORD=<secret> (repo is public, so it
+# can't live here).
 services:
   mc:
     container_name: minecraft
@@ -18,7 +19,9 @@ services:
       EXEC_DIRECTLY: "true"
       ENABLE_RCON: "true"
       RCON_PASSWORD: "${RCON_PASSWORD:?set RCON_PASSWORD in .env}"
-      VERSION: "LATEST"
+      # the world is on 26.2 (server/.fabric-manifest.json); LATEST would
+      # upgrade it irreversibly and break the mods on the next fresh pull
+      VERSION: "26.2"
       DIFFICULTY: "hard"
       MAX_PLAYERS: "69"
       ALLOW_FLIGHT: "true"
@@ -30,7 +33,9 @@ services:
       MODRINTH_ALLOWED_VERSION_TYPE: "alpha"
       MODRINTH_DEFAULT_VERSION_TYPE: "beta"
       MODRINTH_MODPACK: "https://modrinth.com/modpack/fabulously-optimized"
-      MODRINTH_PROJECTS: "c2me-fabric,no-chat-reports,fallingtree,geyser,journeymap"
+      MODRINTH_PROJECTS: "c2me-fabric,no-chat-reports,fallingtree,geyser,journeymap,easyauth"
+      # e4mc 6.2.1 crashes MC 26.2 on player join
+      MODRINTH_EXCLUDE_FILES: "e4mc"
       MODRINTH_DOWNLOAD_DEPENDENCIES: "optional"
       OPS: SquareWheelBike
       EXISTING_OPS_FILE: MERGE

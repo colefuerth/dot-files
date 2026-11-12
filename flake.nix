@@ -241,6 +241,11 @@
           username = "cole";
           system = "x86_64-linux";
         };
+        # USB stick that installs cole-server (nixos/hosts/cole-server/MIGRATION.md)
+        cole-server-installer = nixpkgs.lib.nixosSystem {
+          specialArgs.coleServer = self.nixosConfigurations.cole-server.config.system.build.toplevel;
+          modules = [ ./nixos/hosts/cole-server/installer.nix ];
+        };
       };
 
       darwinConfigurations = {
@@ -276,6 +281,7 @@
           cole-pi-vm = self.nixosConfigurations.cole-pi.config.system.build.vm;
           cole-server-vm = self.nixosConfigurations.cole-server.config.system.build.vm;
           hs-thinkpad-vm = self.nixosConfigurations.hs-thinkpad.config.system.build.vm;
+          cole-server-installer = self.nixosConfigurations.cole-server-installer.config.system.build.isoImage;
           # Note: cole-wsl2-vm is not included because WSL configurations cannot be built as VMs
           shell = import ./shell.nix { inherit pkgs dotFilesPackages; };
           default = shell;
@@ -370,7 +376,11 @@
               testScript = ''
                 machine.start()
                 machine.wait_for_unit("multi-user.target")
-                machine.succeed("systemctl is-system-running --wait || systemctl is-system-running | grep -E 'running|degraded'")
+                # execute(), not succeed(): the driver runs commands under
+                # `set -euo pipefail`, and is-system-running exits 1 when degraded
+                _, state = machine.execute("systemctl is-system-running --wait")
+                print(machine.execute("systemctl --failed --no-legend")[1])
+                assert state.strip() in ("running", "degraded"), state
               '';
             }).config.result;
         in
