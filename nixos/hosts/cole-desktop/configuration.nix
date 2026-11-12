@@ -114,24 +114,22 @@ in
   ];
 
   # Sign every store path added on this host so other machines (e.g. cole-darwin
-  # pulling closures via `nomt`) can trust them by adding the matching public
+  # pulling closures via `nomr`) can trust them by adding the matching public
   # key to trusted-public-keys. Generate the keypair once with:
   #   sudo nix-store --generate-binary-cache-key cole-desktop-1 \
   #     /var/lib/nix-signing-key.sec /var/lib/nix-signing-key.pub
   nix.settings.secret-key-files = "/var/lib/nix-signing-key.sec";
 
-  # The Ubuntu server (`ssh s`, 8 cores) as an opt-in remote builder. Builds
+  # cole-server (`ssh s`, 8 cores) as an opt-in remote builder. Builds
   # stay local by default (distributedBuilds is off, so `builders` is empty),
   # but /etc/nix/machines is still generated; `noms <installable>` builds
   # entirely on s via `-j0 --builders @/etc/nix/machines`.
   # - The daemon connects as root, so the ssh user/key/host key are spelled out
   #   here instead of coming from ~/.ssh/config.
-  # - Nix on s is a multi-user install that isn't on PATH for non-interactive
-  #   ssh, hence remote-program.
-  # - s needs `trusted-users = root cole` in /etc/nix/nix.conf.
+  # - s must list cole in trusted-users (its cachix.nix import does).
   nix.buildMachines = [
     {
-      hostName = "192.168.69.5?remote-program=/nix/var/nix/profiles/default/bin/nix-daemon";
+      hostName = "192.168.69.5";
       protocol = "ssh-ng";
       sshUser = username;
       sshKey = "/home/${username}/.ssh/id_ed25519";
