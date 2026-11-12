@@ -106,8 +106,8 @@ in
           # Set your time zone.
           time.timeZone = lib.mkDefault "America/Los_Angeles";
 
-          # No VISUAL: git/sudoedit prefer it over EDITOR, and a GUI editor
-          # returns before you finish (and has no window over SSH).
+          # No VISUAL: git/sudoedit prefer it over EDITOR, and `code` returns
+          # before you finish without --wait (and has no window over SSH).
           environment.variables.EDITOR = lib.mkForce "fresh";
           programs = {
             gnupg.agent = {
