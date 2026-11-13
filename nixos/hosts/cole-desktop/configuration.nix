@@ -274,6 +274,7 @@ in
       ++ (with dotFilesPackages; [
         bedrock-on-linux
         tw3mm
+        win10-vm
       ]);
   };
 

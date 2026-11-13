@@ -3,7 +3,7 @@
 # (and the standalone shell's PATH) instead of the old "copy everything into one
 # derivation and prepend its bin to PATH" bundle — which shipped the scripts
 # without their dependencies (e.g. remote-switch calling sshpass, which then
-# wasn't on PATH).
+# wasn't on PATH). win10-vm isn't here: only some hosts get it (./win10-vm.nix).
 { pkgs }:
 let
   inherit (pkgs) lib;
@@ -63,15 +63,6 @@ in
   (bashScript "switch" [ pkgs.nix-output-monitor ])
   # tv only drives systemctl --user, which is always ambient on its NixOS hosts.
   (bashScript "tv" [ ])
-  # win10-vm needs virt-install and virsh; hostname comes from coreutils.
-  (bashScript "win10-vm" (
-    with pkgs;
-    [
-      virt-manager
-      libvirt
-      coreutils
-    ]
-  ))
   nomr
   (bashScript "nomt" [
     nomr
