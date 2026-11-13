@@ -162,6 +162,8 @@ in
     ];
     packages = [ dotFilesPackages.win10-vm ];
     shell = pkgs.zsh;
+    # user services/timers (~/trading's scheduled jobs) keep running with no login session
+    linger = true;
   };
 
   environment.systemPackages = with pkgs; [
