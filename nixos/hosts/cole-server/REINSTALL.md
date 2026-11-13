@@ -47,8 +47,6 @@ Delete this section once these are done.
   proxies* (nginx is local now).
 - **qBittorrent**: under Options → Downloads, remove the `/watch_handbrake`
   monitored folder (Handbrake is gone).
-- **FileBot**: the license expires 2026-11-15. Drop the new `license.psm` into
-  `/HDD/docker/mediaserver/provision/filebot/`.
 - Delete Cloudflare tunnel `62f41e32-…` and its credentials. It carried no
   traffic: colef.club DNS is on Namecheap.
 - Router: remove the WireGuard forward (51820/udp), and 25565 if Minecraft
