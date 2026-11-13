@@ -343,7 +343,7 @@ in
   # TMDB key (themoviedb.org -> Settings -> API -> "API Key"):
   #   sudo sh -c "umask 077; printf '%s' '<key>' > /HDD/secrets/tmdb.key"
   # Dry run over everything in /HDD/nohandbrake (prints, writes nothing):
-  #   sudo systemd-run --pty -p User=cole -p LoadCredential=tmdb:/HDD/secrets/tmdb.key -p BindReadOnlyPaths=/HDD/nohandbrake:/watch -E DONE_LIST=/dev/null media-sort --dry-run
+  #   sudo systemd-run --pty -p User=media-sort -p LoadCredential=tmdb:/HDD/secrets/tmdb.key -p BindReadOnlyPaths=/HDD/nohandbrake:/watch -E DONE_LIST=/dev/null media-sort --dry-run
   system.checks = [
     (pkgs.runCommand "media-sort-self-test" { } "${media-sort}/bin/media-sort --self-test > $out")
   ];
