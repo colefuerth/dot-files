@@ -107,7 +107,6 @@ in
   system.stateVersion = "25.11";
 
   powerManagement.enable = true;
-  services.thermald.enable = lib.mkForce false; # Unsupported on Meteor Lake with thinkpad_acpi dytc_lapmode
   services.tlp.settings = {
     # Explicit max frequencies to fix AC restore on hybrid Meteor Lake CPUs.
     # Kernel clamps per-core to each core type's actual max.

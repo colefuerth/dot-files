@@ -31,6 +31,9 @@
     };
   };
 
-  services.thermald.enable = true; # Enable thermald, the temperature management daemon. (only necessary if on Intel CPUs)
   services.power-profiles-daemon.enable = false; # Disable GNOME/COSMIC power management (conflicts with TLP)
+  # COSMIC turns system76-power on when ppd is off; its profiles fight TLP.
+  hardware.system76.power-daemon.enable = false;
+  # TLP's own ppd-compatible D-Bus API, so desktop power menus drive TLP.
+  services.tlp.pd.enable = true;
 }
