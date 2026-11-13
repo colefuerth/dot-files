@@ -5,12 +5,11 @@ SERVICE="tv-loopback.service"
 
 case "${1:-}" in
     on|start)
-        systemctl --user start "$SERVICE"
-        echo "TV audio ON"
+        # Only claim success if systemctl did; its error and exit code pass through
+        systemctl --user start "$SERVICE" && echo "TV audio ON"
         ;;
     off|stop)
-        systemctl --user stop "$SERVICE"
-        echo "TV audio OFF"
+        systemctl --user stop "$SERVICE" && echo "TV audio OFF"
         ;;
     status)
         systemctl --user status "$SERVICE"
