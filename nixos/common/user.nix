@@ -1,6 +1,7 @@
 { pkgs, username, ... }:
 {
-  # Shared user account for the personal machines (desktop/laptop/pi/thinkpad).
+  # Shared user account for the personal machines
+  # (desktop/laptop/pi/thinkpad/vm/wsl2).
   # Hosts add only their own `packages` and any extra `extraGroups`.
   users.users.${username} = {
     isNormalUser = true;

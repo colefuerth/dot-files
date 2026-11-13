@@ -1,10 +1,8 @@
 {
   config,
-  host,
   inputs,
   lib,
   pkgs,
-  username,
   ...
 }:
 {
@@ -12,6 +10,7 @@
     ../../common
     ../../common/cachix.nix
     ../../common/nixbuild.nix
+    ../../common/user.nix
     ./hardware-configuration.nix
     inputs.vscode-server.nixosModules.default
   ];
@@ -24,7 +23,6 @@
   boot.loader.grub.device = "/dev/vda";
   boot.loader.grub.useOSProber = true;
 
-  networking.hostName = host; # Define your hostname.
   networking.wireless.enable = lib.mkForce false;
 
   # Enable the X11 windowing system.
@@ -57,23 +55,9 @@
 
   services.vscode-server.enable = true;
 
-  # Define a user account. Don't forget to set a password with 'passwd'.
+  # cole's account and password hash come from common/user.nix.
   users.mutableUsers = false; # Required for declarative password management in VMs
   users.users.root.initialPassword = "root"; # Root login for debugging
-  users.users.${username} = {
-    isNormalUser = true;
-    description = "Cole Fuerth";
-    extraGroups = [
-      "dialout"
-      "docker"
-      "networkmanager"
-      "video"
-      "wheel"
-    ];
-    packages = with pkgs; [
-    ];
-    shell = pkgs.zsh;
-  };
 
   environment.systemPackages = with pkgs; [
     claude-code
