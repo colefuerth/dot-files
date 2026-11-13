@@ -83,7 +83,10 @@ def target(rel, suffix):
     show = folder(OUT / "TV", clean(hits[0]["name"]))
     if not show:
         return None
-    return OUT / "TV" / show / f"Season {s}" / (clean(f"{show} {s}x{e:02d} - {ep['name']}") + suffix)
+    season, num = OUT / "TV" / show / f"Season {s}", f"{show} {s}x{e:02d} - "
+    # already sorted under an older TMDB episode title: the same episode, not a new file
+    old = next((p for p in sorted(season.glob("*")) if p.name.startswith(num) and p.suffix.lower() in VIDEO), None)
+    return old or season / (clean(num + ep["name"]) + suffix)
 
 
 def subtitle(f, movie):
@@ -205,6 +208,11 @@ def self_test():
         tv = OUT / "TV"
         # exact name beats a look-alike; case-only difference reuses the folder
         assert target("Cyberpunk.Edgerunners.S02E03.0.21.2160p.NF.WEB-DL.DDP5.1.HEVC-NTb.mkv", ".mkv") == tv / "Cyberpunk Edgerunners/Season 2/Cyberpunk Edgerunners 2x03 - 0 + 2 = 1.mkv"
+        old = tv / "Cyberpunk Edgerunners/Season 2/Cyberpunk Edgerunners 2x03 - 0+2=1.mp4"  # TMDB's title since
+        old.parent.mkdir()
+        old.touch()
+        assert target("Cyberpunk.Edgerunners.S02E03.0.21.2160p.NF.WEB-DL.DDP5.1.HEVC-NTb.mkv", ".mkv") == old
+        old.unlink()
         assert target("[SubsPlease] Jujutsu Kaisen - 05 (1080p) [F02B9CEE].mkv", ".mkv") == tv / "JUJUTSU KAISEN/Season 1/JUJUTSU KAISEN 1x05 - Fearsome Womb.mkv"
         assert target("Jujutsu.Kaisen.S02E10.1080p.WEB.H264.mkv", ".mkv") is None  # not on TMDB
         assert target("Face.Off.1080p.BluRay.x264.mkv", ".mkv") is None  # no year
