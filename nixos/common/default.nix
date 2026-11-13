@@ -36,6 +36,9 @@ in
           nix = {
             gc = {
               automatic = true;
+              # Shared so the Mac prunes too: without it the scheduled run never
+              # deletes old generations, so nothing they pin is ever collected.
+              options = "--delete-older-than 7d";
             };
             settings = {
               experimental-features = [
@@ -142,7 +145,6 @@ in
 
           nix.gc = {
             randomizedDelaySec = "45min";
-            options = "--delete-older-than 7d";
           };
 
           nix.settings = {
