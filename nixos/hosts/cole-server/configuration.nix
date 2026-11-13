@@ -524,6 +524,7 @@ in
           "/home/*/.cache"
           "/home/*/.vscode-server*"
           "${provision}/jellyfin/cache"
+          "/HDD/docker/mediaserver/content" # qBittorrent's /data: torrent payload, not state
         ];
         # jellyfin.db is SQLite: copy it cold, so Jellyfin is down for seconds
         # rather than for the whole backup + prune. set -e: the module runs this
