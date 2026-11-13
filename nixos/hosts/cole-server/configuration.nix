@@ -283,13 +283,15 @@ in
       BindPaths = [
         "${provision}/jellyfin/config:/config"
         "${provision}/jellyfin/cache:/cache"
-      ];
-      # read-only like the container (so "save trickplay/NFO with media" fails)
-      BindReadOnlyPaths = [
+        # writable: it saves trickplay, NFO/artwork and subtitles next to the media
         "/HDD4TB/TV:/media/tv"
         "/HDD4TB/Movies:/media/movies"
       ];
-      # Internet-facing: only its /config and /cache binds are writable
+      # What it writes into the setgid media folders stays group-writable for
+      # cole and media-sort (the module's 0077 would lock them out); its /config
+      # files get group jellyfin, which only it is in.
+      UMask = lib.mkForce "0007";
+      # Internet-facing: only these binds are writable
       ProtectSystem = lib.mkForce "strict";
       ProtectHome = true;
       TemporaryFileSystem = [
