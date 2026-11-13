@@ -151,7 +151,9 @@
     '';
     home.file.".config/btop/btop.conf".source = "${dotFilesPackages.configs}/btop/btop.conf";
     home.file.".config/ncdu/config".source = "${dotFilesPackages.configs}/ncdu/config";
-    home.file.".config/.clang-format".source = "${dotFilesPackages.configs}/clang-format/.clang-format";
+    # clang-format only looks in the formatted file's parent dirs, so ~ makes
+    # this the default for anything under home without its own .clang-format.
+    home.file.".clang-format".source = "${dotFilesPackages.configs}/.clang-format";
     home.file.".config/starship.toml".source = "${dotFilesPackages.configs}/starship.toml";
     home.file.".config/flameshot/flameshot.ini".source =
       "${dotFilesPackages.configs}/flameshot/flameshot.ini";
