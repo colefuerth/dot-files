@@ -14,7 +14,8 @@ in
       enable = lib.mkOption {
         default = true;
         description = ''
-          Enable a list of Cachix substituters
+          Install cachix, prefer cache.nixos.org and make `users` trusted
+          Nix users. The other caches are set in default.nix.
         '';
         type = lib.types.bool;
       };
@@ -25,13 +26,10 @@ in
       };
     };
   };
-  config =
-    lib.mkIf cfg.enable {
-      environment.systemPackages = [ pkgs.cachix ];
-      nix.settings.substituters = [ "https://cache.nixos.org/?priority=25" ];
+  config = lib.mkIf cfg.enable {
+    environment.systemPackages = [ pkgs.cachix ];
+    nix.settings.substituters = [ "https://cache.nixos.org/?priority=25" ];
 
-      nix.settings.trusted-users = cfg.users;
-    }
-    // (import ./cachix/nix-community.nix)
-    // (import ./cachix/cuda-maintainers.nix);
+    nix.settings.trusted-users = cfg.users;
+  };
 }

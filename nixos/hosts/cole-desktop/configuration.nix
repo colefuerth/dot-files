@@ -639,35 +639,6 @@ in
     # https://mynixos.com/nixpkgs/option/services.wivrn.config.json
   };
 
-  # # TEMPORARY (trip): keep the desktop awake so I can SSH in over Tailscale
-  # # while I'm away. Remove this block when I'm back home.
-  # services.logind.lidSwitch = "ignore";
-  # systemd.targets.sleep.enable = false;
-  # systemd.targets.suspend.enable = false;
-  # systemd.targets.hibernate.enable = false;
-  # systemd.targets.hybrid-sleep.enable = false;
-
-  systemd.services.tailscale-autoconnect = {
-    description = "Bring Tailscale up at boot";
-    after = [
-      "network-online.target"
-      "tailscaled.service"
-    ];
-    wants = [
-      "network-online.target"
-      "tailscaled.service"
-    ];
-    wantedBy = [ "multi-user.target" ];
-    serviceConfig.Type = "oneshot";
-    script = ''
-      status="$(${pkgs.tailscale}/bin/tailscale status --json | ${pkgs.jq}/bin/jq -r .BackendState)"
-      if [ "$status" = "Running" ]; then
-        exit 0
-      fi
-      ${pkgs.tailscale}/bin/tailscale up
-    '';
-  };
-
   # Declarative NM profile for the "stinky" wifi, pinned to a static IP.
   # PSK is substituted from /etc/nm-secrets.env at activation time so the
   # password never lands in the world-readable Nix store. Create it once:

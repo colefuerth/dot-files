@@ -8,7 +8,7 @@
   username,
   ...
 }:
-# Reinstall/restore runbook for this box: ./MIGRATION.md
+# Reinstall/restore runbook for this box: ./REINSTALL.md
 #
 # Data disks: /HDD (state; everything that used to live in docker volumes stays
 # here in place) and /HDD4TB (media + backups). Only the SSD is disposable.
@@ -383,9 +383,9 @@ in
   # Secrets live in /HDD/secrets (root 0700) so they survive SSD reinstalls.
   # ponytail: plain root-only files, move to sops-nix when more secrets show up
 
-  # Dynamic DNS, same settings as the Ubuntu /etc/ddclient.conf. pre-wipe-backup.sh
-  # copies its password to the file below; otherwise seed it by hand (namecheap
-  # dashboard: Domain -> Advanced DNS -> Dynamic DNS):
+  # Dynamic DNS, same settings as the Ubuntu /etc/ddclient.conf. To re-seed the
+  # password file below by hand (namecheap dashboard: Domain -> Advanced DNS ->
+  # Dynamic DNS):
   #   sudo sh -c "umask 077; printf '%s' '<the token>' > /HDD/secrets/ddclient.pass"
   systemd.services.ddclient.unitConfig.RequiresMountsFor = [ "/HDD" ];
   services.ddclient = {
@@ -479,8 +479,8 @@ in
   ];
 
   # Samba, ported from the Ubuntu smb.conf plus its two Nautilus usershares
-  # Passwords are state (/var/lib/samba/private): MIGRATION.md §3 restores the
-  # Ubuntu passdb, restic keeps it after that
+  # Passwords are state (/var/lib/samba/private): restic backs it up and the
+  # installer restores it
   services.samba = {
     enable = true;
     openFirewall = true;

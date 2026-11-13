@@ -22,10 +22,10 @@ nixos/
     laptop.nix         # TLP power management
     graphical.nix      # Fonts, Firefox, VS Code, printing
     cosmic.nix         # COSMIC desktop environment
-    gnome.nix          # GNOME desktop (alternative to cosmic)
-    audio.nix, bluetooth.nix, xone.nix, cachix.nix, nixbuild.nix, ...
+    plasma.nix         # KDE Plasma desktop (alternative to cosmic)
+    audio.nix, bluetooth.nix, xone.nix, cachix.nix, ...
   users/cole/          # home-manager config (zsh, git, starship, tmux, neovim, etc.)
-overlays/              # Package overlays (chromium, flameshot, fresh-editor, gh, openssh)
+overlays/              # Package overlays (chromium, flameshot, fresh-editor, gh)
 aliases/               # Shell alias files sourced by zsh
 scripts/               # Utility scripts added to PATH (switch, remote-switch, nomr, etc.)
 completions/           # Shell completion files
