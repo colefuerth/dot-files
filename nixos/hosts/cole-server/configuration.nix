@@ -24,14 +24,10 @@ let
     libraries = [ pkgs.python3Packages.guessit ];
     flakeIgnore = [ "E501" ];
   } (builtins.readFile ./media-sort.py);
-  # Root-equivalent for anything running as cole (docker group, nix
-  # trusted-user, libvirtd group), so hidden from the media services below.
-  # These overmount what exists at service start: if docker.socket restarts, the
-  # new /run/docker.sock is reachable until the service restarts too (Jellyfin
-  # does nightly for the backup, media-sort on every run; qBittorrent can't open
-  # unix sockets at all). "-": skip a path that doesn't exist.
-  rootSockets = [
-    "-/run/docker.sock"
+  # Any local user can connect to these (nix-daemon as an untrusted user,
+  # libvirt's read-only API), so hidden from the media services that can open
+  # unix sockets. "-": skip a path that doesn't exist.
+  hostSockets = [
     "-/nix/var/nix/daemon-socket"
     "-/run/libvirt"
   ];
@@ -206,13 +202,31 @@ in
   };
 
   # --- mediaserver, was the /HDD/docker/mediaserver compose ---
-  # Runs as ${username}: /HDD is 0710 cole:root and all media is cole-owned.
-  # Before the first start: sudo chown -R cole:cole ${provision}/jellyfin
-  # (the container ran as root)
+  # Each service runs as its own user and, of /HDD and /HDD4TB, sees only its
+  # binds (systemd sets those up as root, so nothing on the disks is opened up).
+  # Downloads, libraries, drop folders and the done list are shared through the
+  # media group: setgid dirs, group-writable, so cole keeps working on them.
+  # Ids are pinned like cole's: these files outlive SSD reinstalls.
+  users.groups.media = {
+    gid = 400;
+    members = [
+      username
+      "jellyfin"
+      "qbittorrent"
+    ];
+  };
+  users.users.jellyfin.uid = 401;
+  users.groups.jellyfin.gid = 401;
+  users.users.qbittorrent.uid = 402;
+  users.groups.qbittorrent.gid = 402;
+  users.users.media-sort = {
+    uid = 403;
+    group = "media";
+    isSystemUser = true;
+  };
+
   services.jellyfin = {
     enable = true;
-    user = username;
-    group = "cole";
     openFirewall = true;
     # the container's JELLYFIN_DATA_DIR/CACHE_DIR; bound to the real dirs below
     dataDir = "/config";
@@ -245,8 +259,8 @@ in
   };
   systemd.services.jellyfin = {
     environment.JELLYFIN_PublishedServerUrl = "http://jellyfin.colef.club";
-    # cole's real $HOME is hidden below; .NET keeps its DataProtection keys and
-    # fontconfig its cache under $HOME
+    # the jellyfin user's home is /var/empty; .NET keeps its DataProtection keys
+    # and fontconfig its cache under $HOME
     environment.HOME = "/cache";
     unitConfig.RequiresMountsFor = [
       "/HDD"
@@ -255,6 +269,7 @@ in
     after = [ "nvidia-persistenced.service" ]; # GPU initialized, /dev/nvidia* present
     serviceConfig = {
       # the module allows only hardwareAcceleration.device; CUDA also opens these
+      # (all /dev/nvidia* are 0666, so no group is needed)
       DeviceAllow = [
         "/dev/nvidiactl rw"
         "/dev/nvidia-uvm rw"
@@ -268,11 +283,14 @@ in
         "/HDD4TB/TV:/media/tv"
         "/HDD4TB/Movies:/media/movies"
       ];
-      # Internet-facing: only its two binds are writable (else the media would
-      # still be writable at /HDD4TB/...), and no cole home, /run/user or sockets
+      # Internet-facing: only its /config and /cache binds are writable
       ProtectSystem = lib.mkForce "strict";
       ProtectHome = true;
-      InaccessiblePaths = rootSockets;
+      TemporaryFileSystem = [
+        "/HDD:ro"
+        "/HDD4TB:ro"
+      ];
+      InaccessiblePaths = hostSockets;
     };
   };
   # jellyfin-ffmpeg loads libcuda/libnvcuvid/libnvidia-encode from /run/opengl-driver
@@ -280,8 +298,6 @@ in
 
   services.qbittorrent = {
     enable = true;
-    user = username;
-    group = "cole";
     webuiPort = 8085;
     torrentingPort = 6881;
     openFirewall = true; # TCP only; 6881/udp opened below
@@ -290,6 +306,11 @@ in
   systemd.services.qbittorrent = {
     unitConfig.RequiresMountsFor = [ "/HDD" ];
     serviceConfig.Restart = "on-failure"; # the container was restart: unless-stopped
+    serviceConfig.UMask = "0002"; # downloads stay group-writable for cole
+    serviceConfig.TemporaryFileSystem = [
+      "/HDD:ro"
+      "/HDD4TB:ro"
+    ];
     serviceConfig.BindPaths = [
       # the linuxserver profile is flat (XDG config == data dir), so it serves
       # as both halves of the module's <profileDir>/qBittorrent/{config,data}
@@ -300,19 +321,17 @@ in
       "/HDD/Downloads:/downloads"
       "/HDD/nohandbrake:/nohandbrake"
       "/HDD/docker/mediaserver/content:/data"
-      # drop .torrent files here over the [cole] samba share; ProtectHome
-      # hides /home from the service but not these binds
-      "/home/${username}/torrents_downloads:/watch_downloads"
-      "/home/${username}/torrents_nohandbrake:/watch_nohandbrake"
+      # .torrent drop folders, on the [HDD] samba share; qBittorrent deletes
+      # each file once added
+      "/HDD/torrents_downloads:/watch_downloads"
+      "/HDD/torrents_nohandbrake:/watch_nohandbrake"
     ];
-    serviceConfig.InaccessiblePaths = rootSockets;
   };
   systemd.tmpfiles.rules = [
-    "d /home/${username}/torrents_nohandbrake 0755 ${username} cole -"
-    "d /home/${username}/torrents_downloads 0755 ${username} cole -"
-    # media-sort unpacks archives here (libraries' disk, not the SSD). Not a root
-    # ExecStartPre: qBittorrent can write /HDD4TB and plant a symlink root follows.
-    "d /HDD4TB/.media-sort 0755 ${username} cole -"
+    "d /HDD/torrents_nohandbrake 2775 ${username} media -"
+    "d /HDD/torrents_downloads 2775 ${username} media -"
+    # media-sort unpacks archives here (libraries' disk, not the SSD)
+    "d /HDD4TB/.media-sort 0755 media-sort media -"
   ];
 
   # media-sort (./media-sort.py) replaces FileBot AMC, which was the
@@ -344,13 +363,13 @@ in
     };
     serviceConfig = {
       Type = "oneshot";
-      User = username;
+      User = "media-sort";
+      UMask = "0002"; # library files stay group-writable for cole
       StateDirectory = "media-sort";
       LoadCredential = "tmdb:/HDD/secrets/tmdb.key";
       # It parses names from torrents and unpacks their archives, so of the
       # data disks it sees only its input (read-only), the libraries, its
-      # scratch dir and the done list; no cole home, /run/user or sockets, and
-      # no D-Bus (polkit would give it cole's networkmanager rights)
+      # scratch dir and the done list; no /home, sockets or D-Bus
       TemporaryFileSystem = [
         "/HDD:ro"
         "/HDD4TB:ro"
@@ -364,7 +383,7 @@ in
       ];
       ProtectSystem = "strict";
       ProtectHome = true;
-      InaccessiblePaths = rootSockets ++ [ "-/run/dbus" ];
+      InaccessiblePaths = hostSockets ++ [ "-/run/dbus" ];
       PrivateTmp = true;
       PrivateDevices = true;
       PrivateUsers = true;
@@ -380,6 +399,7 @@ in
       ProtectKernelModules = true;
       ProtectKernelTunables = true;
       ProtectProc = "invisible";
+      RemoveIPC = true;
       RestrictAddressFamilies = [
         "AF_UNIX"
         "AF_INET"
@@ -464,7 +484,8 @@ in
   #   sudo sh -c 'umask 077; openssl rand -base64 32 > /HDD/secrets/restic.pass'
   # Restore one path at a time (a bare `restore latest --target /` overwrites live state):
   #   sudo restic-state restore latest --include <path> --target /
-  # For Jellyfin, put /HDD/docker/jellyfin-db-snapshot/* back over config/data/.
+  # For Jellyfin, put /HDD/docker/jellyfin-db-snapshot/* back over config/data/
+  # with cp -a (keeps the jellyfin owner).
   services.restic.backups =
     let
       common = {
@@ -545,13 +566,17 @@ in
         path = "/home/cole";
         "read only" = "no";
       };
+      # New files and folders take their parent's mode: group-writable in the
+      # setgid media folders, so the services can use what cole adds there
       HDD = {
         path = "/HDD";
         "read only" = "no";
+        "inherit permissions" = "yes";
       };
       HDD4TB = {
         path = "/HDD4TB";
         "read only" = "no";
+        "inherit permissions" = "yes";
       };
     };
   };
