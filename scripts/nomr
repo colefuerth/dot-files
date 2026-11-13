@@ -2,24 +2,65 @@
 
 set -euo pipefail
 
-# Use nix-output-monitor if available, else fall back to nix
-command -v nom >/dev/null && NIX=nom || NIX=nix
+usage() {
+    cat <<'EOF'
+Usage: nomr [installable...] [nix flags]
 
-REMOTE="${REMOTE:-s}"
-SYSTEM="${SYSTEM:-aarch64-linux}"
+Build on a remote machine (nothing builds here), copy the result back and
+print its store path(s). Configured through the environment:
 
-RESULT_PATH=$(
-    $NIX build -L \
-        --print-out-paths \
-        --system "$SYSTEM" \
-        --max-jobs 0 \
-        --eval-store auto \
-        --store ssh-ng://$REMOTE \
-        --verbose \
-        $*
-)
-# if `nix-store --verify-path $RESULT_PATH` fails, then we need to copy the result to the local store, make sure to mute stderr
-if ! nix-store --verify-path $RESULT_PATH 2>/dev/null; then
-    nix-copy-closure --gzip --from "$REMOTE" $RESULT_PATH
+  SYSTEM    system to build for              (default: x86_64-linux)
+  REMOTE    ssh host alias of the builder    (default: rd)
+  PROTOCOL  ssh-ng, or ssh for a remote that
+            only has nix-store on PATH       (default: ssh-ng)
+
+rd/d is cole-desktop, which builds x86_64-linux and (via binfmt)
+aarch64-linux, e.g.  SYSTEM=aarch64-linux nomr .#foo
+EOF
+}
+
+if [[ ${1:-} == -h || ${1:-} == --help ]]; then
+    usage
+    exit 0
 fi
-echo $RESULT_PATH
+
+SYSTEM="${SYSTEM:-x86_64-linux}"
+REMOTE="${REMOTE:-rd}"
+PROTOCOL="${PROTOCOL:-ssh-ng}"
+
+case "$PROTOCOL" in
+ssh-ng)
+    # Use nix-output-monitor if available, else fall back to nix
+    command -v nom >/dev/null && NIX=nom || NIX=nix
+    OUT=$(
+        "$NIX" build -L \
+            --print-out-paths \
+            --system "$SYSTEM" \
+            --max-jobs 0 \
+            --eval-store auto \
+            --store "ssh-ng://$REMOTE" \
+            --verbose \
+            "$@"
+    )
+    ;;
+ssh)
+    # `nix build --store ssh://` can't build: the legacy ssh store can't read
+    # the .drv files it would need. So evaluate here, ship the .drv closure
+    # and realise it there with plain nix-store.
+    OUT=$(nix path-info --derivation --system "$SYSTEM" --max-jobs 0 "$@")
+    mapfile -t DRVS <<<"$OUT"
+    nix-copy-closure --gzip --to "$REMOTE" "${DRVS[@]}"
+    OUT=$(ssh "$REMOTE" nix-store --realise "${DRVS[@]}")
+    ;;
+*)
+    echo "nomr: PROTOCOL must be ssh-ng or ssh, not '$PROTOCOL'" >&2
+    exit 1
+    ;;
+esac
+mapfile -t RESULT_PATHS <<<"$OUT"
+
+# Copy the result back unless it's already here (mute stderr: missing is fine)
+if ! nix-store --verify-path "${RESULT_PATHS[@]}" 2>/dev/null; then
+    nix-copy-closure --gzip --from "$REMOTE" "${RESULT_PATHS[@]}"
+fi
+printf '%s\n' "${RESULT_PATHS[@]}"

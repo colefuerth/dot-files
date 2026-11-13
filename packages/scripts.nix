@@ -28,16 +28,6 @@ let
         ''}
       '';
 
-  # nomt shells out to nomr, so nomr must be a package it can find on PATH.
-  nomr = bashScript "nomr" (
-    with pkgs;
-    [
-      nix
-      nix-output-monitor
-      openssh
-    ]
-  );
-
   # mergehex is a Python script needing intelhex; point its shebang at an
   # interpreter that has the library rather than the ambient python3.
   mergehex =
@@ -63,11 +53,14 @@ in
   (bashScript "switch" [ pkgs.nix-output-monitor ])
   # tv only drives systemctl --user, which is always ambient on its NixOS hosts.
   (bashScript "tv" [ ])
-  nomr
-  (bashScript "nomt" [
-    nomr
-    pkgs.coreutils
-  ])
+  (bashScript "nomr" (
+    with pkgs;
+    [
+      nix
+      nix-output-monitor
+      openssh
+    ]
+  ))
   (bashScript "remote-switch" (
     with pkgs;
     [
