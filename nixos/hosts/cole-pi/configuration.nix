@@ -14,17 +14,11 @@
     ../../common/cachix.nix
     ../../common/user.nix
     ./hardware-configuration.nix
-    inputs.nixos-hardware-pi-5.nixosModules.raspberry-pi-5
+    inputs.nixos-hardware.nixosModules.raspberry-pi-5
   ];
 
   # Cross-compile from x86_64 instead of emulating aarch64 via QEMU
   nixpkgs.buildPlatform = "x86_64-linux";
-
-  # Bootloader - Pi 5 uses its own firmware bootloader
-  # The nixos-hardware-pi-5 module handles kernel and boot configuration
-  boot.loader.systemd-boot.enable = lib.mkForce false;
-  boot.loader.grub.enable = lib.mkForce false;
-  boot.loader.generic-extlinux-compatible.enable = true;
 
   users.users.${username}.packages = with pkgs; [
     binsider
