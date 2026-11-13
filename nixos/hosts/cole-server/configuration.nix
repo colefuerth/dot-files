@@ -414,6 +414,10 @@ in
           "--keep-weekly 4"
           "--keep-monthly 6"
         ];
+        # setting checkOpts turns on runCheck: verify 2% of the pack data each
+        # run, so repo corruption surfaces as a failed unit. %% because this
+        # lands in ExecStart, where systemd treats % as a specifier.
+        checkOpts = [ "--read-data-subset=2%%" ];
       };
     in
     {
@@ -434,8 +438,10 @@ in
           "${provision}/jellyfin/cache"
         ];
         # jellyfin.db is SQLite: copy it cold, so Jellyfin is down for seconds
-        # rather than for the whole backup + prune
+        # rather than for the whole backup + prune. set -e: the module runs this
+        # without it, so a failed cp would still "succeed", minus the DB copy.
         backupPrepareCommand = ''
+          set -e
           systemctl stop jellyfin
           rm -rf /HDD/docker/jellyfin-db-snapshot
           install -d -m 700 /HDD/docker/jellyfin-db-snapshot

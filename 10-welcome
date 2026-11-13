@@ -4,3 +4,11 @@ echo
 echo "SYSTEM DISK USAGE"
 export TERM=xterm; inxi -D
 echo
+# Surface failed units (e.g. a nightly backup) that would otherwise go unseen;
+# prints nothing when all is well, or without systemd (macOS)
+failed=$(command -v systemctl >/dev/null && systemctl --failed --no-legend --plain 2>/dev/null)
+if [ -n "$failed" ]; then
+  echo "FAILED UNITS"
+  echo "$failed"
+  echo
+fi
