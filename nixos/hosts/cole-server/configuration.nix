@@ -31,6 +31,52 @@ let
     "-/nix/var/nix/daemon-socket"
     "-/run/libvirt"
   ];
+  # like jellyfin's: of the data disks a unit sees only its binds
+  mediaSandbox = {
+    ProtectSystem = "strict";
+    TemporaryFileSystem = [
+      "/HDD:ro"
+      "/HDD4TB:ro"
+    ];
+    InaccessiblePaths = hostSockets;
+  };
+  # the nixpkgs sonarr/radarr units' hardening, for prowlarr and ombi whose
+  # modules set none (no MemoryDenyWriteExecute: .NET's JIT needs W+X pages)
+  dotnetHardening = {
+    CapabilityBoundingSet = "";
+    LockPersonality = true;
+    NoNewPrivileges = true;
+    PrivateDevices = true;
+    PrivateTmp = true;
+    PrivateUsers = true;
+    ProtectClock = true;
+    ProtectControlGroups = true;
+    ProtectHome = true;
+    ProtectHostname = true;
+    ProtectKernelLogs = true;
+    ProtectKernelModules = true;
+    ProtectKernelTunables = true;
+    ProtectProc = "invisible";
+    RemoveIPC = true;
+    RestrictAddressFamilies = [
+      "AF_UNIX"
+      "AF_INET"
+      "AF_INET6"
+    ];
+    RestrictNamespaces = true;
+    RestrictRealtime = true;
+    RestrictSUIDSGID = true;
+    SystemCallArchitectures = "native";
+    SystemCallFilter = [
+      "@system-service"
+      "~@privileged"
+      "~@debug"
+      "~@mount"
+    ];
+  };
+  arr-guard = pkgs.writers.writePython3Bin "arr-guard" {
+    flakeIgnore = [ "E501" ];
+  } (builtins.readFile ./arr-guard.py);
 in
 {
   imports = [
@@ -171,6 +217,7 @@ in
     claude-code
     docker-compose # minecraft stack stays in docker (see docker/minecraft in this repo)
     media-sort # for dry runs, see the media-sort unit
+    arr-guard # same, see the arr-guard unit
     herdr
     ncdu
     nvtopPackages.nvidia
@@ -201,6 +248,15 @@ in
         extraConfig = "proxy_buffering off;";
       };
     };
+    # mom's requests page; Ombi itself listens on :5000, which the firewall drops
+    virtualHosts."ombi.colef.club" = {
+      enableACME = true;
+      forceSSL = true; # a login page: no plain http
+      locations."/" = {
+        proxyPass = "http://127.0.0.1:${toString config.services.ombi.port}";
+        proxyWebsockets = true;
+      };
+    };
   };
   security.acme = {
     acceptTerms = true;
@@ -219,6 +275,8 @@ in
       username
       "jellyfin"
       "qbittorrent"
+      "sonarr" # 274 and radarr 275: nixpkgs' static ids
+      "radarr"
     ];
   };
   users.users.jellyfin.uid = 401;
@@ -230,6 +288,14 @@ in
     group = "media";
     isSystemUser = true;
   };
+  users.users.prowlarr = {
+    uid = 404;
+    group = "prowlarr";
+    isSystemUser = true;
+  };
+  users.groups.prowlarr.gid = 404;
+  users.users.ombi.uid = 405;
+  users.groups.ombi.gid = 405;
 
   services.jellyfin = {
     enable = true;
@@ -310,7 +376,10 @@ in
     # serverConfig stays unset: it would overwrite qBittorrent.conf (WebUI login)
   };
   systemd.services.qbittorrent = {
-    unitConfig.RequiresMountsFor = [ "/HDD" ];
+    unitConfig.RequiresMountsFor = [
+      "/HDD"
+      "/HDD4TB"
+    ];
     serviceConfig.Restart = "on-failure"; # the container was restart: unless-stopped
     serviceConfig.UMask = "0002"; # downloads stay group-writable for cole
     serviceConfig.TemporaryFileSystem = [
@@ -331,6 +400,9 @@ in
       # each file once added
       "/HDD/torrents_downloads:/watch_downloads"
       "/HDD/torrents_nohandbrake:/watch_nohandbrake"
+      # Sonarr/Radarr's categories, at the paths those units see them (below)
+      "/HDD4TB/TV/.torrents:/tv/.torrents"
+      "/HDD4TB/Movies/.torrents:/movies/.torrents"
     ];
   };
   systemd.tmpfiles.rules = [
@@ -338,23 +410,41 @@ in
     "d /HDD/torrents_downloads 2775 ${username} media -"
     # media-sort unpacks archives here (libraries' disk, not the SSD)
     "d /HDD4TB/.media-sort 0755 media-sort media -"
+    # Sonarr/Radarr's downloads (seeded forever) and their root folders (staging,
+    # which media-sort sorts into the library), all three names of a file
+    # hardlinks of one inode. Hidden and .ignore'd: Jellyfin neither lists nor
+    # watches them
+    "d /HDD4TB/TV/.torrents 2775 ${username} media -"
+    "d /HDD4TB/Movies/.torrents 2775 ${username} media -"
+    "d /HDD4TB/TV/.sonarr 2775 ${username} media -"
+    "d /HDD4TB/Movies/.radarr 2775 ${username} media -"
+    "f /HDD4TB/TV/.torrents/.ignore 0644 ${username} media -"
+    "f /HDD4TB/Movies/.torrents/.ignore 0644 ${username} media -"
+    "f /HDD4TB/TV/.sonarr/.ignore 0644 ${username} media -"
+    "f /HDD4TB/Movies/.radarr/.ignore 0644 ${username} media -"
+    "d ${provision}/sonarr-native 0700 sonarr sonarr -"
+    "d ${provision}/radarr-native 0700 radarr radarr -"
   ];
 
   # media-sort (./media-sort.py) replaces FileBot AMC, which was the
   # jlesage/filebot container: it copies finished torrents from
   # /HDD/nohandbrake into the libraries with FileBot's TMDB names and formats,
-  # so new episodes land in the existing folders. FileBot's exclude list of
-  # processed files (/watch/... paths) is its done list, so nothing is sorted
-  # twice; the rest of ${provision}/filebot is just history now.
+  # so new episodes land in the existing folders. It also sorts Sonarr/Radarr's
+  # imports (/HDD4TB/TV/.sonarr, /HDD4TB/Movies/.radarr) the same way, as
+  # hardlinks, so it is the one thing that names the library. FileBot's exclude
+  # list of processed files (/watch/... paths) is its done list, so nothing is
+  # sorted twice; the rest of ${provision}/filebot is just history now.
   # TMDB key (themoviedb.org -> Settings -> API -> "API Key"):
   #   sudo sh -c "umask 077; printf '%s' '<key>' > /HDD/secrets/tmdb.key"
-  # Dry run over everything in /HDD/nohandbrake (prints, writes nothing):
+  # Dry run over everything in /HDD/nohandbrake and the staging dirs (prints,
+  # writes nothing):
   #   sudo systemd-run --pty -p User=media-sort -p LoadCredential=tmdb:/HDD/secrets/tmdb.key -p BindReadOnlyPaths=/HDD/nohandbrake:/watch -E DONE_LIST=/dev/null media-sort --dry-run
   system.checks = [
     (pkgs.runCommand "media-sort-self-test" { } "${media-sort}/bin/media-sort --self-test > $out")
+    (pkgs.runCommand "arr-guard-self-test" { } "${arr-guard}/bin/arr-guard --self-test > $out")
   ];
   systemd.services.media-sort = {
-    description = "Sort /HDD/nohandbrake into /HDD4TB";
+    description = "Sort /HDD/nohandbrake and Sonarr/Radarr's imports into /HDD4TB";
     unitConfig.RequiresMountsFor = [
       "/HDD"
       "/HDD4TB"
@@ -421,7 +511,7 @@ in
     # successful run and has stopped changing (qbt copies finished torrents in;
     # don't sort half a file). A failed run is retried by the next timer tick.
     script = ''
-      snap() { find /watch -printf '%P %s\n' | sort | sha1sum; }
+      snap() { find /watch /HDD4TB/TV/.sonarr /HDD4TB/Movies/.radarr -printf '%p %s\n' | sort | sha1sum; }
       s=$(snap)
       [ "$s" != "$(cat "$STATE_DIRECTORY/last" 2>/dev/null)" ] || exit 0
       sleep 10
@@ -436,6 +526,111 @@ in
     timerConfig = {
       OnBootSec = "3min";
       OnUnitActiveSec = "3min";
+    };
+  };
+
+  # --- requests: Ombi (ombi.colef.club) -> Sonarr/Radarr -> Prowlarr -> qBittorrent ---
+  # Only what is requested in Ombi gets downloaded: Sonarr/Radarr start empty
+  # (their docker state stays in ${provision}/{sonarr,radarr}, unused; never use
+  # their "Library Import"), and arr-guard below unmonitors anything else and
+  # flags settings that would let them grab more (upgrades, Minimum Free Space...).
+  # They never write the library: a finished download in /tv/.torrents is
+  # hardlinked into their root folder /tv/.sonarr (/movies/.radarr for Radarr),
+  # and media-sort links it from there into the library under its TMDB name.
+  # Prowlarr (IPTorrents, TorrentLeech) and Ombi keep their docker state, handed
+  # over once like jellyfin's:
+  #   sudo chown -R 404:404 ${provision}/prowlarr; sudo chown -R 405:405 ${provision}/ombi
+  services.sonarr.enable = true;
+  services.radarr.enable = true;
+  services.prowlarr = {
+    enable = true;
+    settings.auth.required = "Enabled"; # its config.xml skipped the login for LAN addresses
+  };
+  services.ombi.enable = true;
+  # web UIs on the LAN interface only, not tailscale0; each has its own login
+  networking.firewall.interfaces.eno1.allowedTCPPorts = [
+    7878 # radarr
+    8989 # sonarr
+    9696 # prowlarr
+  ];
+  systemd.services.sonarr = {
+    unitConfig.RequiresMountsFor = [
+      "/HDD"
+      "/HDD4TB"
+    ];
+    serviceConfig = mediaSandbox // {
+      BindPaths = [
+        "${provision}/sonarr-native:${config.services.sonarr.dataDir}"
+        # downloads (/tv/.torrents) and root folder (/tv/.sonarr) in ONE mount:
+        # link(2) fails across mounts, even two binds of one disk, and imports
+        # become copies
+        "/HDD4TB/TV:/tv"
+      ];
+    };
+  };
+  systemd.services.radarr = {
+    unitConfig.RequiresMountsFor = [
+      "/HDD"
+      "/HDD4TB"
+    ];
+    serviceConfig = mediaSandbox // {
+      BindPaths = [
+        "${provision}/radarr-native:${config.services.radarr.dataDir}"
+        "/HDD4TB/Movies:/movies" # /movies/.torrents and /movies/.radarr, as above
+      ];
+    };
+  };
+  systemd.services.prowlarr = {
+    unitConfig.RequiresMountsFor = [ "/HDD" ];
+    serviceConfig =
+      mediaSandbox
+      // dotnetHardening
+      // {
+        # a DynamicUser's uid isn't pinned, and it would re-own the state on start
+        DynamicUser = lib.mkForce false;
+        User = "prowlarr";
+        Group = "prowlarr";
+        BindPaths = [ "${provision}/prowlarr:/var/lib/prowlarr" ];
+      };
+  };
+  systemd.services.ombi = {
+    unitConfig.RequiresMountsFor = [ "/HDD" ];
+    # Internet-facing (through nginx)
+    serviceConfig =
+      mediaSandbox
+      // dotnetHardening
+      // {
+        BindPaths = [ "${provision}/ombi:${config.services.ombi.dataDir}" ];
+      };
+  };
+  # ./arr-guard.py, every minute: Sonarr/Radarr unmonitor whatever no Ombi
+  # request asked for, and it fails while a setting would let them download more.
+  # API keys (Sonarr/Radarr: Settings -> General; Ombi: Settings -> Ombi):
+  #   sudo sh -c 'umask 077; cat > /HDD/secrets/arr-guard.env'
+  #   SONARR_API_KEY=...
+  #   RADARR_API_KEY=...
+  #   OMBI_API_KEY=...
+  # Dry run (prints what it would change and every unsafe setting):
+  #   sudo systemd-run --pty -p EnvironmentFile=/HDD/secrets/arr-guard.env arr-guard --dry-run
+  systemd.services.arr-guard = {
+    description = "Unmonitor in Sonarr/Radarr what nobody requested in Ombi";
+    unitConfig.RequiresMountsFor = [ "/HDD" ];
+    environment.PYTHONUNBUFFERED = "1";
+    serviceConfig = {
+      Type = "oneshot";
+      ExecStart = "${arr-guard}/bin/arr-guard";
+      EnvironmentFile = "/HDD/secrets/arr-guard.env";
+      DynamicUser = true;
+      IPAddressDeny = "any";
+      IPAddressAllow = "localhost";
+    };
+  };
+  systemd.timers.arr-guard = {
+    wantedBy = [ "timers.target" ];
+    timerConfig = {
+      OnBootSec = "2min";
+      OnUnitActiveSec = "1min";
+      AccuracySec = "5s";
     };
   };
 
