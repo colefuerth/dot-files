@@ -430,6 +430,10 @@ in
     "f /HDD4TB/Movies/.torrents/.ignore 0644 ${username} media -"
     "f /HDD4TB/TV/.sonarr/.ignore 0644 ${username} media -"
     "f /HDD4TB/Movies/.radarr/.ignore 0644 ${username} media -"
+    # what media-sort left for a human, and cole's overrides for it: on the
+    # HDD4TB share, outside the libraries, so Jellyfin never scans it
+    "d /HDD4TB/Unsorted 2775 ${username} media -"
+    "f /HDD4TB/Unsorted/overrides.txt 0664 ${username} media - # <path> = tv <tmdb id> [S01E02] | movie <tmdb id> | skip   (paths and help: needs-sorting.txt)\\n"
     "d ${provision}/sonarr-native 0700 sonarr sonarr -"
     "d ${provision}/radarr-native 0700 radarr radarr -"
   ];
@@ -442,6 +446,8 @@ in
   # hardlinks, so it is the one thing that names the library. FileBot's exclude
   # list of processed files (/watch/... paths) is its done list, so nothing is
   # sorted twice; the rest of ${provision}/filebot is just history now.
+  # What it leaves for a human it lists in /HDD4TB/Unsorted/needs-sorting.txt;
+  # a line in overrides.txt next to it names the show/movie (or "skip").
   # TMDB key (themoviedb.org -> Settings -> API -> "API Key"):
   #   sudo sh -c "umask 077; printf '%s' '<key>' > /HDD/secrets/tmdb.key"
   # Dry run over everything in /HDD/nohandbrake and the staging dirs (prints,
@@ -473,7 +479,7 @@ in
       LoadCredential = "tmdb:/HDD/secrets/tmdb.key";
       # It parses names from torrents and unpacks their archives, so of the
       # data disks it sees only its input (read-only), the libraries, its
-      # scratch dir and the done list; no /home, sockets or D-Bus
+      # scratch dir, the done list and Unsorted; no /home, sockets or D-Bus
       TemporaryFileSystem = [
         "/HDD:ro"
         "/HDD4TB:ro"
@@ -484,6 +490,7 @@ in
         "/HDD4TB/.media-sort"
         "/HDD4TB/Movies"
         "/HDD4TB/TV"
+        "/HDD4TB/Unsorted"
       ];
       ProtectSystem = "strict";
       ProtectHome = true;
@@ -518,8 +525,9 @@ in
     # Like FileBot's container: only run when the input changed since the last
     # successful run and has stopped changing (qbt copies finished torrents in;
     # don't sort half a file). A failed run is retried by the next timer tick.
+    # Saving overrides.txt counts as a change (its content: an edit may keep the size).
     script = ''
-      snap() { find /watch /HDD4TB/TV/.sonarr /HDD4TB/Movies/.radarr -printf '%p %s\n' | sort | sha1sum; }
+      snap() { { find /watch /HDD4TB/TV/.sonarr /HDD4TB/Movies/.radarr -printf '%p %s\n' | sort; cat /HDD4TB/Unsorted/overrides.txt 2>/dev/null; } | sha1sum; }
       s=$(snap)
       [ "$s" != "$(cat "$STATE_DIRECTORY/last" 2>/dev/null)" ] || exit 0
       sleep 10
