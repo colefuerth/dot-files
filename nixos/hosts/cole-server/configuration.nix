@@ -40,8 +40,8 @@ let
     ];
     InaccessiblePaths = hostSockets;
   };
-  # the nixpkgs sonarr/radarr units' hardening, for prowlarr and ombi whose
-  # modules set none (no MemoryDenyWriteExecute: .NET's JIT needs W+X pages)
+  # the nixpkgs sonarr/radarr units' hardening, for prowlarr, ombi and unpackerr
+  # whose modules set none (no MemoryDenyWriteExecute: .NET's JIT needs W+X pages)
   dotnetHardening = {
     CapabilityBoundingSet = "";
     LockPersonality = true;
@@ -303,6 +303,7 @@ in
   users.groups.prowlarr.gid = 404;
   users.users.ombi.uid = 405;
   users.groups.ombi.gid = 405;
+  users.users.unpackerr.uid = 406; # group media (services.unpackerr.group)
 
   services.jellyfin = {
     enable = true;
@@ -612,6 +613,62 @@ in
         # qBittorrent (:8085) skips its login for 192.168.69.0/24, this host's
         # address included; Ombi only talks to 127.0.0.1 and the internet
         IPAddressDeny = "192.168.69.5";
+      };
+  };
+  # Unpackerr: Sonarr/Radarr can't import a release packed as .rar. It unpacks
+  # one next to its archives (which keep seeding), they link the video into
+  # staging, and 5 minutes after the import it deletes its copy (never the
+  # archives). Its keys, once arr-guard's file exists (below):
+  #   sudo sh -c 'umask 077; sed -n "s/^\(SONARR\|RADARR\)_API_KEY=/UN_\1_0_API_KEY=/p" /HDD/secrets/arr-guard.env > /HDD/secrets/unpackerr.env'
+  #   sudo systemctl start unpackerr
+  services.unpackerr = {
+    enable = true;
+    group = "media";
+    # file_mode also for archives that store a mode (a Unix-made rar's 0644 or
+    # 0600), which upstream keeps: Sonarr/Radarr would copy or fail to read them
+    package = pkgs.unpackerr.overrideAttrs (old: {
+      postConfigure = (old.postConfigure or "") + ''
+        chmod -R u+w vendor/golift.io/xtractr
+        substituteInPlace vendor/golift.io/xtractr/write.go --replace-fail \
+          'const minimum = 0o400 // ensure owner has read access to the file.' \
+          'minimum := x.FileMode | 0o400'
+      '';
+    });
+    settings = {
+      # group-writable, so fs.protected_hardlinks lets Sonarr/Radarr link it
+      file_mode = "0664";
+      dir_mode = "0775";
+      sonarr = [ { url = "http://127.0.0.1:8989"; } ];
+      radarr = [ { url = "http://127.0.0.1:7878"; } ];
+    };
+  };
+  systemd.services.unpackerr = {
+    unitConfig = {
+      RequiresMountsFor = [
+        "/HDD"
+        "/HDD4TB"
+      ];
+      ConditionPathExists = "/HDD/secrets/unpackerr.env"; # skipped, not failing, until then
+    };
+    # It parses untrusted archives: of the disks it sees only the downloads, at
+    # the paths Sonarr/Radarr report, and of the network only localhost (them)
+    serviceConfig =
+      mediaSandbox
+      // dotnetHardening
+      // {
+        EnvironmentFile = "/HDD/secrets/unpackerr.env";
+        UMask = "0002";
+        BindPaths = [
+          "/HDD4TB/TV/.torrents:/tv/.torrents"
+          "/HDD4TB/Movies/.torrents:/movies/.torrents"
+        ];
+        MemoryDenyWriteExecute = true;
+        RestrictAddressFamilies = [
+          "AF_INET"
+          "AF_INET6"
+        ];
+        IPAddressAllow = "localhost";
+        IPAddressDeny = "any";
       };
   };
   # ./arr-guard.py, every minute: Sonarr/Radarr unmonitor whatever no Ombi
