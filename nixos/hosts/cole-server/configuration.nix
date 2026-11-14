@@ -256,7 +256,14 @@ in
         proxyPass = "http://127.0.0.1:${toString config.services.ombi.port}";
         proxyWebsockets = true;
       };
+      # Ombi never locks an account: throttle password guessing here (ASP.NET
+      # routes ignore case, so must this match)
+      locations."~* ^/api/v1/token" = {
+        proxyPass = "http://127.0.0.1:${toString config.services.ombi.port}";
+        extraConfig = "limit_req zone=ombi_login burst=5 nodelay;";
+      };
     };
+    appendHttpConfig = "limit_req_zone $binary_remote_addr zone=ombi_login:1m rate=10r/m;";
   };
   security.acme = {
     acceptTerms = true;
@@ -591,6 +598,7 @@ in
         User = "prowlarr";
         Group = "prowlarr";
         BindPaths = [ "${provision}/prowlarr:/var/lib/prowlarr" ];
+        IPAddressDeny = "192.168.69.5"; # as ombi's
       };
   };
   systemd.services.ombi = {
@@ -601,6 +609,9 @@ in
       // dotnetHardening
       // {
         BindPaths = [ "${provision}/ombi:${config.services.ombi.dataDir}" ];
+        # qBittorrent (:8085) skips its login for 192.168.69.0/24, this host's
+        # address included; Ombi only talks to 127.0.0.1 and the internet
+        IPAddressDeny = "192.168.69.5";
       };
   };
   # ./arr-guard.py, every minute: Sonarr/Radarr unmonitor whatever no Ombi

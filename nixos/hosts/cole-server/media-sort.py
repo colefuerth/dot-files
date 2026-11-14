@@ -54,7 +54,8 @@ def folder(parent, name):
     key = re.sub(r"\W", "", name).lower()
     if (parent / name).is_dir() or not key:
         return name
-    same = (d.name for d in sorted(parent.iterdir()) if d.is_dir() and re.sub(r"\W", "", d.name).lower() == key)
+    # never .torrents/.sonarr/.radarr (a show named "Torrents" isn't one of them)
+    same = (d.name for d in sorted(parent.iterdir()) if d.is_dir() and not d.name.startswith(".") and re.sub(r"\W", "", d.name).lower() == key)
     return next(same, name)
 
 
@@ -83,7 +84,9 @@ def target(rel, suffix, kind=None):
     if not isinstance(s, int) or not isinstance(e, int):
         return None  # a season or several episodes in one file
     if tmdb_id:
-        hits = [tmdb(f"tv/{tmdb_id}")]
+        hits = [tmdb(f"tv/{tmdb_id}", append_to_response="external_ids")]
+        if tvdb_id and hits[0]["external_ids"].get("tvdb_id") not in (None, tvdb_id):
+            return None  # TVDB's TMDB link (Sonarr's {TmdbId}) points at another show
     elif tvdb_id:  # Sonarr knows no TMDB id for the show
         hits = tmdb(f"find/{tvdb_id}", external_source="tvdb_id")["tv_results"]
     else:
@@ -263,13 +266,13 @@ def self_test():
         # (their titles are wrong here on purpose; JJK has only a TVDB id), the
         # library gets a hardlink, and .torrents is never read
         answers |= {
-            ("tv/1", None): {"id": 1, "name": "Cyberpunk: Edgerunners"},
+            ("tv/1", None): {"id": 1, "name": "Cyberpunk: Edgerunners", "external_ids": {"tvdb_id": 5}},
             ("find/9", None): {"tv_results": [{"id": 2, "name": "Jujutsu Kaisen"}]},
             ("movie/8", None): {"title": "Heat", "release_date": "1995-12-15"},
         }
         staged = [
-            "TV/.sonarr/Wrong (2020) [tmdbid-] [tvdbid-9]/Season 1/Wrong (2020) - S01E05 - Ryomen Sukuna.mkv",
-            "TV/.sonarr/Wrong (2022) [tmdbid-1] [tvdbid-5]/Season 2/Wrong (2022) - S02E03 - 0 + 2 = 1.mkv",
+            "TV/.sonarr/Wrong (2020) [tmdbid-] [tvdbid-9]/Season 1/Wrong (2020) - S01E05.mkv",
+            "TV/.sonarr/Wrong (2022) [tmdbid-1] [tvdbid-5]/Season 2/Wrong (2022) - S02E03.mkv",
             "Movies/.radarr/Wrong (1995) [tmdbid-8]/Wrong (1995).mkv",
         ]
         torrent = OUT / "TV/.torrents/Cyberpunk.Edgerunners.S02E03.2160p.mkv"
@@ -281,6 +284,8 @@ def self_test():
             (OUT / p).write_text(p)
             os.truncate(OUT / p, MIN_SIZE)
         (OUT / staged[1]).unlink()
+        assert folder(tv, "Sonarr") == "Sonarr"  # not .sonarr
+        assert target("Wrong (2022) [tmdbid-1] [tvdbid-6]/Season 2/Wrong (2022) - S02E03.mkv", ".mkv", "episode") is None  # ids disagree
         os.link(torrent, OUT / staged[1])  # how Sonarr imports
         assert not main()
         library = [
