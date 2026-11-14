@@ -62,8 +62,8 @@ def target(rel, suffix, kind=None):
     """Library path for the video at <root>/<rel>, or None when unsure. kind is
     set for STAGING: its "episode"/"movie", and the ids in rel pick the TMDB entry."""
     g = guessit(re.sub(r"(?i)(E\d+)v\d\b", r"\1", rel), {"type": kind} if kind else None)  # S01E13v2
-    if g.get("season") is not None and g.get("season") == g.get("year"):
-        del g["season"]  # "Fruits Basket (2019) - 10"
+    if not kind and g.get("season") is not None and g.get("season") == g.get("year"):
+        del g["season"]  # "Fruits Basket (2019) - 10"; STAGING always says SxxEyy (daily shows: S2019E10)
     title, year = g.get("title"), g.get("year")
     tmdb_id, tvdb_id = (g.get("tmdb_id"), g.get("tvdb_id")) if kind else (None, None)
     if not (title or tmdb_id or tvdb_id):

@@ -55,7 +55,7 @@ def problems(app, base):
     bad += [f"quality profile {p['name']} allows upgrades" for p in api(base, "/qualityprofile") if p["upgradeAllowed"]]
     bad += [f"download client {c['name']} removes completed torrents" for c in api(base, "/downloadclient") if c["removeCompletedDownloads"]]
     # seedRatio, seedTime, seasonPackSeedTime: what Prowlarr's Full Sync copies from its indexers
-    bad += [f"indexer {i['name']} stops seeding ({f['name']})" for i in api(base, "/indexer") for f in i["fields"] if f["name"].startswith("seedCriteria.") and f.get("value")]
+    bad += [f"indexer {i['name']} stops seeding ({f['name']})" for i in api(base, "/indexer") for f in i["fields"] if f["name"].startswith("seedCriteria.") and f.get("value") is not None]  # 0 stops at once
     bad += [f"import list {x['name']}" for x in api(base, "/importlist")]
     if base == RADARR:
         bad += [f"collection {c['title']} monitored (adds its movies)" for c in api(base, "/collection") if c["monitored"]]
@@ -63,15 +63,19 @@ def problems(app, base):
 
 
 def main():
-    eps, movie_ids = requested(api(OMBI, "/Request/tv"), api(OMBI, "/Request/movie"))  # Ombi down: exit before changing anything
     series = api(SONARR, "/series")
+    episodes = {s["id"]: api(SONARR, f"/episode?seriesId={s['id']}") for s in series}
+    radarr = api(RADARR, "/movie")
+    # Ombi after Sonarr/Radarr: it saves a request before monitoring it there, so
+    # a request made during this run can't look unrequested. Ombi down: exit before changing anything
+    eps, movie_ids = requested(api(OMBI, "/Request/tv"), api(OMBI, "/Request/movie"))
     new_seasons = [s for s in series if s["monitorNewItems"] != "none"]
     for s in new_seasons:
         print(f"[NEW SEASONS OFF] {s['title']}")
-    stray = strays(series, {s["id"]: api(SONARR, f"/episode?seriesId={s['id']}") for s in series}, eps)
+    stray = strays(series, episodes, eps)
     for s, e in stray:
         print(f"[UNMONITOR] {s['title']} S{e['seasonNumber']:02d}E{e['episodeNumber']:02d}")
-    movies = [m for m in api(RADARR, "/movie") if m["monitored"] and m["tmdbId"] not in movie_ids]
+    movies = [m for m in radarr if m["monitored"] and m["tmdbId"] not in movie_ids]
     for m in movies:
         print(f"[UNMONITOR] {m['title']} ({m['year']})")
     if not DRY:
