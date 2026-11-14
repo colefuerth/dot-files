@@ -37,7 +37,8 @@ HELP = """# Files media-sort couldn't sort on its last run. To sort one, add a l
 # overrides.txt: uncomment a candidate below, or write your own (the id is the
 # number in the themoviedb.org URL):
 #   <path> = tv <id>    <path> = tv <id> S01E02    <path> = movie <id>    <path> = skip
-# A <path> ending in / covers every file under it. media-sort reruns within minutes.
+# A <path> ending in / gives every file under it one show (tv <id>, no SxxEyy) or skip.
+# media-sort reruns within minutes.
 
 """
 
@@ -212,7 +213,9 @@ def overrides(text):
             continue
         # lazy: the path ends at the first "=" that a rule follows (paths and comments may hold "=")
         m = re.fullmatch(r"(?i)(.*?)\s*=\s*(?:(skip)|(tv|movie)\s+(\d+)(?:\s+S(\d+)E(\d+))?)\s*(?:#.*)?", line.strip())
-        if not m or not m[1] or m[5] and (m[3].lower() == "movie" or m[1].endswith("/")):  # an episode is one file
+        # an episode or a movie is one file: on a folder, an extra filed first would take its name
+        one = m and (m[5] or (m[3] or "").lower() == "movie")
+        if not m or not m[1] or m[5] and m[3].lower() == "movie" or one and m[1].endswith("/"):
             bad.append(line)
         elif m[2]:
             rules[m[1]] = "skip"
@@ -251,7 +254,10 @@ def main():
     done = set(done_list.read_text().splitlines())
     unsorted = OUT / "Unsorted"  # on the samba share: needs-sorting.txt for cole, overrides.txt from him
     ov = unsorted / "overrides.txt"
-    rules, bad = overrides(ov.read_text(encoding="utf-8-sig", errors="replace") if ov.exists() else "")
+    try:
+        rules, bad = overrides(ov.read_text(encoding="utf-8-sig", errors="replace") if ov.exists() else "")
+    except OSError as e:  # e.g. a 0600 copy: sort without it, and say so where cole looks
+        rules, bad = {}, [f"(overrides.txt unreadable: {e!r})"]
     needs = []
     for line in bad:
         print(f"[WARN] overrides.txt: ignored, not '<path> = tv|movie <id> [SxxEyy]' or '<path> = skip': {line}")
@@ -281,7 +287,8 @@ def main():
             needs.append(f"# {f}\n#   error, retried next run: {e!r}\n\n")
             continue
         if not ok:
-            needs.append(report(f, str(rel), kind, "archive not fully sorted (see the journal)" if first_volume(f.name) else "no confident match"))
+            reason = "archive not fully sorted (see the journal)" if first_volume(f.name) else "no confident match"
+            needs.append(report(f, str(rel), kind, reason + (", even with its overrides.txt line" if rule else "")))
         elif not DRY:
             with done_list.open("a") as d:
                 d.write(f"{f}\n")
@@ -394,9 +401,9 @@ def self_test():
         assert (OUT / "Movies/copy.mkv").stat().st_nlink == 1 and torrent.stat().st_nlink == 3
 
         # overrides.txt: a file's own line, else the longest folder line; malformed lines are returned
-        rules, bad = overrides("# note\n\n/a/b.mkv = tv 1 s01e02\n/a/ = TV 2  # Show = Name (2019)\n/a/c/ = movie 3\n/x=y.mkv = skip\nno rule\n/m.mkv = movie 4 S01E02\n/z/ = tv 5 S01E01\n/w.mkv = tv abc\n")
-        assert bad == ["no rule", "/m.mkv = movie 4 S01E02", "/z/ = tv 5 S01E01", "/w.mkv = tv abc"]
-        assert override("/a/b.mkv", rules) == ("episode", 1, 1, 2) and override("/a/c/d.mkv", rules) == ("movie", 3, None, None)
+        rules, bad = overrides("# note\n\n/a/b.mkv = tv 1 s01e02\n/a/ = TV 2  # Show = Name (2019)\n/a/c/ = tv 3\n/x=y.mkv = skip\nno rule\n/m.mkv = movie 4 S01E02\n/z/ = tv 5 S01E01\n/v/ = movie 6\n/w.mkv = tv abc\n")
+        assert bad == ["no rule", "/m.mkv = movie 4 S01E02", "/z/ = tv 5 S01E01", "/v/ = movie 6", "/w.mkv = tv abc"]
+        assert override("/a/b.mkv", rules) == ("episode", 1, 1, 2) and override("/a/c/d.mkv", rules) == ("episode", 3, None, None)
         assert override("/a/e.mkv", rules) == ("episode", 2, None, None) and override("/ab/e.mkv", rules) is None and override("/x=y.mkv", rules) == "skip"
         # the line's episode replaces guessit's absolute number
         answers |= {("tv/2", None): {"id": 2, "name": "Jujutsu Kaisen", "external_ids": {}}, ("tv/2/season/2/episode/10", None): {"name": "Thunderclap"}}
@@ -407,20 +414,25 @@ def self_test():
         text = needs.read_text()
         assert text.startswith(HELP) and f"# {mystery}\n#   no confident match; guessit read: movie, title Mystery\n" in text
         assert f"# {mystery} = movie 3  # Mystery 3 (2003)\n\n" in text and "Mystery 4" not in text
-        # an override files it (copied, like any /watch file); a malformed line is reported, not fatal
+        # an override files it (copied, like any /watch file); a malformed line is reported, not fatal;
+        # one that sorts nothing says so (a Windows editor's BOM and CRLF are fine)
         answers |= {("movie/11", None): {"title": "Mystery Men", "release_date": "1999-08-06"}, ("search/tv", "Unknown Show"): {"results": []}}
         unknown.write_text("x")
         os.truncate(unknown, MIN_SIZE)
-        (OUT / "Unsorted/overrides.txt").write_text(f"{mystery} = movie 11\nbroken line\n")
+        (OUT / "Unsorted/overrides.txt").write_text(f"\ufeff{mystery} = movie 11\r\n{unknown} = tv 1 S09E09\r\nbroken line\r\n")
         assert not main()
         assert (OUT / "Movies/Mystery Men (1999)/Mystery Men (1999).mkv").stat().st_nlink == 1
         text = needs.read_text()
-        assert "#   broken line\n" in text and f"# {unknown}\n" in text and str(mystery) not in text
+        assert "#   broken line\n" in text and str(mystery) not in text
+        assert f"# {unknown}\n#   no confident match, even with its overrides.txt line;" in text
         # skip: on the done list, no longer listed; with nothing left the file says so
         (OUT / "Unsorted/overrides.txt").write_text(f"{mystery} = movie 11\n{WATCH}/ = tv 1\n{unknown} = skip\n")
         assert not main()
         assert Path(t, "done.txt").read_text().splitlines()[-2:] == [str(mystery), str(unknown)]
         assert needs.read_text() == "# Nothing needs sorting.\n" and not (OUT / "Unsorted/.needs-sorting.txt.part").exists()
+        (OUT / "Unsorted/overrides.txt").unlink()
+        (OUT / "Unsorted/overrides.txt").mkdir()  # unreadable: reported, not fatal
+        assert not main() and "overrides.txt unreadable" in needs.read_text()
     print("self-test passed")
 
 
