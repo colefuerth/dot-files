@@ -477,6 +477,23 @@
         "type": "github"
       }
     },
+    "jfa-go": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1791641462,
+        "narHash": "sha256-3TO9QHEF//5WUhSM3ksGrGepPWZFw3VG4DUIVOXOYHk=",
+        "owner": "hrfee",
+        "repo": "jfa-go",
+        "rev": "2f5e51b53173d7189fcbdd9802c890dd8b381a30",
+        "type": "github"
+      },
+      "original": {
+        "owner": "hrfee",
+        "ref": "main",
+        "repo": "jfa-go",
+        "type": "github"
+      }
+    },
     "jj-starship": {
       "inputs": {
         "flake-utils": "flake-utils_2",
@@ -868,6 +885,7 @@
         "dschana-system-config": "dschana-system-config",
         "flameshot": "flameshot",
         "home-manager": "home-manager_2",
+        "jfa-go": "jfa-go",
         "lanzaboote": "lanzaboote",
         "nix-darwin": "nix-darwin",
         "nixos-hardware": "nixos-hardware",

@@ -74,6 +74,7 @@ rec {
   # Go packages
   tour = import ./packages/tour.nix { inherit pkgs; };
   f5 = import ./packages/f5.nix { inherit pkgs; };
+  jfa-go = import ./packages/jfa-go.nix { inherit pkgs inputs; };
 
   sudoplz = import ./packages/sudoplz.nix { inherit pkgs; };
 

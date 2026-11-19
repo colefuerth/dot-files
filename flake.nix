@@ -24,6 +24,8 @@
     nixos-wsl.inputs.nixpkgs.follows = "nixpkgs";
     flameshot.url = "github:flameshot-org/flameshot?ref=master";
     flameshot.inputs.nixpkgs.follows = "nixpkgs";
+    jfa-go.url = "github:hrfee/jfa-go?ref=main";
+    jfa-go.flake = false;
     razerforlinux.url = "github:colefuerth/RazerForLinux";
     razerforlinux.inputs.nixpkgs.follows = "nixpkgs";
     vscode-server.url = "github:nix-community/nixos-vscode-server";
