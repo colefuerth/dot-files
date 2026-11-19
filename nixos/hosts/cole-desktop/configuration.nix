@@ -148,8 +148,8 @@ in
   nix.settings.builders-use-substitutes = true;
 
   nixcfg.cinnamon.enable = false;
-  nixcfg.cosmic.enable = true;
-  nixcfg.plasma.enable = false;
+  nixcfg.cosmic.enable = false;
+  nixcfg.plasma.enable = true;
 
   # GB203 (RTX 5070 Ti) HDMI out -> the TV. Becomes the default output whenever
   # the controller connects and Big Picture opens.
