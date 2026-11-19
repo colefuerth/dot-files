@@ -280,6 +280,7 @@ in
     android-tools
     cameractrls
     clang_22
+    deskflow
     fastfetch
     gamemode
     gamescope
@@ -546,6 +547,8 @@ in
     "docker0"
     "br-+"
   ];
+
+  networking.firewall.allowedTCPPorts = [ 24800 ];
 
   services.odysseus.enable = false;
 
