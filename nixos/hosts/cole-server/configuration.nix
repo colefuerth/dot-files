@@ -263,6 +263,27 @@ in
         extraConfig = "limit_req zone=ombi_login burst=5 nodelay;";
       };
     };
+    # Jellyfin invites (jfa-go, :8056)
+    virtualHosts."invite.colef.club" = {
+      enableACME = true;
+      forceSSL = true;
+      locations."/".proxyPass = "http://127.0.0.1:8056";
+      # its logins are Jellyfin passwords (admins', on /token/login) and it
+      # never locks an account: throttle guessing as for Ombi. Also the reset
+      # PINs: anyone can start a reset by username, each makes a new 6-char PIN
+      # (valid 30 min), and a right guess at /reset sets the password
+      locations."~ ^/((my/)?token/login|reset|my/password/reset/)" = {
+        proxyPass = "http://127.0.0.1:8056";
+        extraConfig = "limit_req zone=ombi_login burst=5 nodelay;";
+      };
+      # first run's setup page tests and saves its answers here, so anyone who
+      # reached it first could aim it at their own Jellyfin; later /config is the
+      # admin settings API: either way, from the LAN only
+      locations."~ ^/(config|jellyfin/test)$" = {
+        proxyPass = "http://127.0.0.1:8056";
+        extraConfig = "allow 192.168.69.0/24; deny all;";
+      };
+    };
     appendHttpConfig = "limit_req_zone $binary_remote_addr zone=ombi_login:1m rate=10r/m;";
   };
   security.acme = {
@@ -438,6 +459,7 @@ in
     "f /HDD4TB/Unsorted/overrides.txt 0664 ${username} media - # <path> = tv <tmdb id> [S01E02] | movie <tmdb id> | skip   (paths and help: needs-sorting.txt)\\n"
     "d ${provision}/sonarr-native 0700 sonarr sonarr -"
     "d ${provision}/radarr-native 0700 radarr radarr -"
+    "d ${provision}/jfa-go 0700 jfa-go jfa-go -"
   ];
 
   # media-sort (./media-sort.py) replaces FileBot AMC, which was the
@@ -623,6 +645,39 @@ in
         # qBittorrent (:8085) skips its login for 192.168.69.0/24, this host's
         # address included; Ombi only talks to 127.0.0.1 and the internet
         IPAddressDeny = "192.168.69.5";
+      };
+  };
+  # jfa-go (invite.colef.club): invite links that make a Jellyfin account (the
+  # person picks the name and password), and password resets by email. State
+  # in ${provision}/jfa-go (restic's state backup); first run serves a setup
+  # page, which nginx keeps to the LAN (invite.colef.club, above).
+  users.users.jfa-go = {
+    uid = 407;
+    group = "jfa-go";
+    isSystemUser = true;
+  };
+  users.groups.jfa-go.gid = 407;
+  systemd.services.jfa-go = {
+    description = "jfa-go, Jellyfin invites and password resets";
+    after = [
+      "network-online.target"
+      "jellyfin.service"
+    ];
+    wants = [ "network-online.target" ];
+    wantedBy = [ "multi-user.target" ];
+    unitConfig.RequiresMountsFor = [ "/HDD" ];
+    # Internet-facing (through nginx); holds a Jellyfin admin login
+    serviceConfig =
+      mediaSandbox
+      // dotnetHardening
+      // {
+        MemoryDenyWriteExecute = true; # Go, no JIT
+        User = "jfa-go";
+        Group = "jfa-go";
+        ExecStart = "${lib.getExe dotFilesPackages.jfa-go} -data /var/lib/jfa-go -host 127.0.0.1 -port 8056";
+        Restart = "on-failure";
+        BindPaths = [ "${provision}/jfa-go:/var/lib/jfa-go" ];
+        IPAddressDeny = "192.168.69.5"; # as ombi's: Jellyfin is 127.0.0.1:8096
       };
   };
   # Unpackerr: Sonarr/Radarr can't import a release packed as .rar. It unpacks
