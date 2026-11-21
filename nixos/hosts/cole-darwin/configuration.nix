@@ -12,7 +12,7 @@
     ../../common
   ];
 
-  time.timeZone = "America/Toronto";
+  # time.timeZone = "America/Toronto";
   # time.timeZone = "America/Chicago";
 
   nixpkgs.config.allowUnfree = true;
@@ -39,6 +39,10 @@
   ];
   nix.settings.builders-use-substitutes = true;
 
+  # launchd's default "Standard" class keeps the daemon (and every build it
+  # forks) on the 6 efficiency cores; "Interactive" lets builds use the P-cores too.
+  nix.daemonProcessType = "Interactive";
+
   nix.settings.trusted-users = [
     "root"
     "@admin"
@@ -59,18 +63,26 @@
       act
       docker
       # ffmpeg-full
-      ffpb
+      # ffpb
       gh
       git-lfs
-      herdr
       libclang
+      llama-cpp
       micro
       nil
       nixfmt-tree
-      (python314.withPackages dotFilesPackages.pyPackages)
+      (python314.withPackages (
+        ps:
+        dotFilesPackages.pyPackages ps
+        ++ [
+          ps.onnxruntime
+          ps.tokenizers
+        ]
+      ))
     ])
     ++ (with pkgs; [
       # anz deps
+      azure-cli
       patchutils
       go_1_27
       gomodifytags
@@ -90,6 +102,32 @@
       dotFilesPackages.f5
       dotFilesPackages.sudoplz
       dotFilesPackages.tour
+      # Scripts, not zsh functions: dba-proxy runs its targets under `bash -lc`.
+      # Live analytics read replica, so reads never land on the primary.
+      (pkgs.writeShellScriptBin "csql-prod" ''
+        exec ${pkgs.google-cloud-sql-proxy}/bin/cloud-sql-proxy --port=9471 \
+          anzenna-integrations-live:us-west1:anzenna-cloudsql-003-replica-02 --auto-iam-authn "$@"
+      '')
+      # Built from the anzenna plugin's source into ~/bin (rebuild after a plugin update);
+      # this puts it on every shell's PATH, Claude Code's included.
+      (pkgs.writeShellScriptBin "dba-proxy" ''
+        exec "$HOME/bin/dba-proxy" "$@"
+      '')
+      (pkgs.writeShellScriptBin "psql-prod" ''
+        token=$(${pkgs.google-cloud-sdk}/bin/gcloud sql generate-login-token --account=cole@anzenna.ai) || exit 1
+        PGPASSWORD=$token exec ${pkgs.postgresql_18}/bin/psql \
+          -h 127.0.0.1 -p 9471 -U cole@anzenna.ai -d anzenna "$@"
+      '')
+      # Test env (app-test, dogfood) has no replica, so this is the primary; dba-proxy forces read-only.
+      (pkgs.writeShellScriptBin "csql-dev" ''
+        exec ${pkgs.google-cloud-sql-proxy}/bin/cloud-sql-proxy --port=9470 \
+          anzenna-integrations:us-west1:anzenna-cloudsql-002 --auto-iam-authn "$@"
+      '')
+      (pkgs.writeShellScriptBin "psql-dev" ''
+        token=$(${pkgs.google-cloud-sdk}/bin/gcloud sql generate-login-token --account=cole@anzenna.ai) || exit 1
+        PGPASSWORD=$token exec ${pkgs.postgresql_18}/bin/psql \
+          -h 127.0.0.1 -p 9470 -U cole@anzenna.ai -d anzenna "$@"
+      '')
     ];
 
   system.defaults = {
@@ -156,6 +194,7 @@
       "claude-code@latest"
       # "cursor"
       # "cursor-cli"
+      "deskflow"
       "discord"
       "firefox"
       "ghostty"
@@ -178,6 +217,7 @@
     ];
     taps = [
       # third party repos
+      "deskflow/tap"
       "bnomei/tmux-mcp"
       "koekeishiya/formulae"
       "hashicorp/tap"
@@ -185,15 +225,12 @@
     brews = [
       # non gui apps
       "afsctool"
-      "azure-cli"
+      "container"
       "coreutils"
-      # Bottles instead of nix overlays: overriding protobuf in nixpkgs forced
-      # source rebuilds of grpc, grpcio, arrow-cpp and google-cloud-cpp.
-      # Keep in step with anzenna CI: golangci-lint = GOLANGCI_LINT_VERSION in
-      # anzenna-github-workflows/golangci-lint.yml, protoc = the `protoc vX.<ver>`
-      # header in anzenna-library's generated *.pb.go files.
       "golangci-lint"
       "hashicorp/tap/terraform"
+      "herdr"
+      "java"
       "protobuf"
       "koekeishiya/formulae/yabai"
       "koekeishiya/formulae/skhd"
@@ -383,11 +420,21 @@
     home.file."go/bin/f5".source = "${dotFilesPackages.f5}/bin/f5";
     home.file."go/bin/protoc-gen-go".source = "${pkgs.protoc-gen-go}/bin/protoc-gen-go";
 
+    # dba-proxy (anzenna plugin): `:customer` marks a target holding customer data.
+    home.file.".config/dba-proxy/targets".text = ''
+      prod:customer   psql-prod
+      dev:customer    psql-dev
+    '';
+
     # Ghostty terminal config
     home.file.".config/ghostty/config".text = ''
       font-family = "Consolas Nerd Font Mono"
       # macos-titlebar-style = hidden
       theme = dark:Atom One Dark,light:Atom One Light
     '';
+    # SSH in from Ghostty sends TERM=xterm-ghostty, which macOS has no terminfo for, so zsh can't move
+    # the cursor and re-echoes every keystroke. It must be in ~/.terminfo: /bin/zsh looks TERM up before
+    # /etc/zshenv sets TERMINFO_DIRS and never picks up entries added there later.
+    home.file.".terminfo".source = "${pkgs.ghostty-bin.terminfo}/share/terminfo";
   };
 }

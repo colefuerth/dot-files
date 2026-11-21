@@ -51,7 +51,16 @@
       };
       gpg.enable = true;
       home-manager.enable = true;
-      mcfly.enable = true;
+      mcfly = {
+        enable = true;
+        # Default darkmode palette prints bright white (ANSI 15) on the terminal's own bg, so it vanishes
+        # under a light theme. "reset" = terminal fg; grey (7) == white (15) in Atom One Dark, so dark is unchanged.
+        settings.colors.darkmode = {
+          prompt = "reset";
+          results_fg = "reset";
+          results_selection_bg = "grey";
+        };
+      };
       ssh = {
         enable = lib.mkDefault true;
         package = pkgs.openssh.override { withKerberos = true; };
@@ -151,6 +160,10 @@
     home.file.".config/flameshot/flameshot.ini".source =
       "${dotFilesPackages.configs}/flameshot/flameshot.ini";
     home.file.".config/ranger/rc.conf".source = "${dotFilesPackages.configs}/ranger/rc.conf";
+    # mcfly reads its config from directories-next's data dir, which on macOS isn't the XDG one HM writes.
+    home.file."Library/Application Support/McFly/config.toml" = lib.mkIf pkgs.stdenv.isDarwin {
+      inherit (config.xdg.dataFile."mcfly/config.toml") source;
+    };
     home.activation.herdrConfig =
       let
         herdrConfig = pkgs.writeText "herdr-config.toml" ''

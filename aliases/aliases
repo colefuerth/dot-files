@@ -2,6 +2,7 @@
 # custom paths that should be added to PATH, if they exist
 cpaths=(
     "$HOME/.local/bin"
+    "$HOME/bin"
     "$HOME/.bin"
     "$HOME/.cargo/bin"
     "$HOME/.platformio/penv/bin"
